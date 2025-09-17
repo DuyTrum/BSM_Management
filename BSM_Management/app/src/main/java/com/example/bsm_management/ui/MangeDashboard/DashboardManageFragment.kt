@@ -1,5 +1,6 @@
 package com.example.bsm_management.ui.MangeDashboard
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -7,6 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bsm_management.R
+import com.example.bsm_management.ui.contract.AddContractActivity
+import com.example.bsm_management.ui.contract.RoomContractActivity
 import com.example.bsm_management.ui.dashboard.ActionAdapter
 import com.example.bsm_management.ui.dashboard.ActionItem
 import com.example.bsm_management.ui.dashboard.GridSpacingItemDecoration
@@ -14,7 +17,23 @@ import com.example.bsm_management.ui.dashboard.GridSpacingItemDecoration
 class DashboardManageFragment : Fragment(R.layout.fragment_dashboard_manage) {
 
     private val adapter = ActionAdapter { item ->
-        // TODO: handle click action
+        when (item.title) {
+            "Lập hợp đồng mới" -> {
+                startActivity(Intent(requireContext(), RoomContractActivity::class.java))
+            }
+            "Thanh lý\n(Trả phòng)" -> {
+                Toast.makeText(requireContext(), "Tính năng trả phòng", Toast.LENGTH_SHORT).show()
+            }
+            "Lập hóa đơn" -> {
+                Toast.makeText(requireContext(), "Đi tới lập hóa đơn", Toast.LENGTH_SHORT).show()
+            }
+            "Chốt & Lập\nhóa đơn" -> {
+                Toast.makeText(requireContext(), "Đi tới chốt hóa đơn", Toast.LENGTH_SHORT).show()
+            }
+            "Hóa đơn\ncần thu tiền" -> {
+                Toast.makeText(requireContext(), "Danh sách hóa đơn cần thu", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

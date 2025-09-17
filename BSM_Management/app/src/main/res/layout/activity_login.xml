@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/login"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -11,8 +12,8 @@
     <!-- Nút back -->
     <ImageButton
         android:id="@+id/btnBack"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="@dimen/icon_xl"
+        android:layout_height="@dimen/icon_xl"
         android:background="@drawable/ic_back_btn"
         android:padding="@dimen/pad_l"
         app:tint="@color/pri"
@@ -137,15 +138,6 @@
         android:backgroundTint="@color/pri"
         android:layout_marginTop="@dimen/mar_l"
         android:padding="@dimen/pad_l" />
-
-    <!-- Loading -->
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/mar_m"
-        android:visibility="gone" />
 
     <!-- Đăng ký -->
     <LinearLayout
