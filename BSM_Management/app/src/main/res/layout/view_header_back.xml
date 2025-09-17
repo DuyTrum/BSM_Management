@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="@dimen/pad_m"
+    android:layout_marginBottom="@dimen/mar_m"
+    android:background="@color/bg_card"
+    android:gravity="center_vertical">
+
+    <!-- Nút back -->
+    <ImageView
+        android:id="@+id/ivBack"
+        android:layout_width="@dimen/icon_l"
+        android:layout_height="@dimen/icon_l"
+        android:src="@drawable/ic_back_btn"
+        android:contentDescription="icon back" />
+
+    <!-- Nội dung tiêu đề + mô tả -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="@dimen/mar_m">
+
+        <TextView
+            android:id="@+id/tvHeaderTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lập hợp đồng mới"
+            android:textSize="@dimen/txt_l"
+            android:textColor="@color/txt_pri"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tvHeaderSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chọn 1 phòng để thực hiện"
+            android:textSize="@dimen/txt_s"
+            android:textColor="@color/txt_sec"/>
+    </LinearLayout>
+</LinearLayout>

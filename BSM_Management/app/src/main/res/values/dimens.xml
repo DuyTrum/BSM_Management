@@ -21,5 +21,10 @@
     <!-- Component sizes -->
     <dimen name="btn_h">48dp</dimen>
     <dimen name="edt_h">48dp</dimen>
-    <dimen name="icon_sz">24dp</dimen>
+
+    <dimen name="icon_xs">20dp</dimen>
+    <dimen name="icon_s">24dp</dimen>
+    <dimen name="icon_m">32dp</dimen>
+    <dimen name="icon_l">40dp</dimen>
+    <dimen name="icon_xl">48dp</dimen>
 </resources>

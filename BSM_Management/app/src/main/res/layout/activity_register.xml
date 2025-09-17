@@ -1,10 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.auth.RegisterActivity">
+    android:fillViewport="true"
+    android:background="@color/bg_card">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/pad_xl">
+
+        <!-- Back -->
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="@dimen/icon_l"
+            android:layout_height="@dimen/icon_l"
+            android:background="@drawable/ic_back_btn"
+            android:padding="@dimen/pad_l"
+            android:contentDescription="Back"/>
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Đăng ký"
+            android:textSize="@dimen/txt_xl"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textColor="@color/txt_pri"
+            android:layout_marginTop="@dimen/mar_l"/>
+
+        <!-- Họ & Tên -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Họ và Tên"
+            android:textSize="@dimen/txt_m"
+            android:textStyle="bold"
+            android:textColor="@color/txt_pri"
+            android:layout_marginTop="@dimen/mar_l" />
+
+        <EditText
+            android:id="@+id/etFullName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nhập họ tên"
+            android:inputType="textPersonName"
+            android:padding="@dimen/pad_l"
+            android:background="@drawable/bg_border"
+            android:textColor="@color/txt_pri"
+            android:textColorHint="@color/txt_hint"
+            android:layout_marginTop="@dimen/mar_s" />
+
+        <!-- Số điện thoại -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Số điện thoại"
+            android:textSize="@dimen/txt_m"
+            android:textStyle="bold"
+            android:textColor="@color/txt_pri"
+            android:layout_marginTop="@dimen/mar_l" />
+
+        <EditText
+            android:id="@+id/etPhone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nhập số điện thoại"
+            android:inputType="phone"
+            android:padding="@dimen/pad_l"
+            android:background="@drawable/bg_border"
+            android:textColor="@color/txt_pri"
+            android:textColorHint="@color/txt_hint"
+            android:layout_marginTop="@dimen/mar_s" />
+
+        <!-- Mật khẩu -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mật khẩu"
+            android:textSize="@dimen/txt_m"
+            android:textStyle="bold"
+            android:textColor="@color/txt_pri"
+            android:layout_marginTop="@dimen/mar_l" />
+
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nhập mật khẩu"
+            android:inputType="textPassword"
+            android:padding="@dimen/pad_l"
+            android:background="@drawable/bg_border"
+            android:textColor="@color/txt_pri"
+            android:textColorHint="@color/txt_hint"
+            android:layout_marginTop="@dimen/mar_s" />
+
+        <!-- Xác nhận mật khẩu -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nhập lại mật khẩu"
+            android:textSize="@dimen/txt_m"
+            android:textStyle="bold"
+            android:textColor="@color/txt_pri"
+            android:layout_marginTop="@dimen/mar_l" />
+
+        <EditText
+            android:id="@+id/etConfirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nhập lại mật khẩu"
+            android:inputType="textPassword"
+            android:padding="@dimen/pad_l"
+            android:background="@drawable/bg_border"
+            android:textColor="@color/txt_pri"
+            android:textColorHint="@color/txt_hint"
+            android:layout_marginTop="@dimen/mar_s" />
+
+        <!-- Đăng ký -->
+        <Button
+            android:id="@+id/btnRegister"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tạo tài khoản"
+            android:textColor="@color/txt_on_pri"
+            android:backgroundTint="@color/pri"
+            android:layout_marginTop="@dimen/mar_l"
+            android:padding="@dimen/pad_l" />
+
+        <!-- Loading -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/mar_m"
+            android:visibility="gone" />
+
+        <!-- Chuyển sang đăng nhập -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/mar_m">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Đã có tài khoản?"
+                android:textColor="@color/txt_pri" />
+
+            <TextView
+                android:id="@+id/tvGoLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Đăng nhập"
+                android:textColor="@color/pri"
+                android:layout_marginStart="@dimen/mar_s" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

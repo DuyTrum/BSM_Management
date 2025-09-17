@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:id="@+id/boxSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="@dimen/pad_m"
+        android:background="@drawable/bg_border"
+        android:layout_marginBottom="@dimen/mar_m">
+
+        <EditText
+            android:id="@+id/edtSearchRoom"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Nhập tên phòng..."
+            android:inputType="textCapWords"
+            android:textColor="@color/txt_pri"
+            android:textColorHint="@color/txt_hint"
+            android:paddingVertical="@dimen/pad_s"
+            android:background="@null"/>
+
+        <ImageView
+            android:layout_width="@dimen/icon_m"
+            android:layout_height="@dimen/icon_m"
+            android:src="@drawable/ic_search"
+            app:tint="@color/txt_hint"/>
+    </LinearLayout>
+</merge>
