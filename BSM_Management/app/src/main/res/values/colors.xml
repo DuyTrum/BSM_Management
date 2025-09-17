@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Background -->
+    <color name="bg_scr">#F5F5F5</color>
+    <color name="bg_card">#FFFFFF</color>
+
+    <!-- Text -->
+    <color name="txt_pri">#000000</color>
+    <color name="txt_sec">#444444</color>
+    <color name="txt_on_pri">#FFFFFF</color>
+    <color name="txt_hint">#888888</color>
+    <color name="txt_dis">#AAAAAA</color>
+
+    <!-- Primary color -->
+    <color name="pri">#047b6f</color>
+    <color name="pri_dark">#03564f</color>
+    <color name="pri_light">#4db6ac</color>
+
+    <!-- Accent color -->
+    <color name="acc">#2196F3</color>
+    <color name="acc_light">#64B5F6</color>
+    <color name="acc_dark">#1976D2</color>
+
+    <!-- Border / Divider -->
+    <color name="border">#DDDDDD</color>
+    <color name="divider">#E0E0E0</color>
+
+    <!-- Status colors -->
+    <color name="err">#F44336</color>
+    <color name="succ">#4CAF50</color>
+    <color name="warn">#FF9800</color>
+    <color name="info">#2196F3</color>
+
+    <color name="bsm_primary">#047B6F</color>
+    <color name="bsm_primary_dark">#026A61</color>
+    <color name="bsm_blue">#2D7CF8</color>
+    <color name="bsm_bg">#F5F6FA</color>
+    <color name="bsm_card">#FFFFFF</color>
+    <color name="bsm_text_primary">#1B1D1F</color>
+    <color name="bsm_text_secondary">#60666F</color>
+    <color name="bsm_divider">#E8EAEE</color>
+    <color name="bsm_warning_bg">#FFF1EA</color>
+    <color name="bsm_success">#27AE60</color>
+    <color name="bsm_orange">#FF6D00</color>
+    <!-- Transparent -->
+    <color name="trans">#00000000</color>
+</resources>

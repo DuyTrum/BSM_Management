@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_scr">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/pad_l">
+
+        <!-- TIÊU ĐỀ CHÍNH -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Lập hợp đồng mới"
+            android:textSize="@dimen/txt_l"
+            android:textStyle="bold"
+            android:textColor="@color/txt_pri"
+            android:padding="@dimen/pad_l"
+            android:layout_marginBottom="@dimen/mar_l"
+            android:gravity="center"
+            android:background="@color/bg_card"/>
+
+        <!-- SECTION 1 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:elevation="2dp"
+            android:padding="@dimen/pad_l"
+            android:layout_marginBottom="@dimen/mar_l"
+            android:backgroundTint="@null"
+            android:foreground="?attr/selectableItemBackground"
+            android:clipToPadding="false"
+            android:background="@drawable/bg_border">
+
+            <include
+                android:id="@+id/headerThoiHan1"
+                layout="@layout/view_section_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <include
+                android:id="@+id/viewThoiHan1"
+                layout="@layout/view_label_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/mar_m"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <include
+                    android:id="@+id/viewNgayVao1"
+                    layout="@layout/view_label_value"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="@dimen/mar_m"/>
+
+                <include
+                    android:id="@+id/viewNgayKetThuc1"
+                    layout="@layout/view_label_value"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/mar_m"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- SECTION 2 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:elevation="2dp"
+            android:padding="@dimen/pad_l"
+            android:layout_marginBottom="@dimen/mar_l"
+            android:background="@drawable/bg_border">
+
+            <!-- HEADER -->
+            <include
+                android:id="@+id/headerThanhVien"
+                layout="@layout/view_section_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- Tổng số thành viên -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/mar_l">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tổng số thành viên"
+                    android:textSize="@dimen/txt_m"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt_sec"
+                    android:layout_marginBottom="@dimen/mar_m"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <EditText
+                        android:id="@+id/edtTongThanhVien"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:inputType="number"
+                        android:hint="0"
+                        android:gravity="center"
+                        android:background="@drawable/bg_border"
+                        android:padding="@dimen/pad_m"
+                        android:textColor="@color/txt_pri"
+                        android:textSize="@dimen/txt_m"
+                        android:layout_marginEnd="@dimen/mar_m"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="/ người"
+                        android:textSize="@dimen/txt_m"
+                        android:textColor="@color/txt_pri" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Tên & SĐT khách (chia 2 cột) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <!-- Tên khách -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="@dimen/mar_m">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tên khách"
+                        android:textSize="@dimen/txt_m"
+                        android:textStyle="bold"
+                        android:textColor="@color/txt_sec"
+                        android:layout_marginBottom="@dimen/mar_m"/>
+
+                    <EditText
+                        android:id="@+id/edtTenKhach"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Nhập tên khách"
+                        android:inputType="textPersonName"
+                        android:background="@drawable/bg_border"
+                        android:padding="@dimen/pad_m"
+                        android:textColor="@color/txt_pri"
+                        android:textSize="@dimen/txt_m"/>
+                </LinearLayout>
+
+                <!-- SĐT khách -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="@dimen/mar_m">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SĐT khách"
+                        android:textSize="@dimen/txt_m"
+                        android:textStyle="bold"
+                        android:textColor="@color/txt_sec"
+                        android:layout_marginBottom="@dimen/mar_m"/>
+
+                    <EditText
+                        android:id="@+id/edtSdtKhach"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Nhập số điện thoại"
+                        android:inputType="phone"
+                        android:background="@drawable/bg_border"
+                        android:padding="@dimen/pad_m"
+                        android:textColor="@color/txt_pri"
+                        android:textSize="@dimen/txt_m"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- SECTION 3 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:elevation="2dp"
+            android:padding="@dimen/pad_l"
+            android:layout_marginBottom="@dimen/mar_l"
+            android:background="@drawable/bg_border">
+
+            <!-- HEADER -->
+            <include
+                android:id="@+id/headerGiaTri"
+                layout="@layout/view_section_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- Hàng 1: Giá thuê + Mức cọc -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginBottom="@dimen/mar_l">
+
+                <!-- Giá thuê -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="@dimen/mar_m">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Giá thuê"
+                        android:textSize="@dimen/txt_m"
+                        android:textStyle="bold"
+                        android:textColor="@color/txt_pri"
+                        android:layout_marginBottom="@dimen/mar_m"/>
+
+                    <EditText
+                        android:id="@+id/edtGiaThue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="0"
+                        android:inputType="number"
+                        android:background="@drawable/bg_border"
+                        android:padding="@dimen/pad_m"
+                        android:textColor="@color/txt_pri"
+                        android:textSize="@dimen/txt_m"/>
+                </LinearLayout>
+
+                <!-- Mức cọc -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="@dimen/mar_m">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mức cọc"
+                        android:textSize="@dimen/txt_m"
+                        android:textStyle="bold"
+                        android:textColor="@color/txt_pri"
+                        android:layout_marginBottom="@dimen/mar_m"/>
+
+                    <EditText
+                        android:id="@+id/edtMucCoc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="0"
+                        android:inputType="number"
+                        android:background="@drawable/bg_border"
+                        android:padding="@dimen/pad_m"
+                        android:textColor="@color/txt_pri"
+                        android:textSize="@dimen/txt_m"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Hàng 2: Chu kỳ thu tiền + Ngày thu tiền -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <!-- Chu kỳ thu tiền -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="@dimen/mar_m">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Chu kỳ thu tiền"
+                        android:textSize="@dimen/txt_m"
+                        android:textStyle="bold"
+                        android:textColor="@color/txt_pri"
+                        android:layout_marginBottom="@dimen/mar_m"/>
+
+                    <Spinner
+                        android:id="@+id/spnChuKyThuTien"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_border"
+                        android:padding="@dimen/pad_m"
+                        android:spinnerMode="dropdown"/>
+                </LinearLayout>
+
+                <!-- Ngày thu tiền -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="@dimen/mar_m">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ngày thu tiền"
+                        android:textSize="@dimen/txt_m"
+                        android:textStyle="bold"
+                        android:textColor="@color/txt_pri"
+                        android:layout_marginBottom="@dimen/mar_m"/>
+
+                    <EditText
+                        android:id="@+id/edtNgayThuTien"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="1"
+                        android:inputType="number"
+                        android:background="@drawable/bg_border"
+                        android:padding="@dimen/pad_m"
+                        android:textColor="@color/txt_pri"
+                        android:textSize="@dimen/txt_m"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/pad_xl"
+    android:background="@color/bg_card">
+
+    <!-- Nút back -->
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="@drawable/ic_back_btn"
+        android:padding="@dimen/pad_l"
+        app:tint="@color/pri"
+        android:contentDescription="Back" />
+
+    <!-- Logo + tiêu đề app -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_gravity="center_horizontal">
+
+        <ImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/ic_bsm_logo"
+            android:contentDescription="BSM logo" />
+
+        <LinearLayout
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvQuanLy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Quản lý"
+                android:textSize="@dimen/txt_l"
+                android:textStyle="bold"
+                android:textColor="@color/txt_pri" />
+
+            <TextView
+                android:id="@+id/tvNhaTro"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nhà trọ"
+                android:textSize="@dimen/txt_l"
+                android:textStyle="bold"
+                android:textColor="@color/pri" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Tiêu đề -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Đăng nhập"
+        android:textSize="@dimen/txt_xl"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="@color/txt_pri"
+        android:layout_marginTop="@dimen/mar_l" />
+
+    <!-- Label + input số điện thoại -->
+    <TextView
+        android:id="@+id/tvPhoneTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Số điện thoại"
+        android:textSize="@dimen/txt_m"
+        android:textStyle="bold"
+        android:textColor="@color/txt_pri"
+        android:layout_marginTop="@dimen/mar_l" />
+
+    <EditText
+        android:id="@+id/etPhone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nhập số điện thoại"
+        android:inputType="phone"
+        android:padding="@dimen/pad_l"
+        android:background="@drawable/bg_border"
+        android:textColor="@color/txt_pri"
+        android:textColorHint="@color/txt_hint"
+        android:layout_marginTop="@dimen/mar_s" />
+
+    <!-- Label + input mật khẩu -->
+    <TextView
+        android:id="@+id/tvPasswordTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mật khẩu"
+        android:textSize="@dimen/txt_m"
+        android:textStyle="bold"
+        android:textColor="@color/txt_pri"
+        android:layout_marginTop="@dimen/mar_m" />
+
+    <EditText
+        android:id="@+id/etPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nhập mật khẩu"
+        android:inputType="textPassword"
+        android:padding="@dimen/pad_l"
+        android:background="@drawable/bg_border"
+        android:textColor="@color/txt_pri"
+        android:textColorHint="@color/txt_hint"
+        android:layout_marginTop="@dimen/mar_s" />
+
+    <!-- Quên mật khẩu -->
+    <TextView
+        android:id="@+id/tvForgotPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Quên mật khẩu?"
+        android:textColor="@color/pri"
+        android:textSize="@dimen/txt_s"
+        android:layout_marginTop="@dimen/mar_m"
+        android:layout_gravity="end" />
+
+    <!-- Nút đăng nhập -->
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Đăng nhập"
+        android:textColor="@color/txt_on_pri"
+        android:backgroundTint="@color/pri"
+        android:layout_marginTop="@dimen/mar_l"
+        android:padding="@dimen/pad_l" />
+
+    <!-- Loading -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/mar_m"
+        android:visibility="gone" />
+
+    <!-- Đăng ký -->
+    <LinearLayout
+        android:id="@+id/llRegister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/mar_m">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chưa có tài khoản?"
+            android:textColor="@color/txt_pri" />
+
+        <TextView
+            android:id="@+id/tvRegister"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đăng ký"
+            android:textColor="@color/pri"
+            android:layout_marginStart="@dimen/mar_s" />
+    </LinearLayout>
+
+</LinearLayout>

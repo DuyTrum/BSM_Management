@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">BSM_Management</string>
+    <string name="tab_manage">Quản lý</string>
+    <string name="tab_overview">Tổng quan</string>
+    <string name="allow_notification_title">Cho phép điện thoại nhận thông báo!</string>
+    <string name="allow_notification_desc">Phần mềm sẽ không hoạt động đúng nếu bạn không cho phép nhận thông báo</string>
+    <string name="allow_notification_btn">Cho phép nhận thông báo</string>
+    <!--  bottom nav  -->
+    <string name="nav_home">Trang chủ</string>
+    <string name="nav_inbox">Hộp thư</string>
+    <string name="nav_tasks">Công việc</string>
+    <string name="nav_find">Tìm khách</string>
+    <string name="nav_more">Thêm +</string>
+</resources>

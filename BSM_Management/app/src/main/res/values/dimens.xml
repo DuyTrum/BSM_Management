@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Text sizes -->
+    <dimen name="txt_s">12sp</dimen>
+    <dimen name="txt_m">16sp</dimen>
+    <dimen name="txt_l">20sp</dimen>
+    <dimen name="txt_xl">24sp</dimen>
+
+    <!-- Padding -->
+    <dimen name="pad_s">4dp</dimen>
+    <dimen name="pad_m">8dp</dimen>
+    <dimen name="pad_l">16dp</dimen>
+    <dimen name="pad_xl">24dp</dimen>
+
+    <!-- Margin -->
+    <dimen name="mar_s">4dp</dimen>
+    <dimen name="mar_m">8dp</dimen>
+    <dimen name="mar_l">16dp</dimen>
+    <dimen name="mar_xl">24dp</dimen>
+
+    <!-- Component sizes -->
+    <dimen name="btn_h">48dp</dimen>
+    <dimen name="edt_h">48dp</dimen>
+    <dimen name="icon_sz">24dp</dimen>
+</resources>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:layout_margin="8dp"
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
+    app:cardUseCompatPadding="false"
+    app:strokeWidth="0dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="12dp">
+
+        <!-- icon tròn -->
+        <ImageView
+            android:id="@+id/ivIcon"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="@drawable/ic_launcher_background"
+            android:padding="6dp"
+            android:src="@drawable/ic_box" />
+
+        <!-- badge % -->
+        <TextView
+            android:id="@+id/tvPercent"
+            android:layout_width="wrap_content"
+            android:layout_height="18dp"
+            android:layout_marginStart="6dp"
+            android:layout_toEndOf="@id/ivIcon"
+            android:background="@drawable/ov_bg_badge"
+            android:gravity="center"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
+            android:text="0%"
+            android:textSize="10sp" />
+
+        <!-- số lớn -->
+        <TextView
+            android:id="@+id/tvValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ivIcon"
+            android:layout_marginTop="12dp"
+            android:text="0"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <!-- tiêu đề -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="6dp"
+            android:layout_toStartOf="@id/ivChevron"
+            android:layout_toEndOf="@id/ivIcon"
+            android:maxLines="2"
+            android:text="Tiêu đề thống kê"
+            android:textSize="13sp" />
+
+        <!-- mũi tên -->
+        <ImageView
+            android:id="@+id/ivChevron"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_chevron_right" />
+    </RelativeLayout>
+</com.google.android.material.card.MaterialCardView>
