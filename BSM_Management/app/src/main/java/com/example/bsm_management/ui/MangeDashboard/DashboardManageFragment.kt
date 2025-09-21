@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bsm_management.R
-import com.example.bsm_management.ui.contract.AddContractActivity
 import com.example.bsm_management.ui.contract.RoomContractActivity
 import com.example.bsm_management.ui.dashboard.ActionAdapter
 import com.example.bsm_management.ui.dashboard.ActionItem
