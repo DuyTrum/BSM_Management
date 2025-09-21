@@ -39,15 +39,21 @@ class LoginActivity : AppCompatActivity() {
             val phone = etPhone.text.toString().trim()
             val password = etPassword.text.toString().trim()
 
-            if (phone.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Vui lòng nhập đủ thông tin", Toast.LENGTH_SHORT).show()
-            } else if (phone == "0123456789" && password == "123456") {
+            // bên trong btnLogin.setOnClickListener { ... }
+            if (phone == "0123456789" && password == "123456") {
                 Toast.makeText(this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this, MainActivity::class.java))
+
+                val intent = Intent(this, MainActivity::class.java).apply {
+                    // Xoá toàn bộ back stack (không quay lại Login khi nhấn Back)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                }
+                startActivity(intent)
+                // finish() không còn cần thiết khi đã CLEAR_TASK, nhưng giữ cũng không sao
                 finish()
             } else {
                 Toast.makeText(this, "Số điện thoại hoặc mật khẩu sai", Toast.LENGTH_SHORT).show()
             }
+
         }
 
         // Event: quên mật khẩu
