@@ -16,7 +16,7 @@
             android:name=".ui.auth.RegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.main.MainActivity"
+            android:name=".ui.auth.LoginActivity"
             android:exported="false" />
         <activity
             android:name=".ui.contract.AddContractActivity"
@@ -25,7 +25,7 @@
             android:name=".ui.contract.RoomContractActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.auth.LoginActivity"
+            android:name=".ui.main.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
