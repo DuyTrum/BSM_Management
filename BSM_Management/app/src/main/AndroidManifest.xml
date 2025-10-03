@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name="database.App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -11,18 +12,35 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BSM_Management">
-
+        <activity
+            android:name=".ui.invoice.InvoiceListActivity"
+            android:exported="false" />
+         <activity
+            android:name=".ui.invoice.AddInvoiceActivity"
+            android:exported="false" />
+         <activity
+            android:name=".ui.invoice.InvoiceActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.contract.ContractListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.contract.ContractRoomActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.profile.ChangePasswordActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.auth.RegisterActivity"
             android:exported="false" />
-        <activity
-            android:name=".ui.auth.LoginActivity"
-            android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".ui.auth.LoginActivity"-->
+<!--            android:exported="false" />-->
         <activity
             android:name=".ui.contract.AddContractActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.contract.RoomContractActivity"
+            android:name=".ui.main.MainActivity"
             android:exported="false" />
         <activity
             android:name=".ui.main.MainActivity"
@@ -33,4 +51,5 @@
             </intent-filter>
         </activity>
     </application>
+
 </manifest>

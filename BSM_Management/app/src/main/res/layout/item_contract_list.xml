@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_border"
+    android:orientation="vertical"
+    android:padding="@dimen/pad_l"
+    android:layout_marginBottom="@dimen/mar_l"
+    android:layout_marginLeft="@dimen/mar_l"
+    android:layout_marginRight="@dimen/mar_l">
+
+    <!-- Hàng tiêu đề + trạng thái + menu -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+
+        <ImageView
+            android:layout_width="@dimen/icon_l"
+            android:layout_height="@dimen/icon_l"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_contract"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="@dimen/mar_m">
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Phòng 1 - #45600"
+                android:textColor="@color/txt_pri"
+                android:textStyle="bold"
+                android:textSize="@dimen/txt_m"/>
+
+            <!-- chip trạng thái xám: Trong thời hạn hợp đồng -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="10dp"
+                android:background="@drawable/bg_chip_gray"
+                android:layout_marginTop="4dp">
+
+                <View
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/dot_green"
+                    android:layout_marginRight="6dp"/>
+
+                <TextView
+                    android:id="@+id/tvMainStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Trong thời hạn hợp đồng"
+                    android:textColor="@color/txt_pri"
+                    android:textSize="@dimen/txt_s"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/btnMore"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/ic_more_vert"/>
+    </LinearLayout>
+
+    <!-- 3 ô số liệu -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/pad_m">
+
+        <!-- Giá thuê -->
+        <LinearLayout
+            android:id="@+id/cardRent"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/bg_box_green"
+            android:padding="@dimen/pad_m">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/img_price"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="  Giá thuê"
+                    android:textColor="@color/txt_pri"
+                    android:textSize="@dimen/txt_s"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvRent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3.000.000đ"
+                android:textStyle="bold"
+                android:textColor="@color/txt_pri"
+                android:textSize="@dimen/txt_m"/>
+        </LinearLayout>
+
+        <!-- Mức cọc -->
+        <LinearLayout
+            android:id="@+id/cardDeposit"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/bg_box_blue"
+            android:padding="@dimen/pad_m"
+            android:layout_marginStart="@dimen/mar_m"
+            android:layout_marginEnd="@dimen/mar_m">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/img_price"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="  Mức cọc"
+                    android:textColor="@color/txt_pri"
+                    android:textSize="@dimen/txt_s"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvDeposit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3.000.000đ"
+                android:textStyle="bold"
+                android:textColor="@color/txt_pri"
+                android:textSize="@dimen/txt_m"/>
+        </LinearLayout>
+
+        <!-- Đã thu cọc -->
+        <LinearLayout
+            android:id="@+id/cardCollected"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:background="@drawable/bg_box_orange"
+            android:padding="@dimen/pad_m">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/img_price"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="  Đã thu cọc"
+                    android:textColor="@color/txt_pri"
+                    android:textSize="@dimen/txt_s"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvCollected"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chưa thu"
+                android:textStyle="bold"
+                android:textColor="@color/dark_orange"
+                android:textSize="@dimen/txt_m"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 3 cột ngày -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:orientation="horizontal"
+        android:background="@drawable/bg_border"
+        android:padding="@dimen/pad_m"
+        android:layout_marginTop="@dimen/pad_m">
+
+        <!-- Ngày lập -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ngày lập"
+                android:textColor="@color/txt_sec"
+                android:textSize="@dimen/txt_s"/>
+
+            <TextView
+                android:id="@+id/tvCreatedDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="07/09/2025"
+                android:textColor="@color/txt_pri"
+                android:textSize="@dimen/txt_m"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/divider"/>
+
+        <!-- Ngày vào ở -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/pad_m"
+            android:gravity="center"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ngày vào ở"
+                android:textColor="@color/txt_sec"
+                android:textSize="@dimen/txt_s"/>
+
+            <TextView
+                android:id="@+id/tvMoveInDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="07/09/2025"
+                android:textColor="@color/txt_pri"
+                android:textSize="@dimen/txt_m"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/divider"/>
+
+        <!-- Hạn kết thúc -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/pad_m"
+            android:gravity="center"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hạn kết thúc"
+                android:textColor="@color/txt_sec"
+                android:textSize="@dimen/txt_s"/>
+
+            <TextView
+                android:id="@+id/tvEndDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Vô thời hạn"
+                android:textColor="@color/txt_pri"
+                android:textSize="@dimen/txt_m"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

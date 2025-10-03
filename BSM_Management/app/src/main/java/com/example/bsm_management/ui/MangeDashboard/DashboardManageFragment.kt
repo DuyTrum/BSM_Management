@@ -3,61 +3,46 @@ package com.example.bsm_management.ui.MangeDashboard
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bsm_management.R
-import com.example.bsm_management.ui.contract.RoomContractActivity
+import com.example.bsm_management.ui.contract.ContractListActivity
+import com.example.bsm_management.ui.contract.ContractRoomActivity
 import com.example.bsm_management.ui.dashboard.ActionAdapter
 import com.example.bsm_management.ui.dashboard.ActionItem
 import com.example.bsm_management.ui.dashboard.GridSpacingItemDecoration
+import com.example.bsm_management.ui.invoice.AddInvoiceActivity
+import com.example.bsm_management.ui.invoice.InvoiceActivity
+import com.example.bsm_management.ui.invoice.InvoiceListActivity
 
 class DashboardManageFragment : Fragment(R.layout.fragment_dashboard_manage) {
 
     private val adapter = ActionAdapter { item ->
         when (item.title) {
-            "Lập hợp đồng mới" -> {
-                startActivity(Intent(requireContext(), RoomContractActivity::class.java))
-            }
-            "Thanh lý\n(Trả phòng)" -> {
-                Toast.makeText(requireContext(), "Tính năng trả phòng", Toast.LENGTH_SHORT).show()
-            }
-            "Lập hóa đơn" -> {
-                Toast.makeText(requireContext(), "Đi tới lập hóa đơn", Toast.LENGTH_SHORT).show()
-            }
-            "Chốt & Lập\nhóa đơn" -> {
-                Toast.makeText(requireContext(), "Đi tới chốt hóa đơn", Toast.LENGTH_SHORT).show()
-            }
-            "Hóa đơn\ncần thu tiền" -> {
-                Toast.makeText(requireContext(), "Danh sách hóa đơn cần thu", Toast.LENGTH_SHORT).show()
-            }
+            "Lập hợp đồng" -> startActivity(Intent(requireContext(), ContractRoomActivity::class.java))
+            "Lập hóa đơn" -> startActivity(Intent(requireContext(), InvoiceActivity::class.java))
+            "Quản lý hợp đồng" -> startActivity(Intent(requireContext(), ContractListActivity::class.java))
+            "Quản lý hóa đơn" -> startActivity(Intent(requireContext(), InvoiceListActivity::class.java))
         }
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        // RV 3 cột
         val rv = view.findViewById<RecyclerView>(R.id.rvActions)
-        val span = 3
+        val span = 2 // 2 hoặc 3 tùy bạn
         rv.layoutManager = GridLayoutManager(requireContext(), span)
-        val spacing = resources.getDimensionPixelSize(R.dimen.pad_m) // ~12–16dp
+        val spacing = resources.getDimensionPixelSize(R.dimen.pad_m)
         rv.addItemDecoration(GridSpacingItemDecoration(span, spacing, includeEdge = true))
         rv.adapter = adapter
 
         adapter.submitList(
             listOf(
-                ActionItem(R.drawable.ic_handshake, "Cọc giữ chỗ"),
-                ActionItem(R.drawable.ic_people_swap, "Lập hợp đồng mới", badge = 5),
-                ActionItem(R.drawable.ic_exit_person, "Thanh lý\n(Trả phòng)"),
-                ActionItem(R.drawable.ic_receipt_long, "Lập hóa đơn"),
-                ActionItem(R.drawable.ic_calc_receipt, "Chốt & Lập\nhóa đơn"),
-                ActionItem(R.drawable.ic_bill_due, "Hóa đơn\ncần thu tiền")
+                ActionItem(R.drawable.ic_handshake,   "Lập hợp đồng"),
+                ActionItem(R.drawable.ic_receipt_long,"Lập hóa đơn"),
+                ActionItem(R.drawable.ic_contract,    "Quản lý hợp đồng"),
+                ActionItem(R.drawable.ic_bill_due,    "Quản lý hóa đơn"),
             )
         )
-
-        view.findViewById<View>(R.id.btnAllowNotification)?.setOnClickListener {
-            // TODO: mở Settings/Notification hoặc flow cấp quyền
-            Toast.makeText(requireContext(), "Cho phép thông báo", Toast.LENGTH_SHORT).show()
-        }
     }
 }

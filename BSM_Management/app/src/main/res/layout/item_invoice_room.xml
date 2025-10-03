@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="@dimen/mar_l"
+    app:strokeColor="@color/border"
+    app:strokeWidth="1dp"
+    app:contentPadding="0dp"
+    android:layout_marginLeft="@dimen/mar_l"
+    android:layout_marginRight="@dimen/mar_l"
+    android:layout_marginBottom="@dimen/mar_l">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/white">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/pad_l">
+
+            <ImageView
+                android:id="@+id/imgAvatar"
+                android:layout_width="@dimen/icon_xl"
+                android:layout_height="@dimen/icon_xl"
+                android:src="@drawable/ic_house"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <TextView
+                android:id="@+id/tvRoomName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Phòng 1"
+                android:textStyle="bold"
+                android:textSize="@dimen/txt_m"
+                android:layout_marginStart="@dimen/mar_m"
+                app:layout_constraintStart_toEndOf="@id/imgAvatar"
+                app:layout_constraintEnd_toStartOf="@id/btnChevron"
+                app:layout_constraintTop_toTopOf="@id/imgAvatar"/>
+
+            <TextView
+                android:id="@+id/tvPhone"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Thbb - 0958587658"
+                android:textColor="@color/acc"
+                android:autoLink="phone"
+                android:layout_marginStart="@dimen/mar_m"
+                app:layout_constraintStart_toEndOf="@id/imgAvatar"
+                app:layout_constraintEnd_toStartOf="@id/btnChevron"
+                app:layout_constraintTop_toBottomOf="@id/tvRoomName"/>
+
+            <ImageButton
+                android:id="@+id/btnChevron"
+                android:layout_width="@dimen/icon_xl"
+                android:layout_height="@dimen/icon_xl"
+                android:background="@drawable/ic_next"
+                android:contentDescription="next"
+                app:tint="@color/txt_dis"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/pad_l"
+            android:layout_margin="@dimen/pad_l"
+            android:background="@drawable/bg_border">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Hạn h.đồng"/>
+                <TextView
+                    android:id="@+id/tvContract"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="07/09/2025 - Vô thời hạn"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Trạng thái"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Đang ở"
+                    android:textColor="@color/succ"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/pad_l">
+
+            <ImageView
+                android:layout_width="@dimen/icon_m"
+                android:layout_height="@dimen/icon_m"
+                app:srcCompat="@drawable/ic_attach_money"
+                app:tint="@color/txt_pri"/>
+
+            <TextView
+                android:id="@+id/tvRent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingStart="@dimen/pad_s"
+                android:text="3.000.000đ"
+                android:textStyle="bold"/>
+
+            <ImageView
+                android:layout_width="@dimen/icon_m"
+                android:layout_height="@dimen/icon_m"
+                app:srcCompat="@drawable/ic_person"
+                app:tint="@color/txt_pri"/>
+
+            <TextView
+                android:id="@+id/tvPeople"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/pad_s"
+                android:text="1/1 người"/>
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

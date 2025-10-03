@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardRoom"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_border"
+    android:padding="@dimen/pad_l"
+    android:layout_marginBottom="@dimen/mar_l"
+    android:layout_marginLeft="@dimen/mar_l"
+    android:layout_marginRight="@dimen/mar_l"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
+
+    <!-- Icon phòng -->
+    <ImageView
+        android:id="@+id/ivRoomIcon"
+        android:layout_width="@dimen/icon_l"
+        android:layout_height="@dimen/icon_l"
+        android:src="@drawable/ic_house"
+        android:background="@drawable/bg_round_gray_24"
+        android:contentDescription="icon phòng"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <!-- Tên phòng -->
+    <TextView
+        android:id="@+id/tvRoomName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Phòng 2"
+        android:textColor="@color/txt_pri"
+        android:textSize="@dimen/txt_m"
+        android:textStyle="bold"
+        android:layout_marginStart="@dimen/mar_m"
+        app:layout_constraintStart_toEndOf="@id/ivRoomIcon"
+        app:layout_constraintTop_toTopOf="@id/ivRoomIcon"
+        app:layout_constraintBottom_toBottomOf="@id/ivRoomIcon"
+        app:layout_constraintEnd_toStartOf="@id/btnChevron"/>
+
+    <!-- Chevron -->
+    <ImageView
+        android:id="@+id/btnChevron"
+        android:layout_width="@dimen/icon_xl"
+        android:layout_height="@dimen/icon_xl"
+        android:src="@drawable/ic_next"
+        app:tint="@color/txt_hint"
+        android:contentDescription="chi tiết"
+        app:layout_constraintTop_toTopOf="@id/ivRoomIcon"
+        app:layout_constraintBottom_toBottomOf="@id/ivRoomIcon"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Khối trạng thái -->
+    <LinearLayout
+        android:id="@+id/blockStatus"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_border"
+        android:padding="@dimen/pad_l"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="@dimen/mar_m"
+        app:layout_constraintTop_toBottomOf="@id/ivRoomIcon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Tiêu đề "Trạng thái" -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="@dimen/icon_s"
+                android:layout_height="@dimen/icon_s"
+                android:src="@drawable/ic_tag_24"
+                app:tint="@color/txt_hint" />
+
+            <TextView
+                android:id="@+id/tvStatusTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/mar_s"
+                android:text="Trạng thái"
+                android:textColor="@color/txt_sec"
+                android:textSize="@dimen/txt_s"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Dòng chip -->
+        <LinearLayout
+            android:id="@+id/rowChips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/mar_s"
+            android:layout_gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/chipEmpty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Đang trống"
+                android:textSize="@dimen/txt_s"
+                android:textColor="@color/txt_pri"
+                android:paddingLeft="@dimen/pad_m"
+                android:paddingRight="@dimen/pad_m"
+                android:paddingTop="@dimen/pad_s"
+                android:paddingBottom="@dimen/pad_s"
+                android:drawableStart="@drawable/dot_orange"
+                android:drawablePadding="@dimen/mar_s"
+                android:background="@drawable/bg_chip_gray"/>
+
+            <TextView
+                android:id="@+id/chipNextCycle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/mar_s"
+                android:text="Chờ kỳ thu tới"
+                android:textSize="@dimen/txt_s"
+                android:textColor="@color/txt_pri"
+                android:paddingLeft="@dimen/pad_m"
+                android:paddingRight="@dimen/pad_m"
+                android:paddingTop="@dimen/pad_s"
+                android:paddingBottom="@dimen/pad_s"
+                android:drawableStart="@drawable/dot_green"
+                android:drawablePadding="@dimen/mar_s"
+                android:background="@drawable/bg_chip_gray"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Giá thuê -->
+    <LinearLayout
+        android:id="@+id/rowFooter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="@dimen/mar_m"
+        app:layout_constraintTop_toBottomOf="@id/blockStatus"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="@dimen/icon_m"
+            android:layout_height="@dimen/icon_m"
+            android:src="@drawable/img_price" />
+
+        <TextView
+            android:id="@+id/tvPriceLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/mar_s"
+            android:text="Giá thuê"
+            android:textColor="@color/txt_sec"
+            android:textSize="@dimen/txt_s" />
+
+        <TextView
+            android:id="@+id/tvPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/mar_s"
+            android:text="3.000.000 đ"
+            android:textColor="@color/txt_pri"
+            android:textSize="@dimen/txt_m"
+            android:textStyle="bold" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
