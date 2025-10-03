@@ -1,10 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.invoice.InvoiceListActivity">
+    android:background="@color/bg_scr">
 
+    <!-- Header back tái sử dụng -->
+    <include
+        android:id="@+id/header"
+        layout="@layout/view_header_back"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Hàng filter: 2 Spinner -->
+    <LinearLayout
+        android:id="@+id/rowFilter"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/pad_l"
+        android:paddingEnd="@dimen/pad_l"
+        android:paddingTop="@dimen/pad_l"
+        android:paddingBottom="@dimen/pad_m"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Spinner tháng lập hoá đơn -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/bg_card"
+            android:padding="@dimen/pad_l"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tháng lập hóa đơn"
+                android:textColor="@color/txt_sec"
+                android:textSize="@dimen/txt_s"/>
+
+            <Spinner
+                android:id="@+id/spMonth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:popupTheme="@style/ThemeOverlay.Material3.MaterialAlertDialog"/>
+        </LinearLayout>
+
+        <Space
+            android:layout_width="@dimen/mar_m"
+            android:layout_height="0dp"/>
+
+        <!-- Spinner trạng thái -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/bg_card"
+            android:padding="@dimen/pad_l"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Trạng thái hóa đơn"
+                android:textColor="@color/txt_sec"
+                android:textSize="@dimen/txt_s"/>
+
+            <Spinner
+                android:id="@+id/spStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:popupTheme="@style/ThemeOverlay.Material3.MaterialAlertDialog"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Danh sách hóa đơn -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvInvoices"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingStart="@dimen/pad_l"
+        android:paddingEnd="@dimen/pad_l"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/rowFilter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

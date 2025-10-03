@@ -5,8 +5,16 @@ import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.bsm_management.R
-import com.example.bsm_management.ui.main.MainActivity   // ✅ thêm dòng này
+import com.example.bsm_management.ui.main.MainActivity
+import database.DatabaseHelper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import androidx.core.content.edit
 
 class LoginActivity : AppCompatActivity() {
 
@@ -21,6 +29,13 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        val root = findViewById<View>(android.R.id.content)
+        ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
+            val sys = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(sys.left, sys.top, sys.right, sys.bottom)
+            insets
+        }
+
         // Ánh xạ view
         btnBack = findViewById(R.id.btnBack)
         etPhone = findViewById(R.id.etPhone)
@@ -29,42 +44,67 @@ class LoginActivity : AppCompatActivity() {
         tvForgotPassword = findViewById(R.id.tvForgotPassword)
         tvRegister = findViewById(R.id.tvRegister)
 
-        // Event: nút quay lại
-        btnBack.setOnClickListener { _: View ->
-            finish()
+        btnBack.setOnClickListener { finish() }
+
+        btnLogin.setOnClickListener { attemptLogin() }
+
+        tvForgotPassword.setOnClickListener {
+            Toast.makeText(this, "Chức năng quên mật khẩu (đang phát triển)", Toast.LENGTH_SHORT).show()
         }
 
-        // Event: nút đăng nhập
-        btnLogin.setOnClickListener { _: View ->
-            val phone = etPhone.text.toString().trim()
-            val password = etPassword.text.toString().trim()
+        tvRegister.setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
+        }
+    }
 
-            // bên trong btnLogin.setOnClickListener { ... }
-            if (phone == "0123456789" && password == "123456") {
-                Toast.makeText(this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show()
+    private fun attemptLogin() {
+        val phone = etPhone.text.toString().trim()
+        val password = etPassword.text.toString().trim()
 
-                val intent = Intent(this, MainActivity::class.java).apply {
-                    // Xoá toàn bộ back stack (không quay lại Login khi nhấn Back)
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                }
-                startActivity(intent)
-                // finish() không còn cần thiết khi đã CLEAR_TASK, nhưng giữ cũng không sao
-                finish()
+        if (phone.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập đủ số điện thoại & mật khẩu", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Chạy query DB trên IO thread
+        lifecycleScope.launch {
+            btnLogin.isEnabled = false
+            val userId = withContext(Dispatchers.IO) { queryUserId(phone, password) }
+            btnLogin.isEnabled = true
+
+            if (userId != null) {
+                saveSession(userId)
+                Toast.makeText(this@LoginActivity, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show()
+                goToMain()
             } else {
-                Toast.makeText(this, "Số điện thoại hoặc mật khẩu sai", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@LoginActivity, "Số điện thoại hoặc mật khẩu sai", Toast.LENGTH_SHORT).show()
             }
-
         }
+    }
 
-        // Event: quên mật khẩu
-        tvForgotPassword.setOnClickListener { _: View ->
-            Toast.makeText(this, "Chức năng quên mật khẩu", Toast.LENGTH_SHORT).show()
+    // Trả về userId nếu đúng, ngược lại null
+    private fun queryUserId(phone: String, pass: String): Long? {
+        val db = DatabaseHelper(applicationContext).readableDatabase
+        db.rawQuery(
+            "SELECT id FROM users WHERE phone=? AND password=? LIMIT 1",
+            arrayOf(phone, pass)
+        ).use { c ->
+            return if (c.moveToFirst()) c.getLong(0) else null  
         }
+    }
 
-        // Event: đăng ký
-        tvRegister.setOnClickListener { _: View ->
-            val intent = Intent(this, RegisterActivity::class.java)
-            startActivity(intent)
+    private fun saveSession(userId: Long) {
+        getSharedPreferences("auth", MODE_PRIVATE)
+            .edit {
+                putLong("userId", userId)
+            }
+    }
+
+    private fun goToMain() {
+        val intent = Intent(this, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         }
+        startActivity(intent)
+        finish()
     }
 }

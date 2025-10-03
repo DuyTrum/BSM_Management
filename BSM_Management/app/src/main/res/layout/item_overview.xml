@@ -69,6 +69,6 @@
             android:layout_height="18dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_chevron_right" />
+            android:src="@drawable/ic_next" />
     </RelativeLayout>
 </com.google.android.material.card.MaterialCardView>

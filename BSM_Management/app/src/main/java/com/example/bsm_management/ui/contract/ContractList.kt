@@ -1,6 +1,6 @@
 package com.example.bsm_management.ui.contract
 
-data class Contract(
+data class ContractListItem(
     val roomName: String,
     val contractCode: String,
     val status: String,

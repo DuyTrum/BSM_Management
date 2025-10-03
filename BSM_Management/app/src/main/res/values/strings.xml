@@ -11,4 +11,6 @@
     <string name="nav_tasks">Công việc</string>
     <string name="nav_find">Tìm khách</string>
     <string name="nav_more">Thêm +</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

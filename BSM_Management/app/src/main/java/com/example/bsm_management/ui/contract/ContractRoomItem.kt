@@ -1,6 +1,6 @@
 package com.example.bsm_management.ui.contract
 
-data class RoomCardItem(
+data class ContractRoomItem(
     val roomName: String,
     val price: String,
     val isEmpty: Boolean = false,       // hiển thị chip "Đang trống"

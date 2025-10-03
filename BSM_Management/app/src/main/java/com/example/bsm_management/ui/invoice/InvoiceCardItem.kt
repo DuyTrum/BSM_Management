@@ -1,6 +1,6 @@
 package com.example.bsm_management.ui.invoice
 
-data class InvoiceItem(
+data class InvoiceCardItem(
     val id: String,
     val title: String,
     val mainStatus: String,

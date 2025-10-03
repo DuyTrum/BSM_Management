@@ -1,10 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.contract.ContractListActivity">
+    android:background="@color/bg_scr">
 
+    <!-- Header back tái sử dụng -->
+    <include
+        android:id="@+id/header"
+        layout="@layout/view_header_back"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Thanh filter -->
+    <LinearLayout
+        android:id="@+id/filters"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/pad_l"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Filter: Chọn phòng -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/btnFilterRoom"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:paddingHorizontal="@dimen/pad_m"
+            android:background="@drawable/bg_border"
+            android:layout_marginEnd="@dimen/mar_m">
+
+            <!-- Label -->
+            <TextView
+                android:id="@+id/tvRoomLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Chọn phòng"
+                android:textColor="@color/txt_sec"
+                android:textSize="@dimen/txt_s"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <!-- Giá trị -->
+            <TextView
+                android:id="@+id/tvRoomValue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Chọn giá trị"
+                android:textColor="@color/txt_pri"
+                android:textSize="@dimen/txt_m"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/ivRoomExpand"
+                app:layout_constraintTop_toBottomOf="@id/tvRoomLabel"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintVertical_bias="0"/>
+
+            <!-- Icon mũi tên -->
+            <ImageView
+                android:id="@+id/ivRoomExpand"
+                android:layout_width="@dimen/icon_m"
+                android:layout_height="@dimen/icon_m"
+                android:src="@drawable/ic_expand"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Filter: Trạng thái hợp đồng -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/btnFilterStatus"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:paddingHorizontal="@dimen/pad_m"
+            android:background="@drawable/bg_border"
+            android:layout_marginStart="@dimen/mar_m">
+
+            <!-- Label -->
+            <TextView
+                android:id="@+id/tvStatusLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Trạng thái hợp đồng"
+                android:textColor="@color/txt_sec"
+                android:textSize="@dimen/txt_s"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <!-- Giá trị -->
+            <TextView
+                android:id="@+id/tvStatusValue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Chọn giá trị"
+                android:textColor="@color/txt_pri"
+                android:textSize="@dimen/txt_m"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/ivExpand"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvStatusLabel"
+                app:layout_constraintVertical_bias="0"/>
+
+            <!-- Icon mũi tên -->
+            <ImageView
+                android:id="@+id/ivExpand"
+                android:layout_width="@dimen/icon_m"
+                android:layout_height="@dimen/icon_m"
+                android:src="@drawable/ic_expand"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+    <!-- RecyclerView danh sách thẻ hợp đồng -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvContracts"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/filters"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

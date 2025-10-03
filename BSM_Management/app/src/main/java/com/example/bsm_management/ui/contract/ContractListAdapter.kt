@@ -7,8 +7,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bsm_management.R
 
-class ContractAdapter(private val items: List<Contract>) :
-    RecyclerView.Adapter<ContractAdapter.VH>() {
+class ContractListAdapter(private val items: List<ContractListItem>) :
+    RecyclerView.Adapter<ContractListAdapter.VH>() {
 
     inner class VH(v: View) : RecyclerView.ViewHolder(v) {
         val tvTitle: TextView = v.findViewById(R.id.tvTitle)
@@ -23,7 +23,7 @@ class ContractAdapter(private val items: List<Contract>) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val v = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_contract_list, parent, false)   // layout mà bạn gửi
+            .inflate(R.layout.item_contract_list, parent, false)
         return VH(v)
     }
 

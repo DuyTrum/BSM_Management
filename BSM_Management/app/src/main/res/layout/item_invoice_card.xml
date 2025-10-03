@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/mar_l"
+    app:cardCornerRadius="@dimen/mar_l"
     app:strokeColor="@color/border"
-    app:strokeWidth="1dp"
-    app:cardCornerRadius="@dimen/mar_l">
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,7 +15,7 @@
         android:orientation="vertical"
         android:background="@color/bg_card">
 
-        <!-- Header -->
+        <!-- HEADER -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -26,11 +26,11 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/border"
-                android:padding="@dimen/pad_m"
-                android:orientation="vertical"
                 android:minWidth="56dp"
-                android:gravity="center">
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="@dimen/pad_m"
+                android:background="@color/border">
 
                 <TextView
                     android:id="@+id/tvMonthShort"
@@ -50,6 +50,7 @@
                     android:textColor="@color/txt_sec"/>
             </LinearLayout>
 
+            <!-- Tiêu đề + phụ đề + note -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -61,7 +62,7 @@
                     android:id="@+id/tvTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Phòng 1"
+                    android:text="Phòng 1 - #45600"
                     android:textStyle="bold"
                     android:textSize="@dimen/txt_l"
                     android:textColor="@color/txt_pri"/>
@@ -70,7 +71,7 @@
                     android:id="@+id/tvSub"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Thu tiền tháng đầu tiên"
+                    android:text="Trong thời hạn hợp đồng"
                     android:textColor="@color/txt_sec"
                     android:textSize="@dimen/txt_m"/>
 
@@ -98,7 +99,104 @@
             android:layout_height="1dp"
             android:background="@color/divider"/>
 
-        <!-- Hành động -->
+        <!-- 3 CỘT NGÀY: Tạo / Vào ở / Hết hạn -->
+        <LinearLayout
+            android:id="@+id/rowDates"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3"
+            android:paddingStart="@dimen/pad_l"
+            android:paddingEnd="@dimen/pad_l"
+            android:paddingTop="@dimen/pad_m"
+            android:paddingBottom="@dimen/pad_m">
+
+            <!-- Col 1: Tạo -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tạo"
+                    android:textColor="@color/txt_sec"
+                    android:textSize="@dimen/txt_s"/>
+
+                <TextView
+                    android:id="@+id/tvCreatedDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="07/09/2025"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/divider"/>
+
+            <!-- Col 2: Vào ở -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Vào ở"
+                    android:textColor="@color/txt_sec"
+                    android:textSize="@dimen/txt_s"/>
+
+                <TextView
+                    android:id="@+id/tvMoveInDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="07/09/2025"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/divider"/>
+
+            <!-- Col 3: Hết hạn -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hết hạn"
+                    android:textColor="@color/txt_sec"
+                    android:textSize="@dimen/txt_s"/>
+
+                <TextView
+                    android:id="@+id/tvEndDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Vô thời hạn"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider"/>
+
+        <!-- HÀNH ĐỘNG -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -145,7 +243,7 @@
             android:layout_height="1dp"
             android:background="@color/divider"/>
 
-        <!-- Tổng tiền -->
+        <!-- TỔNG TIỀN -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -157,16 +255,18 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Tổng số"
                     android:textColor="@color/txt_sec"/>
+
                 <TextView
                     android:id="@+id/tvTotal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="5.400.000 đ"
+                    android:text="3.000.000đ"
                     android:textStyle="bold"/>
             </LinearLayout>
 
@@ -176,16 +276,18 @@
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:gravity="center">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Đã trả"
                     android:textColor="@color/txt_sec"/>
+
                 <TextView
                     android:id="@+id/tvPaid"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0 đ"/>
+                    android:text="Chưa thu"/>
             </LinearLayout>
 
             <LinearLayout
@@ -194,16 +296,18 @@
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:gravity="end">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Còn lại"
                     android:textColor="@color/txt_sec"/>
+
                 <TextView
                     android:id="@+id/tvRemain"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="5.400.000 đ"
+                    android:text="3.000.000đ"
                     android:textStyle="bold"
                     android:textColor="@color/err"/>
             </LinearLayout>

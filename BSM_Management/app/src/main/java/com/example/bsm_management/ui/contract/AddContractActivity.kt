@@ -62,7 +62,7 @@ class AddContractActivity : AppCompatActivity() {
 
     private fun setupThoiHanSpinner() {
         val thoiHanView = findViewById<View>(R.id.viewThoiHan1)
-        // ⚠️ id bên trong include phải khớp với layout thật
+
         val lbl = thoiHanView?.findViewById<TextView>(R.id.txtLabelSpinner)
         val spn = thoiHanView?.findViewById<Spinner>(R.id.spinnerItem)
 
@@ -127,7 +127,8 @@ class AddContractActivity : AppCompatActivity() {
     private fun findHeader(headerId: Int): View? = findViewById(headerId)
 
     private fun setupBackButtonIfAny() {
-        val backBtnId = resources.getIdentifier("btnBack", "id", packageName)
-        if (backBtnId != 0) findViewById<View>(backBtnId)?.setOnClickListener { finish() }
+        val backBtn = findViewById<View?>(R.id.btnBack)
+        backBtn?.setOnClickListener { finish() }
     }
+
 }
