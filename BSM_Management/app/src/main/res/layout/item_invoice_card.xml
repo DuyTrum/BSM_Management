@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/mar_l"
+    app:strokeColor="@color/border"
+    app:strokeWidth="1dp"
+    app:cardCornerRadius="@dimen/mar_l">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/bg_card">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/pad_l">
+
+            <!-- Badge tháng -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/border"
+                android:padding="@dimen/pad_m"
+                android:orientation="vertical"
+                android:minWidth="56dp"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/tvMonthShort"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="T.9"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/txt_m"
+                    android:textColor="@color/txt_pri"/>
+
+                <TextView
+                    android:id="@+id/tvYear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2025"
+                    android:textSize="@dimen/txt_s"
+                    android:textColor="@color/txt_sec"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/mar_l"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Phòng 1"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/txt_l"
+                    android:textColor="@color/txt_pri"/>
+
+                <TextView
+                    android:id="@+id/tvSub"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Thu tiền tháng đầu tiên"
+                    android:textColor="@color/txt_sec"
+                    android:textSize="@dimen/txt_m"/>
+
+                <TextView
+                    android:id="@+id/tvNote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Khách chưa cài APP"
+                    android:textColor="@color/warn"
+                    android:textSize="@dimen/txt_s"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/btnDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chi tiết >"
+                android:textColor="@color/acc"
+                android:textSize="@dimen/txt_m"
+                android:padding="@dimen/pad_m"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider"/>
+
+        <!-- Hành động -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <TextView
+                android:id="@+id/btnCall"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/btn_h"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Gọi"/>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/divider"/>
+
+            <TextView
+                android:id="@+id/btnSend"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/btn_h"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Gửi h.đơn"/>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/divider"/>
+
+            <TextView
+                android:id="@+id/btnPrint"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/btn_h"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="In"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider"/>
+
+        <!-- Tổng tiền -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/pad_l">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tổng số"
+                    android:textColor="@color/txt_sec"/>
+                <TextView
+                    android:id="@+id/tvTotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="5.400.000 đ"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Đã trả"
+                    android:textColor="@color/txt_sec"/>
+                <TextView
+                    android:id="@+id/tvPaid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0 đ"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="end">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Còn lại"
+                    android:textColor="@color/txt_sec"/>
+                <TextView
+                    android:id="@+id/tvRemain"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="5.400.000 đ"
+                    android:textStyle="bold"
+                    android:textColor="@color/err"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

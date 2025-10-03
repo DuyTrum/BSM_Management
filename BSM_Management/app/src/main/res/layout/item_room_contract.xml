@@ -12,8 +12,7 @@
 
         android:clickable="true"
         android:focusable="true"
-        android:foreground="?attr/selectableItemBackground"
-        android:onClick="onClickRoomCard">
+        android:foreground="?attr/selectableItemBackground">
 
         <!-- Hàng tiêu đề -->
         <LinearLayout
@@ -46,7 +45,7 @@
                 android:id="@+id/btnChevron"
                 android:layout_width="@dimen/icon_xl"
                 android:layout_height="@dimen/icon_xl"
-                android:src="@drawable/ic_chevron_right"
+                android:src="@drawable/ic_next"
                 app:tint="@color/txt_hint"
                 android:contentDescription="chi tiết" />
         </LinearLayout>
