@@ -8,97 +8,59 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bsm_management.R
-import java.text.NumberFormat
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class InvoiceListAdapter(
-    private val onItemClick: (InvoiceCardItem) -> Unit = {},
-    private val onMoreClick: (InvoiceCardItem, View) -> Unit = { _, _ -> }
+    private val onItemClick: (InvoiceCardItem) -> Unit,
+    private val onMoreClick: (view: View, item: InvoiceCardItem) -> Unit
 ) : ListAdapter<InvoiceCardItem, InvoiceListAdapter.VH>(DIFF) {
 
     companion object {
         private val DIFF = object : DiffUtil.ItemCallback<InvoiceCardItem>() {
-            override fun areItemsTheSame(o: InvoiceCardItem, n: InvoiceCardItem) = o.id == n.id
-            override fun areContentsTheSame(o: InvoiceCardItem, n: InvoiceCardItem) = o == n
-        }
+            override fun areItemsTheSame(oldItem: InvoiceCardItem, newItem: InvoiceCardItem) =
+                oldItem.id == newItem.id
 
-        private val dfIn  = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        private val dfMon = SimpleDateFormat("'T.'M", Locale.getDefault()) // ví dụ: T.9
-        private val dfY   = SimpleDateFormat("yyyy", Locale.getDefault())
-        private val vnNF  = NumberFormat.getInstance(Locale("vi", "VN"))
+            override fun areContentsTheSame(oldItem: InvoiceCardItem, newItem: InvoiceCardItem) =
+                oldItem == newItem
+        }
     }
 
-    inner class VH(v: View) : RecyclerView.ViewHolder(v) {
-        private val tvMonthShort  = v.findViewById<TextView>(R.id.tvMonthShort)
-        private val tvYear        = v.findViewById<TextView>(R.id.tvYear)
-        private val tvTitle       = v.findViewById<TextView>(R.id.tvTitle)
-        private val tvSub         = v.findViewById<TextView>(R.id.tvSub)
-        private val tvNote        = v.findViewById<TextView>(R.id.tvNote)
-        private val btnDetail     = v.findViewById<TextView>(R.id.btnDetail)
+    inner class VH(view: View) : RecyclerView.ViewHolder(view) {
+        // Header/tiêu đề
+        private val tvTitle: TextView      = view.findViewById(R.id.tvTitle)
+        private val tvSub: TextView        = view.findViewById(R.id.tvSub)       // dùng làm "mainStatus"
+        private val tvNote: TextView       = view.findViewById(R.id.tvNote)      // có thể để trống nếu chưa dùng
+        private val btnDetail: TextView    = view.findViewById(R.id.btnDetail)
 
-        // 3 cột ngày mới
-        private val tvCreatedDate = v.findViewById<TextView>(R.id.tvCreatedDate)
-        private val tvMoveInDate  = v.findViewById<TextView>(R.id.tvMoveInDate)
-        private val tvEndDate     = v.findViewById<TextView>(R.id.tvEndDate)
+        // Ba cột ngày
+        private val tvCreatedDate: TextView = view.findViewById(R.id.tvCreatedDate)
+        private val tvMoveInDate: TextView  = view.findViewById(R.id.tvMoveInDate)
+        private val tvEndDate: TextView     = view.findViewById(R.id.tvEndDate)
 
-        // Tổng/Paid/Remain
-        private val tvTotal       = v.findViewById<TextView>(R.id.tvTotal)
-        private val tvPaid        = v.findViewById<TextView>(R.id.tvPaid)
-        private val tvRemain      = v.findViewById<TextView>(R.id.tvRemain)
+        // Khu tổng tiền
+        private val tvTotal: TextView   = view.findViewById(R.id.tvTotal)   // map từ item.rent (tổng hiển thị)
+        private val tvPaid: TextView    = view.findViewById(R.id.tvPaid)    // map từ item.collected (Đã thu/Chưa thu)
+        private val tvRemain: TextView  = view.findViewById(R.id.tvRemain)  // map từ item.deposit (đang dùng để hiển thị số còn lại)
 
         fun bind(item: InvoiceCardItem) {
-            // Header
+            // Tiêu đề + trạng thái
             tvTitle.text = item.title
-            tvSub.text   = item.mainStatus
+            tvSub.text = item.mainStatus
+            // tvNote: để nguyên hoặc set theo nhu cầu
+            // tvNote.text = "..."  // nếu có ghi chú riêng cho item
 
-            // tvNote: dùng làm cảnh báo/ghi chú nếu có (để trống thì ẩn)
-            if (tvNote.text.isNullOrBlank()) tvNote.visibility = View.GONE else tvNote.visibility = View.VISIBLE
-
-            // Badge tháng/năm từ createdDate
-            runCatching { dfIn.parse(item.createdDate) }.onSuccess { d ->
-                if (d != null) {
-                    tvMonthShort.text = dfMon.format(d)
-                    tvYear.text = dfY.format(d)
-                } else fallbackMonthYear(item)
-            }.onFailure { fallbackMonthYear(item) }
-
-            // 3 cột ngày
+            // Ngày/thời điểm
             tvCreatedDate.text = item.createdDate
-            tvMoveInDate.text  = item.moveInDate
-            tvEndDate.text     = item.endDate
+            tvMoveInDate.text = item.moveInDate
+            tvEndDate.text = item.endDate
 
-            // Tổng/Paid/Còn lại
-            tvTotal.text = item.rent
-            tvPaid.text  = item.collected
-
-            val rentVnd = parseMoneyVnd(item.rent)           // ví dụ: "3.000.000đ" -> 3000000
-            val paidVnd = extractPaidVnd(item.collected)     // "Đã thu 3.500.000đ" -> 3500000; "Chưa thu" -> 0
-            val remain  = (rentVnd - paidVnd).coerceAtLeast(0)
-
-            tvRemain.text = "${vnNF.format(remain)} đ"
+            // Số tiền
+            tvTotal.text = item.rent        // tổng tiền hiển thị (đang truyền dạng "1.234.000đ")
+            tvPaid.text = item.collected    // "Đã thu xxxđ" hoặc "Chưa thu"
+            tvRemain.text = item.deposit    // đang dùng trường 'deposit' để hiển thị "Còn lại"
 
             // Clicks
             itemView.setOnClickListener { onItemClick(item) }
-            btnDetail.setOnClickListener { onMoreClick(item, it) }
-        }
-
-        private fun fallbackMonthYear(item: InvoiceCardItem) {
-            val parts = item.createdDate.split("/")
-            tvMonthShort.text = if (parts.size == 3) "T.${parts[1]}" else "T.?"
-            tvYear.text = if (parts.size == 3) parts[2] else "----"
-        }
-
-        private fun parseMoneyVnd(text: String): Long {
-            // Lấy tất cả chữ số trong chuỗi, ví dụ "3.000.000đ" -> "3000000"
-            val digits = text.filter { it.isDigit() }
-            return digits.toLongOrNull() ?: 0L
-        }
-
-        private fun extractPaidVnd(collected: String): Long {
-            // Hỗ trợ các chuỗi như "Đã thu 3.000.000đ", "Chưa thu", "Đã thu"
-            val hasPaid = collected.trim().lowercase(Locale.getDefault()).startsWith("đã thu")
-            return if (!hasPaid) 0L else parseMoneyVnd(collected)
+            btnDetail.setOnClickListener { v -> onMoreClick(v, item) }
         }
     }
 
@@ -108,5 +70,7 @@ class InvoiceListAdapter(
         return VH(v)
     }
 
-    override fun onBindViewHolder(holder: VH, position: Int) = holder.bind(getItem(position))
+    override fun onBindViewHolder(holder: VH, position: Int) {
+        holder.bind(getItem(position))
+    }
 }

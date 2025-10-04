@@ -4,36 +4,42 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bsm_management.R
 
 class InvoiceAdapter(
-    private val onClick: (RoomItem) -> Unit
-) : RecyclerView.Adapter<InvoiceAdapter.VH>() {
+    private val onItemClick: (RoomItem) -> Unit
+) : ListAdapter<RoomItem, InvoiceAdapter.VH>(DIFF) {
 
-    private val items = mutableListOf<RoomItem>()
+    companion object {
+        private val DIFF = object : DiffUtil.ItemCallback<RoomItem>() {
+            override fun areItemsTheSame(oldItem: RoomItem, newItem: RoomItem): Boolean =
+                oldItem.roomId == newItem.roomId
 
-    fun submitList(list: List<RoomItem>) {
-        items.clear()
-        items.addAll(list)
-        notifyDataSetChanged()
+            override fun areContentsTheSame(oldItem: RoomItem, newItem: RoomItem): Boolean =
+                oldItem == newItem
+        }
     }
 
     inner class VH(view: View) : RecyclerView.ViewHolder(view) {
-        private val tvRoomName = view.findViewById<TextView>(R.id.tvRoomName)
-        private val tvPhone = view.findViewById<TextView>(R.id.tvPhone)
-        private val tvContract = view.findViewById<TextView>(R.id.tvContract)
-        private val tvRent = view.findViewById<TextView>(R.id.tvRent)
-        private val tvPeople = view.findViewById<TextView>(R.id.tvPeople)
+        private val tvRoomName: TextView = view.findViewById(R.id.tvRoomName)
+        private val tvPhone: TextView    = view.findViewById(R.id.tvPhone)
+        private val tvContract: TextView = view.findViewById(R.id.tvContract)
+        private val tvRent: TextView     = view.findViewById(R.id.tvRent)
+        private val tvPeople: TextView   = view.findViewById(R.id.tvPeople)
+        private val tvStatus: TextView = view.findViewById(R.id.tvStatus)
 
         fun bind(item: RoomItem) {
             tvRoomName.text = item.roomName
-            tvPhone.text = item.phone
+            tvPhone.text    = item.phone
             tvContract.text = item.contract
-            tvRent.text = item.rent
-            tvPeople.text = item.people
+            tvRent.text     = item.rent
+            tvPeople.text   = item.people
+            tvStatus.text   = item.status
 
-            itemView.setOnClickListener { onClick(item) }
+            itemView.setOnClickListener { onItemClick(item) }
         }
     }
 
@@ -43,8 +49,7 @@ class InvoiceAdapter(
         return VH(v)
     }
 
-    override fun onBindViewHolder(holder: VH, position: Int) =
-        holder.bind(items[position])
-
-    override fun getItemCount() = items.size
+    override fun onBindViewHolder(holder: VH, position: Int) {
+        holder.bind(getItem(position))
+    }
 }

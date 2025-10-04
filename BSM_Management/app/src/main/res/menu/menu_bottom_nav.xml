@@ -20,5 +20,4 @@
         android:id="@+id/ProfileFragment"
         android:icon="@drawable/ic_more"
         android:title="Thêm +" />
-
 </menu>

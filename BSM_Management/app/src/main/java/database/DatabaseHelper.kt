@@ -13,43 +13,9 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        // Tạo đầy đủ schema
-        createCoreTables(db)
-        createHostelTableIfMissing(db)
-        createIndexes(db)
-    }
-
-    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        // Nếu bạn từng dùng phiên bản rất cũ muốn reset sạch:
-        if (oldVersion < 5) {
-            db.beginTransaction()
-            try {
-                dropIndexes(db)
-                db.execSQL("DROP TABLE IF EXISTS invoices;")
-                db.execSQL("DROP TABLE IF EXISTS contracts;")
-                db.execSQL("DROP TABLE IF EXISTS rooms;")
-                db.execSQL("DROP TABLE IF EXISTS messages;")
-                db.execSQL("DROP TABLE IF EXISTS hostels;")
-                db.execSQL("DROP TABLE IF EXISTS users;")
-                onCreate(db)
-                db.setTransactionSuccessful()
-            } finally {
-                db.endTransaction()
-            }
-            return
-        }
-
-        // 🔧 Từ 5 trở lên: không drop, chỉ "heal" – tạo bảng/ chỉ mục nếu thiếu
-        createCoreTables(db)            // dùng IF NOT EXISTS nên an toàn
-        createHostelTableIfMissing(db)  // đảm bảo có hostels
-        createIndexes(db)               // đảm bảo có index
-    }
-
-    // ---- Helpers ----
-
-    private fun createCoreTables(db: SQLiteDatabase) {
+        // USERS
         db.execSQL("""
-            CREATE TABLE IF NOT EXISTS users (
+            CREATE TABLE users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 phone TEXT NOT NULL UNIQUE,
                 name TEXT NOT NULL,
@@ -57,8 +23,9 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             );
         """.trimIndent())
 
+        // ROOMS
         db.execSQL("""
-            CREATE TABLE IF NOT EXISTS rooms (
+            CREATE TABLE rooms (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL UNIQUE,
                 floor INTEGER NOT NULL DEFAULT 1,
@@ -67,12 +34,13 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             );
         """.trimIndent())
 
+        // CONTRACTS
         db.execSQL("""
-            CREATE TABLE IF NOT EXISTS contracts (
+            CREATE TABLE contracts (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 roomId INTEGER NOT NULL,
                 tenantName TEXT NOT NULL,
-                startDate INTEGER NOT NULL,
+                startDate INTEGER NOT NULL, -- epoch millis
                 endDate INTEGER,
                 deposit INTEGER NOT NULL DEFAULT 0,
                 active INTEGER NOT NULL DEFAULT 1,
@@ -80,8 +48,9 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             );
         """.trimIndent())
 
+        // INVOICES
         db.execSQL("""
-            CREATE TABLE IF NOT EXISTS invoices (
+            CREATE TABLE invoices (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 roomId INTEGER NOT NULL,
                 periodYear INTEGER NOT NULL,
@@ -91,46 +60,61 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
                 waterM3 INTEGER NOT NULL DEFAULT 0,
                 serviceFee INTEGER NOT NULL DEFAULT 0,
                 totalAmount INTEGER NOT NULL,
-                paid INTEGER NOT NULL DEFAULT 0,
-                createdAt INTEGER NOT NULL DEFAULT (strftime('%s','now')*1000),
+                paid INTEGER NOT NULL DEFAULT 0, -- 1=đã thu, 0=chưa
+                createdAt INTEGER NOT NULL,
                 FOREIGN KEY(roomId) REFERENCES rooms(id) ON DELETE CASCADE,
                 UNIQUE(roomId, periodYear, periodMonth)
             );
         """.trimIndent())
 
-        db.execSQL("""
-            CREATE TABLE IF NOT EXISTS messages (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                title TEXT NOT NULL,
-                content TEXT,
-                tag TEXT,
-                pinned INTEGER NOT NULL DEFAULT 0,
-                unread INTEGER NOT NULL DEFAULT 1,
-                createdAt INTEGER NOT NULL
-            );
-        """.trimIndent())
-    }
+        // ===== SEED DATA =====
 
-    private fun createHostelTableIfMissing(db: SQLiteDatabase) {
+        // Users: số dễ nhập
         db.execSQL("""
-            CREATE TABLE IF NOT EXISTS hostels (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL UNIQUE,
-                type TEXT NOT NULL DEFAULT 'HOSTEL',
-                rentMode TEXT NOT NULL DEFAULT 'ROOM',
-                autoGenerate INTEGER NOT NULL DEFAULT 1,
-                sampleRooms INTEGER NOT NULL DEFAULT 0,
-                sampleArea INTEGER NOT NULL DEFAULT 0,
-                samplePrice INTEGER NOT NULL DEFAULT 0,
-                maxPeople INTEGER NOT NULL DEFAULT 0,
-                invoiceDay INTEGER NOT NULL DEFAULT 1,
-                dueDays INTEGER NOT NULL DEFAULT 5,
-                createdAt INTEGER NOT NULL
-            );
+            INSERT INTO users (phone, name, password) VALUES
+            ('12345678','Admin','123456'),
+            ('22222222','Nguyen Van A','123456'),
+            ('33333333','Le Thi C','123456');
         """.trimIndent())
-    }
 
-    private fun createIndexes(db: SQLiteDatabase) {
+        // Rooms: 5 phòng (1,2,4 đang thuê)
+        db.execSQL("""
+            INSERT INTO rooms (name, floor, status, baseRent) VALUES
+            ('P101', 1, 'RENTED', 1500000),
+            ('P102', 1, 'RENTED', 1500000),
+            ('P201', 2, 'EMPTY', 1800000),
+            ('P202', 2, 'RENTED', 1800000),
+            ('P203', 2, 'EMPTY', 1800000);
+        """.trimIndent())
+
+        // Contracts cho phòng đang thuê (giả định id phòng bắt đầu từ 1..5)
+        db.execSQL("""
+            INSERT INTO contracts (roomId, tenantName, startDate, endDate, deposit, active) VALUES
+            (1, 'Le Van C',  strftime('%s','now','-5 months')*1000, NULL, 2000000, 1),
+            (2, 'Tran Thi B', strftime('%s','now','-2 months')*1000, NULL, 2000000, 1),
+            (4, 'Pham D',     strftime('%s','now','-1 months')*1000, NULL, 2500000, 1);
+        """.trimIndent())
+
+        // Invoices: nhiều tháng cho các phòng thuê
+        db.execSQL("""
+            INSERT INTO invoices
+                (roomId, periodYear, periodMonth, roomRent, electricKwh, waterM3, serviceFee, totalAmount, paid, createdAt)
+            VALUES
+                -- P101 (roomId=1): 7,8,9/2025
+                (1, 2025, 7, 1500000, 40, 7, 50000, (1500000 + 40*3500 + 7*8000 + 50000), 1, strftime('%s','now','-85 days')*1000),
+                (1, 2025, 8, 1500000, 43, 7, 50000, (1500000 + 43*3500 + 7*8000 + 50000), 1, strftime('%s','now','-55 days')*1000),
+                (1, 2025, 9, 1500000, 45, 8, 50000, (1500000 + 45*3500 + 8*8000 + 50000), 0, strftime('%s','now','-25 days')*1000),
+
+                -- P102 (roomId=2): 8,9/2025
+                (2, 2025, 8, 1500000, 42, 7, 50000, (1500000 + 42*3500 + 7*8000 + 50000), 1, strftime('%s','now','-60 days')*1000),
+                (2, 2025, 9, 1500000, 45, 8, 50000, (1500000 + 45*3500 + 8*8000 + 50000), 0, strftime('%s','now','-20 days')*1000),
+
+                -- P202 (roomId=4): 9,10/2025 (tháng 10 mới tạo)
+                (4, 2025,10, 1800000, 38, 6, 60000, (1800000 + 38*3500 + 6*8000 + 60000), 0, strftime('%s','now')*1000),
+                (4, 2025, 9, 1800000, 36, 6, 60000, (1800000 + 36*3500 + 6*8000 + 60000), 1, strftime('%s','now','-18 days')*1000);
+        """.trimIndent())
+
+        // Indexes
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_contracts_active ON contracts(active);")
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_invoices_paid ON invoices(paid);")
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_messages_createdAt ON messages(createdAt);")
@@ -138,23 +122,16 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_hostels_createdAt ON hostels(createdAt);")
     }
 
-    private fun dropIndexes(db: SQLiteDatabase) {
-        db.execSQL("DROP INDEX IF EXISTS idx_contracts_active;")
-        db.execSQL("DROP INDEX IF EXISTS idx_invoices_paid;")
-        db.execSQL("DROP INDEX IF EXISTS idx_messages_createdAt;")
-        db.execSQL("DROP INDEX IF EXISTS idx_messages_pinned;")
-        db.execSQL("DROP INDEX IF EXISTS idx_hostels_createdAt;")
-    }
-
-    // 👉 Dùng để MainActivity router quyết định vào AddHostel hay Dashboard
-    fun hasHostel(): Boolean {
-        readableDatabase.rawQuery("SELECT 1 FROM hostels LIMIT 1", null).use { c ->
-            return c.moveToFirst()
-        }
+    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        db.execSQL("DROP TABLE IF EXISTS invoices;")
+        db.execSQL("DROP TABLE IF EXISTS contracts;")
+        db.execSQL("DROP TABLE IF EXISTS rooms;")
+        db.execSQL("DROP TABLE IF EXISTS users;")
+        onCreate(db)
     }
 
     companion object {
-        const val DB_NAME: String = "bsm.db"
-        private const val DB_VERSION = 6  // bump để chắc chắn chạy onUpgrade heal schema
+        const val DB_NAME = "bsm.db"
+        private const val DB_VERSION = 1
     }
 }

@@ -164,7 +164,7 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/mar_m"
+                        android:layout_marginTop="@dimen/mar_l"
                         android:background="@drawable/bg_box_green"
                         android:padding="@dimen/pad_m"
                         xmlns:app="http://schemas.android.com/apk/res-auto">
