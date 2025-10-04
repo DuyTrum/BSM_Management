@@ -11,8 +11,14 @@
     <string name="nav_tasks">Công việc</string>
     <string name="nav_find">Tìm khách</string>
     <string name="nav_more">Thêm +</string>
-    <!-- TODO: Remove or change this placeholder text -->
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="invoice_create_title">Lập hóa đơn</string>
+    <string name="invoice_create_subtitle">Chỉ hiện phòng có hợp đồng còn hiệu lực</string>
+    <string name="invoice_list_title">Danh sách hóa đơn</string>
+    <string name="invoice_list_subtitle">Lọc theo tháng và trạng thái</string>
+    <string name="pick_month">Chọn tháng</string>
+    <string name="invoice_list_empty">Không có hóa đơn trong tháng %1$d/%2$d</string>
 
     <string name="message">Hộp thư</string>
 </resources>

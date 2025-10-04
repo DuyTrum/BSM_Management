@@ -15,7 +15,7 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
     override fun onCreate(db: SQLiteDatabase) {
         // ===== Schema chính (KHÔNG có hostels) =====
         db.execSQL("""
-            CREATE TABLE IF NOT EXISTS users (
+            CREATE TABLE users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 phone TEXT NOT NULL UNIQUE,
                 name TEXT NOT NULL,
@@ -23,8 +23,9 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             );
         """.trimIndent())
 
+        // ROOMS
         db.execSQL("""
-            CREATE TABLE IF NOT EXISTS rooms (
+            CREATE TABLE rooms (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL UNIQUE,
                 floor INTEGER NOT NULL DEFAULT 1,
@@ -33,12 +34,13 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             );
         """.trimIndent())
 
+        // CONTRACTS
         db.execSQL("""
-            CREATE TABLE IF NOT EXISTS contracts (
+            CREATE TABLE contracts (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 roomId INTEGER NOT NULL,
                 tenantName TEXT NOT NULL,
-                startDate INTEGER NOT NULL,
+                startDate INTEGER NOT NULL, -- epoch millis
                 endDate INTEGER,
                 deposit INTEGER NOT NULL DEFAULT 0,
                 active INTEGER NOT NULL DEFAULT 1,
@@ -46,8 +48,9 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             );
         """.trimIndent())
 
+        // INVOICES
         db.execSQL("""
-            CREATE TABLE IF NOT EXISTS invoices (
+            CREATE TABLE invoices (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 roomId INTEGER NOT NULL,
                 periodYear INTEGER NOT NULL,
@@ -57,23 +60,21 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
                 waterM3 INTEGER NOT NULL DEFAULT 0,
                 serviceFee INTEGER NOT NULL DEFAULT 0,
                 totalAmount INTEGER NOT NULL,
-                paid INTEGER NOT NULL DEFAULT 0,
-                createdAt INTEGER NOT NULL DEFAULT (strftime('%s','now')*1000),
+                paid INTEGER NOT NULL DEFAULT 0, -- 1=đã thu, 0=chưa
+                createdAt INTEGER NOT NULL,
                 FOREIGN KEY(roomId) REFERENCES rooms(id) ON DELETE CASCADE,
                 UNIQUE(roomId, periodYear, periodMonth)
             );
         """.trimIndent())
 
+        // ===== SEED DATA =====
+
+        // Users: số dễ nhập
         db.execSQL("""
-            CREATE TABLE IF NOT EXISTS messages (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                title TEXT NOT NULL,
-                content TEXT,
-                tag TEXT,
-                pinned INTEGER NOT NULL DEFAULT 0,
-                unread INTEGER NOT NULL DEFAULT 1,
-                createdAt INTEGER NOT NULL
-            );
+            INSERT INTO users (phone, name, password) VALUES
+            ('12345678','Admin','123456'),
+            ('22222222','Nguyen Van A','123456'),
+            ('33333333','Le Thi C','123456');
         """.trimIndent())
 
         // Indexes (không có hostels)
