@@ -4,18 +4,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bsm_sheet_bg">
+    android:background="@color/bsm_sheet_bg"
+    android:fitsSystemWindows="true">
 
     <!-- Top app bar -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/topBar"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        app:navigationIcon="@drawable/ic_back"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@android:color/white"
         app:title="Thêm mới nhà cho thuê"
         app:titleCentered="true"
-        app:titleTextColor="@android:color/black"
-        android:background="@android:color/white"
+        app:titleTextColor="@color/bsm_text_primary"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:navigationIconTint="@color/bsm_text_primary"
         app:layout_scrollFlags="scroll|enterAlways" />
 
     <androidx.core.widget.NestedScrollView
@@ -24,7 +26,7 @@
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:padding="16dp"
-        android:layout_marginTop="56dp">
+        android:layout_marginTop="?attr/actionBarSize">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -52,12 +54,14 @@
                     android:orientation="vertical"
                     android:layout_weight="1"
                     android:layout_marginStart="12dp">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Thông tin nhà cho thuê"
                         android:textStyle="bold"
                         android:textSize="16sp"/>
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -87,24 +91,22 @@
                         android:text="Loại hình cho thuê *"
                         android:textStyle="bold"/>
 
+                    <!-- DÙNG endIcon thay cho ImageButton tự chèn -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                        android:layout_marginTop="8dp">
+                        android:layout_marginTop="8dp"
+                        app:endIconMode="clear_text"
+                        app:endIconDrawable="@drawable/ic_close"
+                        app:endIconTint="@color/bsm_text_primary">
+
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edtType"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Nhà trọ"
                             android:enabled="false"/>
-                        <ImageButton
-                            android:id="@+id/btnClearType"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:layout_gravity="end|center_vertical"
-                            android:background="@drawable/bg_icon_circle_soft"
-                            android:src="@drawable/ic_close"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- Thuê theo phòng / giường -->
@@ -123,17 +125,20 @@
                             app:strokeColor="@color/bsm_green"
                             app:strokeWidth="2dp"
                             android:foreground="?attr/selectableItemBackground">
+
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
                                 android:orientation="vertical"
                                 android:padding="12dp">
+
                                 <ImageView
                                     android:layout_width="32dp"
                                     android:layout_height="32dp"
                                     android:src="@drawable/ic_byroom"
                                     app:tint="@color/bsm_green" />
+
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -147,7 +152,6 @@
                                     android:text="Tính tiền thuê theo phòng"
                                     android:textColor="@color/bsm_text_secondary"
                                     android:textSize="12sp"/>
-
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
 
@@ -163,17 +167,20 @@
                             app:cardCornerRadius="16dp"
                             app:strokeColor="@color/bsm_divider"
                             android:foreground="?attr/selectableItemBackground">
+
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
                                 android:orientation="vertical"
                                 android:padding="12dp">
+
                                 <ImageView
                                     android:layout_width="32dp"
                                     android:layout_height="32dp"
                                     android:src="@drawable/ic_bybed"
                                     app:tint="@color/bsm_text_secondary" />
+
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -187,7 +194,6 @@
                                     android:text="Tính tiền theo giường"
                                     android:textColor="@color/bsm_text_secondary"
                                     android:textSize="12sp"/>
-
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
                     </LinearLayout>
@@ -198,6 +204,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp">
+
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edtName"
                             android:layout_width="match_parent"
@@ -233,6 +240,7 @@
                     android:orientation="vertical"
                     android:layout_weight="1"
                     android:layout_marginStart="12dp">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -245,7 +253,6 @@
                         android:layout_height="wrap_content"
                         android:text="Theo mẫu hoặc từ excel hoặc thủ công"
                         android:textColor="@color/bsm_text_secondary"/>
-
                 </LinearLayout>
             </LinearLayout>
 
@@ -259,15 +266,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_gravity="center_vertical"
-                    android:baselineAligned="false">
-                <TextView
+                    android:gravity="center_vertical">
+
+                    <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Đang khởi tạo tự động theo mẫu"
                         android:textStyle="bold"/>
+
                     <com.google.android.material.materialswitch.MaterialSwitch
                         android:id="@+id/switchAuto"
                         android:layout_width="wrap_content"
@@ -283,6 +290,7 @@
                     android:layout_marginTop="12dp"
                     app:cardCornerRadius="16dp"
                     app:strokeColor="@color/bsm_divider">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -301,7 +309,6 @@
                             android:text="Tầng trệt (không có tầng)"
                             android:textColor="@color/bsm_text_secondary"/>
 
-
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -314,13 +321,13 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1">
+
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/edtSampleRoom"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:inputType="number"
                                     android:hint="Số lượng phòng mẫu" />
-
                             </com.google.android.material.textfield.TextInputLayout>
 
                             <Space android:layout_width="12dp" android:layout_height="0dp"/>
@@ -348,6 +355,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1">
+
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edtArea"
                             android:layout_width="match_parent"
@@ -372,6 +380,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1">
+
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edtPrice"
                             android:layout_width="match_parent"
@@ -396,6 +405,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp">
+
                     <AutoCompleteTextView
                         android:id="@+id/ddlMaxPeople"
                         android:layout_width="match_parent"
@@ -411,14 +421,21 @@
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
                     android:layout_marginTop="16dp">
+
                     <ImageView
-                        android:layout_width="36dp" android:layout_height="36dp"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
                         android:background="@drawable/bg_icon_circle"
-                        android:padding="8dp" android:src="@drawable/ic_tag"/>
+                        android:padding="8dp"
+                        android:src="@drawable/ic_tag"/>
+
                     <LinearLayout
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:orientation="vertical" android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
                         android:layout_marginStart="12dp">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -431,7 +448,6 @@
                             android:layout_height="wrap_content"
                             android:text="Tùy chỉnh tính năng sử dụng cho Nhà trọ"
                             android:textColor="@color/bsm_text_secondary"/>
-
                     </LinearLayout>
                 </LinearLayout>
 
@@ -446,6 +462,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1">
+
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edtInvoiceDay"
                             android:layout_width="match_parent"
@@ -461,6 +478,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1">
+
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edtDueDays"
                             android:layout_width="match_parent"

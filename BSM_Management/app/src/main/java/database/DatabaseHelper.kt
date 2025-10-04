@@ -13,41 +13,7 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        // Tạo đầy đủ schema
-        createCoreTables(db)
-        createHostelTableIfMissing(db)
-        createIndexes(db)
-    }
-
-    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        // Nếu bạn từng dùng phiên bản rất cũ muốn reset sạch:
-        if (oldVersion < 5) {
-            db.beginTransaction()
-            try {
-                dropIndexes(db)
-                db.execSQL("DROP TABLE IF EXISTS invoices;")
-                db.execSQL("DROP TABLE IF EXISTS contracts;")
-                db.execSQL("DROP TABLE IF EXISTS rooms;")
-                db.execSQL("DROP TABLE IF EXISTS messages;")
-                db.execSQL("DROP TABLE IF EXISTS hostels;")
-                db.execSQL("DROP TABLE IF EXISTS users;")
-                onCreate(db)
-                db.setTransactionSuccessful()
-            } finally {
-                db.endTransaction()
-            }
-            return
-        }
-
-        // 🔧 Từ 5 trở lên: không drop, chỉ "heal" – tạo bảng/ chỉ mục nếu thiếu
-        createCoreTables(db)            // dùng IF NOT EXISTS nên an toàn
-        createHostelTableIfMissing(db)  // đảm bảo có hostels
-        createIndexes(db)               // đảm bảo có index
-    }
-
-    // ---- Helpers ----
-
-    private fun createCoreTables(db: SQLiteDatabase) {
+        // ===== Schema chính (KHÔNG có hostels) =====
         db.execSQL("""
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -109,52 +75,74 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
                 createdAt INTEGER NOT NULL
             );
         """.trimIndent())
-    }
 
-    private fun createHostelTableIfMissing(db: SQLiteDatabase) {
-        db.execSQL("""
-            CREATE TABLE IF NOT EXISTS hostels (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL UNIQUE,
-                type TEXT NOT NULL DEFAULT 'HOSTEL',
-                rentMode TEXT NOT NULL DEFAULT 'ROOM',
-                autoGenerate INTEGER NOT NULL DEFAULT 1,
-                sampleRooms INTEGER NOT NULL DEFAULT 0,
-                sampleArea INTEGER NOT NULL DEFAULT 0,
-                samplePrice INTEGER NOT NULL DEFAULT 0,
-                maxPeople INTEGER NOT NULL DEFAULT 0,
-                invoiceDay INTEGER NOT NULL DEFAULT 1,
-                dueDays INTEGER NOT NULL DEFAULT 5,
-                createdAt INTEGER NOT NULL
-            );
-        """.trimIndent())
-    }
-
-    private fun createIndexes(db: SQLiteDatabase) {
+        // Indexes (không có hostels)
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_contracts_active ON contracts(active);")
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_invoices_paid ON invoices(paid);")
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_messages_createdAt ON messages(createdAt);")
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_messages_pinned ON messages(pinned);")
-        db.execSQL("CREATE INDEX IF NOT EXISTS idx_hostels_createdAt ON hostels(createdAt);")
     }
 
-    private fun dropIndexes(db: SQLiteDatabase) {
-        db.execSQL("DROP INDEX IF EXISTS idx_contracts_active;")
-        db.execSQL("DROP INDEX IF EXISTS idx_invoices_paid;")
-        db.execSQL("DROP INDEX IF EXISTS idx_messages_createdAt;")
-        db.execSQL("DROP INDEX IF EXISTS idx_messages_pinned;")
-        db.execSQL("DROP INDEX IF EXISTS idx_hostels_createdAt;")
+    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        // Heal schema – đảm bảo không còn hostels legacy
+        if (oldVersion < 7) {
+            db.beginTransaction()
+            try {
+                // xoá index cũ nếu có
+                db.execSQL("DROP INDEX IF EXISTS idx_hostels_createdAt;")
+                // xoá table hostels nếu tồn tại
+                db.execSQL("DROP TABLE IF EXISTS hostels;")
+                // re-create core schema & indexes
+                onCreate(db)
+                db.setTransactionSuccessful()
+            } finally { db.endTransaction() }
+            return
+        }
+
+        // các bản vá về sau (nếu có) – hiện tại không cần
+        onCreate(db) // chạy IF NOT EXISTS an toàn
     }
 
-    // 👉 Dùng để MainActivity router quyết định vào AddHostel hay Dashboard
-    fun hasHostel(): Boolean {
-        readableDatabase.rawQuery("SELECT 1 FROM hostels LIMIT 1", null).use { c ->
+    // ======= Helpers cho flow chỉ dùng rooms =======
+
+    /** Có phòng nào trong DB chưa? */
+    fun hasAnyRoom(): Boolean {
+        readableDatabase.rawQuery("SELECT 1 FROM rooms LIMIT 1", null).use { c ->
             return c.moveToFirst()
         }
     }
 
+    /** Tạo N phòng tự động: P001..Pnnn, floor=1, status='EMPTY', baseRent=price */
+    fun insertRoomsAuto(count: Int, baseRent: Int, startIndex: Int = 1, floor: Int = 1) {
+        if (count <= 0) return
+        val db = writableDatabase
+        db.beginTransaction()
+        try {
+            val stmt = db.compileStatement(
+                "INSERT INTO rooms (name, floor, status, baseRent) VALUES (?, ?, 'EMPTY', ?)"
+            )
+            var idx = startIndex
+            var created = 0
+            while (created < count) {
+                val name = "P%03d".format(idx) // P001, P002, ...
+                try {
+                    stmt.clearBindings()
+                    stmt.bindString(1, name)
+                    stmt.bindLong(2, floor.toLong())
+                    stmt.bindLong(3, baseRent.toLong())
+                    stmt.executeInsert()
+                    created++
+                } catch (_: Exception) {
+                    // trùng tên -> tăng số tiếp
+                }
+                idx++
+            }
+            db.setTransactionSuccessful()
+        } finally { db.endTransaction() }
+    }
+
     companion object {
         const val DB_NAME: String = "bsm.db"
-        private const val DB_VERSION = 6  // bump để chắc chắn chạy onUpgrade heal schema
+        private const val DB_VERSION = 7  // bump để xoá hostels nếu còn sót
     }
 }
