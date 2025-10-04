@@ -22,8 +22,7 @@
         android:title="Tìm khách" />
 
     <item
-        android:id="@+id/nav_more"
+        android:id="@+id/ProfileFragment"
         android:icon="@drawable/ic_more"
         android:title="Thêm +" />
-
 </menu>

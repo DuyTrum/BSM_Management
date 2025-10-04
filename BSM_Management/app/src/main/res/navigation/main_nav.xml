@@ -9,4 +9,8 @@
         android:id="@+id/homeFragment"
         android:name="com.example.bsm_management.ui.dashboard.DashboardFragment"
         android:label="home" />
+    <fragment
+        android:id="@+id/ProfileFragment"
+        android:name="com.example.bsm_management.ui.dashboard.DashboardFragment"
+        android:label="more" />
 </navigation>

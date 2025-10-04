@@ -38,8 +38,8 @@
 
                 <ImageButton
                     android:id="@+id/btnPrev"
-                    android:layout_width="@dimen/icon_xl"
-                    android:layout_height="@dimen/icon_xl"
+                    android:layout_width="@dimen/icon_l"
+                    android:layout_height="@dimen/icon_l"
                     android:background="@drawable/ic_back"
                     android:contentDescription="btn_back"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -63,8 +63,8 @@
 
                 <ImageButton
                     android:id="@+id/btnNext"
-                    android:layout_width="@dimen/icon_xl"
-                    android:layout_height="@dimen/icon_xl"
+                    android:layout_width="@dimen/icon_l"
+                    android:layout_height="@dimen/icon_l"
                     android:background="@drawable/ic_next"
                     android:contentDescription="btn_next"
                     app:tint="@color/txt_pri"
@@ -86,4 +86,17 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
+    <TextView
+        android:id="@+id/tvEmpty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Không có phòng nào có hợp đồng đang hiệu lực"
+        android:textColor="@color/txt_sec"
+        android:textSize="@dimen/txt_m"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/rvInvoices"
+        app:layout_constraintBottom_toBottomOf="@id/rvInvoices"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
