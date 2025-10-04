@@ -1,90 +1,77 @@
+// com.example.bsm_management.ui.hostel.AddHostelActivity.kt
 package com.example.bsm_management.ui.hostel
 
+import android.content.Intent
 import android.os.Bundle
-import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.bsm_management.R
-import com.example.bsm_management.databinding.ActivityAddHostelBinding
+import com.example.bsm_management.ui.main.MainActivity
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.materialswitch.MaterialSwitch
+import com.google.android.material.textfield.TextInputEditText
 import database.DatabaseHelper
-import android.content.ContentValues
 
 class AddHostelActivity : AppCompatActivity() {
-    private lateinit var vb: ActivityAddHostelBinding
-    private lateinit var db: DatabaseHelper
-    private var rentMode: String = "ROOM" // ROOM or BED
+
+    private lateinit var edtSampleRoom: TextInputEditText
+    private lateinit var edtArea: TextInputEditText
+    private lateinit var edtPrice: TextInputEditText
+    private lateinit var edtInvoiceDay: TextInputEditText
+    private lateinit var edtDueDays: TextInputEditText
+    private lateinit var ddlMaxPeople: AutoCompleteTextView
+    private lateinit var switchAuto: MaterialSwitch
+    private lateinit var btnClose: MaterialButton
+    private lateinit var btnNext: MaterialButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        vb = ActivityAddHostelBinding.inflate(layoutInflater)
-        setContentView(vb.root)
+        setContentView(R.layout.activity_add_hostel) // đúng file layout bạn gửi
 
-        db = DatabaseHelper(this)
+        findViewById<MaterialToolbar>(R.id.topBar)
+            .setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
-        // Topbar
-        vb.topBar.setNavigationOnClickListener { finish() }
+        edtSampleRoom = findViewById(R.id.edtSampleRoom)
+        edtArea       = findViewById(R.id.edtArea)
+        edtPrice      = findViewById(R.id.edtPrice)
+        edtInvoiceDay = findViewById(R.id.edtInvoiceDay)
+        edtDueDays    = findViewById(R.id.edtDueDays)
+        ddlMaxPeople  = findViewById(R.id.ddlMaxPeople)
+        switchAuto    = findViewById(R.id.switchAuto)
+        btnClose      = findViewById(R.id.btnClose)
+        btnNext       = findViewById(R.id.btnNext)
 
-        // Dropdown max people
-        vb.ddlMaxPeople.setAdapter(
-            ArrayAdapter(this, android.R.layout.simple_list_item_1, (1..10).map { "$it người" })
+        // dropdown “Tối đa người ở / phòng”
+        ddlMaxPeople.setAdapter(
+            android.widget.ArrayAdapter(
+                this, android.R.layout.simple_list_item_1,
+                listOf("Không giới hạn","1","2","3","4","5","6","7","8")
+            )
         )
 
-        // Chọn “thuê theo phòng / giường”
-        vb.cardByRoom.setOnClickListener {
-            rentMode = "ROOM"
-            vb.cardByRoom.strokeColor = getColor(R.color.bsm_green)
-            vb.cardByBed.strokeColor = getColor(R.color.bsm_divider)
-        }
-        vb.cardByBed.setOnClickListener {
-            rentMode = "BED"
-            vb.cardByBed.strokeColor = getColor(R.color.bsm_green)
-            vb.cardByRoom.strokeColor = getColor(R.color.bsm_divider)
-        }
-
-        vb.btnClose.setOnClickListener { finish() }
-        vb.btnNext.setOnClickListener { saveAndNext() }
+        btnClose.setOnClickListener { finish() }
+        btnNext.setOnClickListener { saveAndGo() }
     }
 
-    private fun saveAndNext() {
-        val name = vb.edtName.text?.toString()?.trim().orEmpty()
-        val sampleRooms = vb.edtSampleRoom.text?.toString()?.toIntOrNull() ?: 0
-        val area = vb.edtArea.text?.toString()?.toIntOrNull() ?: 0
-        val price = vb.edtPrice.text?.toString()?.toLongOrNull() ?: 0L
-        val invoiceDay = vb.edtInvoiceDay.text?.toString()?.toIntOrNull() ?: 1
-        val dueDays = vb.edtDueDays.text?.toString()?.toIntOrNull() ?: 5
-        val auto = if (vb.switchAuto.isChecked) 1 else 0
+    private fun saveAndGo() {
+        val auto = switchAuto.isChecked
+        val count = edtSampleRoom.text?.toString()?.trim()?.toIntOrNull() ?: 0
+        val price = edtPrice.text?.toString()?.trim()?.toIntOrNull() ?: 0
 
-        if (name.isEmpty()) {
-            Toast.makeText(this, "Nhập tên nhà trọ", Toast.LENGTH_SHORT).show()
-            return
+        if (auto) {
+            if (count <= 0) { toast("Nhập số lượng phòng mẫu > 0"); return }
+            if (price <= 0) { toast("Nhập giá thuê mẫu > 0"); return }
+            DatabaseHelper(this).insertRoomsAuto(count = count, baseRent = price, floor = 1)
         }
 
-        val cv = ContentValues().apply {
-            put("name", name)
-            put("type", "HOSTEL")
-            put("rentMode", rentMode)
-            put("autoGenerate", auto)
-            put("sampleRooms", sampleRooms)
-            put("sampleArea", area)
-            put("samplePrice", price)
-            put("maxPeople", parseMaxPeople(vb.ddlMaxPeople.text?.toString()))
-            put("invoiceDay", invoiceDay)
-            put("dueDays", dueDays)
-            put("createdAt", System.currentTimeMillis())
-        }
-
-        val id = db.writableDatabase.insert("hostels", null, cv)
-        if (id > 0) {
-            Toast.makeText(this, "Đã lưu nhà trọ #$id", Toast.LENGTH_SHORT).show()
-            // TODO: chuyển bước tiếp theo hoặc finish()
-            finish()
-        } else {
-            Toast.makeText(this, "Lưu thất bại", Toast.LENGTH_SHORT).show()
-        }
+        startActivity(
+            Intent(this, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        )
+        finish()
     }
 
-    private fun parseMaxPeople(text: CharSequence?): Int {
-        val t = text?.toString()?.trim().orEmpty()
-        return t.split(" ").firstOrNull()?.toIntOrNull() ?: 0
-    }
+    private fun toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
 }
