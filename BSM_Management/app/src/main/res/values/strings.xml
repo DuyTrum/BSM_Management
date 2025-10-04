@@ -21,4 +21,29 @@
     <string name="invoice_list_empty">Không có hóa đơn trong tháng %1$d/%2$d</string>
 
     <string name="message">Hộp thư</string>
+
+
+    <string name="title_room_list">Danh sách phòng</string>
+    <string name="floor_ground">Tầng trệt</string>
+    <string name="filter">Lọc</string>
+    <string name="no_rooms">Chưa có phòng ở tầng này</string>
+
+    <string name="no_phone">Chưa có SĐT</string>
+    <string name="contract_due">Hạn h.đồng</string>
+    <string name="use_app">Sử dụng APP</string>
+    <string name="online_contract">Hợp đồng online</string>
+    <string name="app_used">Đã dùng app</string>
+    <string name="app_not_used">Chưa sử dụng app</string>
+    <string name="online_signed">Khách đã ký</string>
+    <string name="online_not_signed">Khách chưa ký</string>
+
+    <string name="status">Trạng thái</string>
+    <string name="status_living">Đang ở</string>
+    <string name="status_next_cycle">Chờ kỳ thu tới</string>
+    <string name="status_empty">Đang trống</string>
+
+    <string name="fill_room">Lấp phòng</string>
+    <string name="post_news">Đăng tin</string>
+
+    <string name="contract_empty">Chưa có hợp đồng</string>
 </resources>

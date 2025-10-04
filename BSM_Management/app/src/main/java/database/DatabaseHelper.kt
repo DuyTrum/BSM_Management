@@ -4,6 +4,7 @@ package database
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.database.DatabaseUtils
 
 class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
@@ -141,6 +142,32 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             db.setTransactionSuccessful()
         } finally { db.endTransaction() }
     }
+    // database/DatabaseHelper.kt  (thêm vào trong class)
+    /** Đếm số phòng hiện có */
+    fun countRooms(): Long =
+        DatabaseUtils.queryNumEntries(readableDatabase, "rooms")
+
+    /** Xóa toàn bộ phòng và dữ liệu liên quan (contracts, invoices) */
+    fun deleteAllRoomsCascade(): Int {
+        val db = writableDatabase
+        db.beginTransaction()
+        return try {
+            // Đếm trước để trả về
+            val current = countRooms().toInt()
+
+            // Xóa rooms -> sẽ tự cascade sang contracts/invoices
+            db.delete("rooms", null, null)
+
+            // Reset auto-increment (nếu muốn)
+            db.execSQL("DELETE FROM sqlite_sequence WHERE name IN ('rooms','contracts','invoices')")
+
+            db.setTransactionSuccessful()
+            current
+        } finally {
+            db.endTransaction()
+        }
+    }
+
 
     companion object {
         const val DB_NAME: String = "bsm.db"

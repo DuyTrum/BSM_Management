@@ -7,7 +7,7 @@
     android:padding="16dp"
     android:background="@color/bsm_sheet_bg">
 
-    <!-- Hàng tiêu đề (icon + title) -->
+    <!-- Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,6 +29,7 @@
             android:layout_marginStart="12dp">
 
             <TextView
+                android:id="@+id/tvSheetTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Danh sách nhà đang quản lý"
@@ -37,9 +38,10 @@
                 android:textColor="@color/bsm_text_primary"/>
 
             <TextView
+                android:id="@+id/tvSheetSubtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Danh sách nhà đang quản lý"
+                android:text="Chọn nhà để quản lý hoặc xóa"
                 android:textSize="13sp"
                 android:textColor="@color/bsm_text_secondary"/>
         </LinearLayout>
@@ -55,24 +57,27 @@
         android:background="@drawable/bg_card">
 
         <TextView
+            android:id="@+id/tvHostelName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nhà trọ DuyHen"
+            android:text="Nhà trọ ..."
             android:textStyle="bold"
             android:textSize="15sp"
             android:textColor="@color/bsm_text_primary"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/tvHostelAddress"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tổ 10 khu phố 1, Tân Định, Bến Cát..."
+            android:text="Địa chỉ ..."
             android:textColor="@color/bsm_text_secondary"
             android:textSize="13sp"/>
 
         <TextView
+            android:id="@+id/tvRoomCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="5 phòng cho thuê"
+            android:text="0 phòng cho thuê"
             android:textColor="@color/bsm_text_secondary"
             android:textSize="13sp"/>
 
@@ -109,7 +114,7 @@
                 android:text="Quản lý"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
-                app:backgroundTint="#19FD00"
+                app:backgroundTint="@color/bsm_green"
                 app:cornerRadius="16dp"
                 app:icon="@drawable/ic_manage"
                 app:iconPadding="8dp"

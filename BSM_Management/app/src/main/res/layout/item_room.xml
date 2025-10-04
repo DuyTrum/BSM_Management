@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="16dp"
+    app:strokeColor="@color/bsm_divider"
+    app:cardBackgroundColor="@android:color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <!-- Header -->
+        <ImageView
+            android:id="@+id/ivAvatar"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_icon_circle_soft"
+            app:srcCompat="@drawable/ic_store_front"
+            app:tint="@color/bsm_green"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/tvRoomName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Phòng 1"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@id/ivAvatar"
+            app:layout_constraintTop_toTopOf="@id/ivAvatar"
+            app:layout_constraintEnd_toStartOf="@id/btnMore"
+            android:layout_marginStart="10dp"/>
+
+        <TextView
+            android:id="@+id/tvPhone"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/no_phone"
+            android:autoLink="phone"
+            app:layout_constraintStart_toStartOf="@id/tvRoomName"
+            app:layout_constraintTop_toBottomOf="@id/tvRoomName"
+            app:layout_constraintEnd_toStartOf="@id/btnMore"
+            android:layout_marginTop="2dp"/>
+
+        <ImageButton
+            android:id="@+id/btnMore"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_icon_circle_soft"
+            app:srcCompat="@drawable/ic_more_vert"
+            app:tint="@color/bsm_text_primary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <!-- Info block -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardInfo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="14dp"
+            app:strokeColor="@color/bsm_divider"
+            app:cardBackgroundColor="@color/bsm_card"
+            app:layout_constraintTop_toBottomOf="@id/ivAvatar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <!-- Hạn HĐ -->
+                <include
+                    android:id="@+id/rowContractDate"
+                    layout="@layout/row_icon_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    app:icon="@drawable/ic_event"
+                    app:title="@string/contract_due"/>
+
+                <!-- App -->
+                <include
+                    android:id="@+id/rowApp"
+                    layout="@layout/row_icon_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    app:icon="@drawable/ic_phone_android"
+                    app:title="@string/use_app"/>
+
+                <!-- Hợp đồng online -->
+                <include
+                    android:id="@+id/rowOnline"
+                    layout="@layout/row_icon_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:icon="@drawable/ic_draw"
+                    app:title="@string/online_contract"/>
+
+                <!-- Chip trạng thái -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="4dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/status"
+                        android:textColor="@color/bsm_text_primary"
+                        android:layout_marginEnd="8dp"/>
+
+                    <TextView
+                        android:id="@+id/chipOccupied"
+                        style="@style/Bsm.AssistChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/status_living"
+                        android:paddingHorizontal="10dp"
+                        android:background="@drawable/bg_chip_success"/>
+
+                    <TextView
+                        android:id="@+id/chipWaiting"
+                        style="@style/Bsm.AssistChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:text="@string/status_next_cycle"
+                        android:paddingHorizontal="10dp"
+                        android:background="@drawable/bg_chip_soft"/>
+
+                    <TextView
+                        android:id="@+id/chipEmpty"
+                        style="@style/Bsm.AssistChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:text="@string/status_empty"
+                        android:paddingHorizontal="10dp"
+                        android:background="@drawable/bg_chip_orange"/>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Rent + tenant count -->
+        <LinearLayout
+            android:id="@+id/bottomInfo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/cardInfo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:id="@+id/tvRent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableStart="@drawable/ic_attach_money"
+                android:drawablePadding="6dp"
+                android:textStyle="bold"
+                android:text="3.000.000 đ"/>
+
+            <TextView
+                android:id="@+id/tvTenantCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_person"
+                android:drawablePadding="6dp"
+                android:text="1/1 người"/>
+        </LinearLayout>
+
+        <!-- Actions -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/bottomInfo"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:orientation="horizontal"
+            android:layout_marginTop="6dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFill"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="38dp"
+                android:text="@string/fill_room"
+                app:cornerRadius="20dp"
+                app:strokeColor="@color/bsm_green"
+                app:icon="@drawable/ic_bolt"
+                app:iconTint="@color/bsm_green"
+                app:iconPadding="6dp"/>
+
+            <Space android:layout_width="8dp" android:layout_height="0dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPost"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="38dp"
+                android:text="@string/post_news"
+                app:cornerRadius="20dp"
+                app:strokeColor="@color/bsm_green"
+                app:icon="@drawable/ic_fiber_new"
+                app:iconTint="@color/bsm_green"
+                app:iconPadding="6dp"/>
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

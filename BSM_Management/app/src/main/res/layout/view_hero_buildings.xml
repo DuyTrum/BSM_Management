@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.motion.widget.MotionLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/heroMotion"
+    android:layout_width="match_parent"
+    android:layout_height="220dp"
+    android:background="#F8FAFF"
+    app:layoutDescription="@xml/scene_hero_buildings"
+    android:padding="16dp">
+
+    <View
+        android:id="@+id/sky"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#009CFD"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <!-- Các đám mây -->
+    <ImageView
+        android:id="@+id/cloud1"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:src="@drawable/ic_cloud"
+        android:alpha="0.8"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/sun"
+        app:layout_constraintBottom_toTopOf="@id/imgMid"
+        android:translationY="20dp" />
+
+    <ImageView
+        android:id="@+id/cloud2"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="40dp"
+        android:alpha="0.7"
+        android:src="@drawable/ic_cloud"
+        android:translationX="60dp"
+        android:translationY="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/cloud1" />
+
+
+    <ImageView
+        android:id="@+id/cloud3"
+        android:layout_width="90dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="-100dp"
+        android:alpha="0.6"
+        android:src="@drawable/ic_cloud"
+        android:translationX="-40dp"
+        android:translationY="100dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cloud1" />
+
+    <ImageView
+        android:id="@+id/sun"
+        android:layout_width="70dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="24dp"
+        android:src="@drawable/ic_circle_yellow"
+        app:layout_constraintEnd_toEndOf="@id/sky"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imgLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/bldg_left"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <ImageView
+        android:id="@+id/imgMid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/bldg_mid"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/imgLeft"
+        app:layout_constraintEnd_toStartOf="@id/imgRight"/>
+
+    <ImageView
+        android:id="@+id/imgRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/bldg_right"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+</androidx.constraintlayout.motion.widget.MotionLayout>
