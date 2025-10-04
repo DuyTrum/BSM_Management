@@ -20,4 +20,5 @@
     <string name="pick_month">Chọn tháng</string>
     <string name="invoice_list_empty">Không có hóa đơn trong tháng %1$d/%2$d</string>
 
+    <string name="message">Hộp thư</string>
 </resources>

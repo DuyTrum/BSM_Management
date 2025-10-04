@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
     <application
         android:name="database.App"
         android:allowBackup="true"
@@ -13,12 +17,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BSM_Management">
         <activity
+            android:name=".ui.hostel.AddHostelActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.qr.QrScanActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.invoice.InvoiceListActivity"
             android:exported="false" />
-         <activity
+        <activity
             android:name=".ui.invoice.AddInvoiceActivity"
             android:exported="false" />
-         <activity
+        <activity
             android:name=".ui.invoice.InvoiceActivity"
             android:exported="false" />
         <activity
@@ -32,21 +42,20 @@
             android:exported="false" />
         <activity
             android:name=".ui.auth.RegisterActivity"
-            android:exported="false" />
-<!--        <activity-->
-<!--            android:name=".ui.auth.LoginActivity"-->
-<!--            android:exported="false" />-->
+            android:exported="false" /> <!-- <activity -->
+        <!-- android:name=".ui.auth.LoginActivity" -->
+        <!-- android:exported="false" /> -->
         <activity
             android:name=".ui.contract.AddContractActivity"
-            android:exported="false" />
+            android:exported="false" /> <!-- <activity -->
+        <!-- android:name=".ui.main.MainActivity" -->
+        <!-- android:exported="false" /> -->
         <activity
             android:name=".ui.main.MainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.auth.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

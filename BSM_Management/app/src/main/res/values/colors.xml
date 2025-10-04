@@ -63,6 +63,12 @@
     <color name="bsm_warning_bg">#FFF1EA</color>
     <color name="bsm_success">#27AE60</color>
     <color name="bsm_orange">#FF6D00</color>
+    <color name="bsm_card_pressed">#FFE0E0E0</color>
+    <color name="bsm_card_selected">#FFF5F5F5</color>
+    <color name="bsm_sheet_bg">#FFF9FC</color>
+    <color name="bsm_green">#22A447</color>
+    <color name="bsm_green_dark">#1B7F36</color>
+    <color name="bsm_green_light">#E7F6EE</color>
     <!-- Transparent -->
     <color name="trans">#00000000</color>
 </resources>

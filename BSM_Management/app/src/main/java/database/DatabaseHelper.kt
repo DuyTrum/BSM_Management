@@ -1,3 +1,4 @@
+// database/DatabaseHelper.kt
 package database
 
 import android.content.Context
@@ -5,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
 class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
+
     override fun onConfigure(db: SQLiteDatabase) {
         super.onConfigure(db)
         db.setForeignKeyConstraintsEnabled(true)
@@ -115,6 +117,9 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
         // Indexes
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_contracts_active ON contracts(active);")
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_invoices_paid ON invoices(paid);")
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_messages_createdAt ON messages(createdAt);")
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_messages_pinned ON messages(pinned);")
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_hostels_createdAt ON hostels(createdAt);")
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
