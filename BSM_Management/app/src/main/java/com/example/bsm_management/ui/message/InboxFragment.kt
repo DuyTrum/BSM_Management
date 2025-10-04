@@ -1,48 +1,75 @@
 package com.example.bsm_management.ui.message
 
+import android.app.AlertDialog
+import android.graphics.Rect
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.bsm_management.databinding.FragmentInboxBinding
+import androidx.recyclerview.widget.RecyclerView
+import com.example.bsm_management.R
+import com.example.bsm_management.data.InboxStore
 
-class InboxFragment : Fragment() {
+class InboxFragment : Fragment(R.layout.fragment_inbox) {
 
-    private var _vb: FragmentInboxBinding? = null
-    private val vb get() = _vb!!
-
-    private val adapter = MessageAdapter { message ->
-        // TODO: xử lý khi click tin nhắn (mở chi tiết)
+    private val adapter = MessageAdapter { item ->
+        // TODO: mở màn chat/chi tiết
     }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _vb = FragmentInboxBinding.inflate(inflater, container, false)
-        return vb.root
-    }
+    private lateinit var store: InboxStore
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        store = InboxStore(requireContext())
 
-        vb.rvMessages.layoutManager = LinearLayoutManager(requireContext())
-        vb.rvMessages.adapter = adapter
+        val rv = view.findViewById<RecyclerView>(R.id.rvMessages)
+        rv.layoutManager = LinearLayoutManager(requireContext())
+        rv.adapter = adapter
+        rv.addItemDecoration(object : RecyclerView.ItemDecoration() {
+            override fun getItemOffsets(outRect: Rect, v: View, parent: RecyclerView, state: RecyclerView.State) {
+                outRect.bottom = resources.getDimensionPixelSize(R.dimen.pad_m)
+            }
+        })
 
-        // Demo dữ liệu mẫu
-        adapter.submitList(
-            listOf(
-                MessageItem("Nguyễn Văn A", "Hợp đồng sắp hết hạn...", "10:30", true),
-                MessageItem("Hệ thống", "Bạn có 1 hóa đơn mới", "Hôm qua", false),
-                MessageItem("Lê Thị B", "Cho tôi hỏi về phòng trọ...", "12/09", true),
-            )
-        )
+        // Load lần đầu
+        refreshList()
+
+        // FAB thêm message
+        view.findViewById<View>(R.id.fabAdd).setOnClickListener {
+            showAddDialog()
+        }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _vb = null
+    private fun refreshList() {
+        adapter.submitList(store.getAll())
+    }
+
+    private fun showAddDialog() {
+        val ctx = requireContext()
+        val inputTitle = EditText(ctx).apply { hint = "Tiêu đề" }
+        val inputContent = EditText(ctx).apply { hint = "Nội dung" }
+
+        val container = androidx.appcompat.widget.LinearLayoutCompat(ctx).apply {
+            orientation = androidx.appcompat.widget.LinearLayoutCompat.VERTICAL
+            val pad = resources.getDimensionPixelSize(R.dimen.pad_l)
+            setPadding(pad, pad, pad, 0)
+            addView(inputTitle)
+            addView(inputContent)
+        }
+
+        AlertDialog.Builder(ctx)
+            .setTitle("Tin nhắn mới")
+            .setView(container)
+            .setPositiveButton("Lưu") { d, _ ->
+                val title = inputTitle.text?.toString()?.trim().orEmpty()
+                val content = inputContent.text?.toString()?.trim().orEmpty()
+                if (title.isNotEmpty()) {
+                    store.insert(title, content, tag = null, pinned = false)
+                    refreshList()
+                }
+                d.dismiss()
+            }
+            .setNegativeButton("Hủy", null)
+            .show()
     }
 }

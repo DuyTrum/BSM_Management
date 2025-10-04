@@ -1,6 +1,7 @@
 package com.example.bsm_management.ui.message
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -12,8 +13,8 @@ class MessageAdapter(private val onClick: (MessageItem) -> Unit) :
 
     companion object {
         private val DIFF = object : DiffUtil.ItemCallback<MessageItem>() {
-            override fun areItemsTheSame(old: MessageItem, new: MessageItem) = old === new
-            override fun areContentsTheSame(old: MessageItem, new: MessageItem) = old == new
+            override fun areItemsTheSame(o: MessageItem, n: MessageItem) = o.title == n.title && o.time == n.time
+            override fun areContentsTheSame(o: MessageItem, n: MessageItem) = o == n
         }
     }
 
@@ -27,11 +28,12 @@ class MessageAdapter(private val onClick: (MessageItem) -> Unit) :
     override fun onBindViewHolder(holder: VH, position: Int) {
         val item = getItem(position)
         with(holder.vb) {
-            tvSender.text = item.sender
-            tvContent.text = item.content
+            tvTitle.text = item.title
+            tvSubtitle.text = item.content
             tvTime.text = item.time
-            root.alpha = if (item.unread) 1f else 0.6f
+            ivPin.visibility = if (item.pinned) View.VISIBLE else View.GONE
             root.setOnClickListener { onClick(item) }
         }
     }
 }
+

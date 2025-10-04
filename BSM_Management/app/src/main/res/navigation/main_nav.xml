@@ -12,4 +12,18 @@
         android:id="@+id/homeFragment"
         android:name="com.example.bsm_management.ui.dashboard.DashboardFragment"
         android:label="home" />
+<!--    <fragment-->
+<!--        android:id="@+id/tasksFragment"-->
+<!--        android:name="com.example.bsm_management.ui.tasks.TasksFragment"-->
+<!--        android:label="Công việc"/>-->
+
+<!--    <fragment-->
+<!--        android:id="@+id/findFragment"-->
+<!--        android:name="com.example.bsm_management.ui.find.FindFragment"-->
+<!--        android:label="Tìm khách"/>-->
+
+    <fragment
+        android:id="@+id/ProfileFragment"
+        android:name="com.example.bsm_management.ui.profile.ProfileFragment"
+        android:label="Thêm +"/>
 </navigation>

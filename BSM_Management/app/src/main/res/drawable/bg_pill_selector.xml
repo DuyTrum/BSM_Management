@@ -1,0 +1,17 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- checked -->
+    <item android:state_checked="true">
+        <shape>
+            <solid android:color="@color/pri"/> <!-- xanh chủ đạo -->
+            <corners android:radius="24dp"/>
+        </shape>
+    </item>
+    <!-- unchecked -->
+    <item>
+        <shape>
+            <solid android:color="@color/bsm_card_selected"/> <!-- xám nhạt bạn đã có -->
+            <corners android:radius="24dp"/>
+            <stroke android:width="1dp" android:color="@color/bsm_divider"/>
+        </shape>
+    </item>
+</selector>
