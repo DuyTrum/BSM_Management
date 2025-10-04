@@ -1,0 +1,13 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="90dp" android:height="140dp"
+    android:viewportWidth="90" android:viewportHeight="140">
+    <!-- thân nhà -->
+    <path android:fillColor="#3D6FB6" android:pathData="M0,30h90v110h-90z"/>
+    <!-- mái -->
+    <path android:fillColor="#2E5691" android:pathData="M0,30h90l-10,-10h-70z"/>
+    <!-- cửa sổ -->
+    <path android:fillColor="#E6F1FF" android:pathData="M12,48h16v16h-16z"/>
+    <path android:fillColor="#E6F1FF" android:pathData="M12,70h16v16h-16z"/>
+    <path android:fillColor="#E6F1FF" android:pathData="M36,48h16v16h-16z"/>
+    <path android:fillColor="#E6F1FF" android:pathData="M36,70h16v16h-16z"/>
+</vector>

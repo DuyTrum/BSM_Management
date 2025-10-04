@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         val db = database.DatabaseHelper(this)
         if (!db.hasAnyRoom()) {
             startActivity(
-                Intent(this, com.example.bsm_management.ui.hostel.AddHostelActivity::class.java)
+                Intent(this, com.example.bsm_management.ui.intro.EmptyStateActivity::class.java)
                     .putExtra("firstSetup", true)
             )
             finish()

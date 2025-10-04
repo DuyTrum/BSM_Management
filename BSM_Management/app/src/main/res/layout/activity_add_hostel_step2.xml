@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- ===== DỊCH VỤ (4 dòng, tái dùng item_service_line) ===== -->
+    <include android:id="@+id/svcElectric" layout="@layout/item_service_line"/>
+    <include android:id="@+id/svcWater"   layout="@layout/item_service_line"/>
+    <include android:id="@+id/svcTrash"   layout="@layout/item_service_line"/>
+    <include android:id="@+id/svcInternet" layout="@layout/item_service_line"/>
+
+    <View android:layout_width="match_parent" android:layout_height="1dp"
+        android:layout_marginVertical="16dp" android:background="@color/bsm_divider"/>
+
+    <!-- ===== 3 TÍNH NĂNG ===== -->
+    <include android:id="@+id/featApp"   layout="@layout/item_feature_switch"/>
+    <include android:id="@+id/featZalo"  layout="@layout/item_feature_switch"/>
+    <include android:id="@+id/featImage" layout="@layout/item_feature_switch"/>
+
+    <View android:layout_width="match_parent" android:layout_height="1dp"
+        android:layout_marginVertical="16dp" android:background="@color/bsm_divider"/>
+
+    <!-- ===== ĐỊA CHỈ & VỊ TRÍ ===== -->
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.Material3.CardView.Outlined"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="16dp"
+        app:strokeColor="@color/bsm_divider">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                android:text="Địa chỉ &amp; vị trí"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtAddress"
+                    android:hint="Nhập địa chỉ (ví dụ: 10 Nguyễn Huệ, Q.1...)"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnMyLocation"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="Vị trí hiện tại"
+                    app:cornerRadius="16dp"/>
+
+                <Space android:layout_width="12dp" android:layout_height="0dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPickOnMap"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="Mở Google Maps"
+                    app:cornerRadius="16dp"/>
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>
