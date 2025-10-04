@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/bsm_sheet_bg">
+
+    <!-- Hàng tiêu đề (icon + title) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/bg_icon_circle"
+            android:padding="8dp"
+            android:src="@drawable/ic_hostel" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Danh sách nhà đang quản lý"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="@color/bsm_text_primary"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Danh sách nhà đang quản lý"
+                android:textSize="13sp"
+                android:textColor="@color/bsm_text_secondary"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Card nhà -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="12dp"
+        android:padding="12dp"
+        android:background="@drawable/bg_card">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nhà trọ DuyHen"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:textColor="@color/bsm_text_primary"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tổ 10 khu phố 1, Tân Định, Bến Cát..."
+            android:textColor="@color/bsm_text_secondary"
+            android:textSize="13sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5 phòng cho thuê"
+            android:textColor="@color/bsm_text_secondary"
+            android:textSize="13sp"/>
+
+        <!-- Nút hành động -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="12dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDelete"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="Xóa nhà"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                app:backgroundTint="#FD6500"
+                app:cornerRadius="16dp"
+                app:icon="@drawable/ic_delete"
+                app:iconPadding="8dp"
+                app:iconTint="@android:color/white" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnManage"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:text="Quản lý"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                app:backgroundTint="#19FD00"
+                app:cornerRadius="16dp"
+                app:icon="@drawable/ic_manage"
+                app:iconPadding="8dp"
+                app:iconTint="@android:color/white" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -12,17 +12,12 @@
         android:title="Hộp thư" />
 
     <item
-        android:id="@+id/nav_tasks"
-        android:icon="@drawable/ic_task"
-        android:title="Công việc" />
-
-    <item
         android:id="@+id/nav_search"
         android:icon="@drawable/ic_person_search"
         android:title="Tìm khách" />
 
     <item
-        android:id="@+id/nav_more"
+        android:id="@+id/ProfileFragment"
         android:icon="@drawable/ic_more"
         android:title="Thêm +" />
 
