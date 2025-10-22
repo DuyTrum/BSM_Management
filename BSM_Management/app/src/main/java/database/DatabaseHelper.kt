@@ -4,7 +4,6 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-
 import com.example.bsm_management.ui.contract.Contract
 import android.database.DatabaseUtils
 
@@ -69,6 +68,18 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
                 reason TEXT,
                 FOREIGN KEY(roomId) REFERENCES rooms(id) ON DELETE CASCADE,
                 UNIQUE(roomId, periodYear, periodMonth)
+            );
+        """.trimIndent())
+
+        // ✅ FIX CRASH: thêm bảng messages trước khi tạo index
+        db.execSQL("""
+            CREATE TABLE IF NOT EXISTS messages (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                sender TEXT,
+                receiver TEXT,
+                content TEXT,
+                pinned INTEGER NOT NULL DEFAULT 0,
+                createdAt INTEGER NOT NULL
             );
         """.trimIndent())
 
@@ -149,7 +160,7 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
                  'Thanh toán định kỳ');
         """.trimIndent())
 
-        // Indexes
+        // Indexes (OK sau khi có bảng messages)
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_contracts_active ON contracts(active);")
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_invoices_paid ON invoices(paid);")
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_messages_createdAt ON messages(createdAt);")
@@ -157,35 +168,27 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        // Heal schema – đảm bảo không còn hostels legacy
         if (oldVersion < 7) {
             db.beginTransaction()
             try {
-                // xoá index cũ nếu có
                 db.execSQL("DROP INDEX IF EXISTS idx_hostels_createdAt;")
-                // xoá table hostels nếu tồn tại
                 db.execSQL("DROP TABLE IF EXISTS hostels;")
-                // re-create core schema & indexes
                 onCreate(db)
                 db.setTransactionSuccessful()
             } finally { db.endTransaction() }
             return
         }
-
-        // các bản vá về sau (nếu có) – hiện tại không cần
-        onCreate(db) // chạy IF NOT EXISTS an toàn
+        onCreate(db)
     }
 
-    // ======= Helpers cho flow chỉ dùng rooms =======
+    // ======= Helpers =======
 
-    /** Có phòng nào trong DB chưa? */
     fun hasAnyRoom(): Boolean {
         readableDatabase.rawQuery("SELECT 1 FROM rooms LIMIT 1", null).use { c ->
             return c.moveToFirst()
         }
     }
 
-    /** Tạo N phòng tự động: P001..Pnnn, floor=1, status='EMPTY', baseRent=price */
     fun insertRoomsAuto(count: Int, baseRent: Int, startIndex: Int = 1, floor: Int = 1) {
         if (count <= 0) return
         val db = writableDatabase
@@ -197,7 +200,7 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             var idx = startIndex
             var created = 0
             while (created < count) {
-                val name = "P%03d".format(idx) // P001, P002, ...
+                val name = "P%03d".format(idx)
                 try {
                     stmt.clearBindings()
                     stmt.bindString(1, name)
@@ -205,33 +208,23 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
                     stmt.bindLong(3, baseRent.toLong())
                     stmt.executeInsert()
                     created++
-                } catch (_: Exception) {
-                    // trùng tên -> tăng số tiếp
-                }
+                } catch (_: Exception) { }
                 idx++
             }
             db.setTransactionSuccessful()
         } finally { db.endTransaction() }
     }
-    // database/DatabaseHelper.kt  (thêm vào trong class)
-    /** Đếm số phòng hiện có */
+
     fun countRooms(): Long =
         DatabaseUtils.queryNumEntries(readableDatabase, "rooms")
 
-    /** Xóa toàn bộ phòng và dữ liệu liên quan (contracts, invoices) */
     fun deleteAllRoomsCascade(): Int {
         val db = writableDatabase
         db.beginTransaction()
         return try {
-            // Đếm trước để trả về
             val current = countRooms().toInt()
-
-            // Xóa rooms -> sẽ tự cascade sang contracts/invoices
             db.delete("rooms", null, null)
-
-            // Reset auto-increment (nếu muốn)
             db.execSQL("DELETE FROM sqlite_sequence WHERE name IN ('rooms','contracts','invoices')")
-
             db.setTransactionSuccessful()
             current
         } finally {
@@ -239,9 +232,8 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
         }
     }
 
-
     companion object {
         const val DB_NAME = "bsm.db"
-        private const val DB_VERSION = 1  // tăng version
+        private const val DB_VERSION = 1  // giữ nguyên
     }
 }
