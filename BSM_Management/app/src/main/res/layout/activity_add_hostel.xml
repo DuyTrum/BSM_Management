@@ -2,31 +2,49 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bsm_sheet_bg">
+    android:background="@color/bsm_sheet_bg"
+    android:fitsSystemWindows="true">
 
-    <!-- Top app bar -->
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/topBar"
+    <!-- AppBar (đúng chỗ dùng layout_scrollFlags) -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        app:navigationIcon="@drawable/ic_back"
-        app:title="Thêm mới nhà cho thuê"
-        app:titleCentered="true"
-        app:titleTextColor="@android:color/black"
-        android:background="@android:color/white"
-        app:layout_scrollFlags="scroll|enterAlways" />
+        android:layout_height="wrap_content"
+        android:background="@android:color/white">
 
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topBar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@android:color/white"
+            app:title="Thêm mới nhà cho thuê"
+            app:titleCentered="true"
+            app:titleTextColor="@color/bsm_text_primary"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:navigationIconTint="@color/bsm_text_primary"
+            app:layout_scrollFlags="scroll|enterAlways"/>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Nội dung -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:padding="16dp"
-        android:layout_marginTop="56dp">
+        android:paddingBottom="112dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- ====== BƯỚC 1 ====== -->
         <LinearLayout
+            android:id="@+id/step1Container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -52,12 +70,14 @@
                     android:orientation="vertical"
                     android:layout_weight="1"
                     android:layout_marginStart="12dp">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Thông tin nhà cho thuê"
                         android:textStyle="bold"
                         android:textSize="16sp"/>
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -91,20 +111,17 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                        android:layout_marginTop="8dp">
+                        android:layout_marginTop="8dp"
+                        app:endIconMode="clear_text"
+                        app:endIconDrawable="@drawable/ic_close"
+                        app:endIconTint="@color/bsm_text_primary">
+
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edtType"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Nhà trọ"
                             android:enabled="false"/>
-                        <ImageButton
-                            android:id="@+id/btnClearType"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:layout_gravity="end|center_vertical"
-                            android:background="@drawable/bg_icon_circle_soft"
-                            android:src="@drawable/ic_close"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- Thuê theo phòng / giường -->
@@ -123,12 +140,14 @@
                             app:strokeColor="@color/bsm_green"
                             app:strokeWidth="2dp"
                             android:foreground="?attr/selectableItemBackground">
+
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
                                 android:orientation="vertical"
                                 android:padding="12dp">
+
                                 <ImageView
                                     android:layout_width="32dp"
                                     android:layout_height="32dp"
@@ -140,14 +159,12 @@
                                     android:text="Thuê theo phòng"
                                     android:textStyle="bold"
                                     android:layout_marginTop="8dp"/>
-
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Tính tiền thuê theo phòng"
                                     android:textColor="@color/bsm_text_secondary"
                                     android:textSize="12sp"/>
-
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
 
@@ -163,12 +180,14 @@
                             app:cardCornerRadius="16dp"
                             app:strokeColor="@color/bsm_divider"
                             android:foreground="?attr/selectableItemBackground">
+
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
                                 android:orientation="vertical"
                                 android:padding="12dp">
+
                                 <ImageView
                                     android:layout_width="32dp"
                                     android:layout_height="32dp"
@@ -180,14 +199,12 @@
                                     android:text="Thuê theo giường"
                                     android:textStyle="bold"
                                     android:layout_marginTop="8dp"/>
-
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Tính tiền theo giường"
                                     android:textColor="@color/bsm_text_secondary"
                                     android:textSize="12sp"/>
-
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
                     </LinearLayout>
@@ -198,6 +215,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp">
+
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edtName"
                             android:layout_width="match_parent"
@@ -233,6 +251,7 @@
                     android:orientation="vertical"
                     android:layout_weight="1"
                     android:layout_marginStart="12dp">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -245,34 +264,33 @@
                         android:layout_height="wrap_content"
                         android:text="Theo mẫu hoặc từ excel hoặc thủ công"
                         android:textColor="@color/bsm_text_secondary"/>
-
                 </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="8dp">
+                android:layout_marginTop="8dp"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_gravity="center_vertical"
-                    android:baselineAligned="false">
-                <TextView
+                    android:orientation="horizontal">
+
+                    <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Đang khởi tạo tự động theo mẫu"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
+
                     <com.google.android.material.materialswitch.MaterialSwitch
                         android:id="@+id/switchAuto"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:checked="true"/>
+                        android:checked="true" />
                 </LinearLayout>
 
                 <!-- Box: số tầng -->
@@ -283,6 +301,7 @@
                     android:layout_marginTop="12dp"
                     app:cardCornerRadius="16dp"
                     app:strokeColor="@color/bsm_divider">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -293,45 +312,46 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Thiết lập số tầng (Gồm tầng trệt) *"
-                            android:textStyle="bold"/>
+                            android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Tầng trệt (không có tầng)"
-                            android:textColor="@color/bsm_text_secondary"/>
-
+                            android:textColor="@color/bsm_text_secondary" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
+                            android:layout_marginTop="8dp"
                             android:gravity="center_vertical"
-                            android:layout_marginTop="8dp">
+                            android:orientation="horizontal">
 
                             <com.google.android.material.textfield.TextInputLayout
                                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1">
+
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/edtSampleRoom"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:inputType="number"
-                                    android:hint="Số lượng phòng mẫu" />
-
+                                    android:hint="Số lượng phòng mẫu"
+                                    android:inputType="number" />
                             </com.google.android.material.textfield.TextInputLayout>
 
-                            <Space android:layout_width="12dp" android:layout_height="0dp"/>
+                            <Space
+                                android:layout_width="12dp"
+                                android:layout_height="0dp" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="48dp"
-                                android:gravity="center"
-                                android:text="phòng"
                                 android:background="@drawable/bg_chip_soft"
-                                android:paddingHorizontal="12dp"/>
+                                android:gravity="center"
+                                android:paddingHorizontal="12dp"
+                                android:text="phòng" />
                         </LinearLayout>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -340,54 +360,58 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="12dp">
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
 
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1">
+
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edtArea"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="number"
-                            android:hint="Diện tích mẫu"/>
+                            android:hint="Diện tích mẫu"
+                            android:inputType="number" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="48dp"
                         android:layout_marginStart="8dp"
-                        android:gravity="center"
-                        android:text="m2"
                         android:background="@drawable/bg_chip_soft"
-                        android:paddingHorizontal="12dp"/>
+                        android:gravity="center"
+                        android:paddingHorizontal="12dp"
+                        android:text="m2" />
 
-                    <Space android:layout_width="12dp" android:layout_height="0dp"/>
+                    <Space
+                        android:layout_width="12dp"
+                        android:layout_height="0dp" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1">
+
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edtPrice"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="number"
-                            android:hint="Nhập giá"/>
+                            android:hint="Nhập giá"
+                            android:inputType="number" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="48dp"
                         android:layout_marginStart="8dp"
-                        android:gravity="center"
-                        android:text="đ/tháng"
                         android:background="@drawable/bg_chip_soft"
-                        android:paddingHorizontal="12dp"/>
+                        android:gravity="center"
+                        android:paddingHorizontal="12dp"
+                        android:text="đ/tháng" />
                 </LinearLayout>
 
                 <!-- Tối đa người / phòng (dropdown) -->
@@ -396,128 +420,163 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp">
+
                     <AutoCompleteTextView
                         android:id="@+id/ddlMaxPeople"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Tối đa người ở / phòng"
-                        android:inputType="none"/>
+                        android:inputType="none" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- SECTION 3: Cài đặt ngày chốt & hạn hoá đơn -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:layout_marginTop="16dp"
                     android:gravity="center_vertical"
-                    android:layout_marginTop="16dp">
+                    android:orientation="horizontal">
+
                     <ImageView
-                        android:layout_width="36dp" android:layout_height="36dp"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
                         android:background="@drawable/bg_icon_circle"
-                        android:padding="8dp" android:src="@drawable/ic_tag"/>
+                        android:padding="8dp"
+                        android:src="@drawable/ic_tag" />
+
                     <LinearLayout
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:orientation="vertical" android:layout_weight="1"
-                        android:layout_marginStart="12dp">
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Cài đặt ngày chốt &amp; hạn hóa đơn"
-                            android:textStyle="bold"
-                            android:textSize="16sp"/>
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Tùy chỉnh tính năng sử dụng cho Nhà trọ"
-                            android:textColor="@color/bsm_text_secondary"/>
-
+                            android:textColor="@color/bsm_text_secondary" />
                     </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="12dp">
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
 
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1">
+
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edtInvoiceDay"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="number"
-                            android:hint="Ngày lập hóa đơn"/>
+                            android:hint="Ngày lập hóa đơn"
+                            android:inputType="number" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <Space android:layout_width="12dp" android:layout_height="0dp"/>
+                    <Space
+                        android:layout_width="12dp"
+                        android:layout_height="0dp" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1">
+
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edtDueDays"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="number"
-                            android:hint="Hạn đóng tiền (ngày)"/>
+                            android:hint="Hạn đóng tiền (ngày)"
+                            android:inputType="number" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+
+        <!-- ====== BƯỚC 2: include, ẩn ban đầu (hiện thử trên preview) ====== -->
+        <include
+            android:id="@+id/step2Container"
+            layout="@layout/activity_add_hostel_step2"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
 
     <!-- Bottom actions -->
-    <LinearLayout
+<com.google.android.material.card.MaterialCardView
+android:id="@+id/bottomBar"
+android:layout_width="match_parent"
+android:layout_height="96dp"
+android:layout_gravity="bottom"
+android:backgroundTint="@android:color/white"
+app:cardCornerRadius="0dp"
+app:cardUseCompatPadding="true"
+app:cardElevation="8dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="88dp"
-        android:background="@android:color/white"
-        android:gravity="center_vertical"
-        android:padding="16dp"
-        android:layout_gravity="bottom"
-        android:elevation="8dp">
+        android:layout_height="match_parent"
+        android:padding="12dp">
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/progress"
-            android:layout_width="0dp"
+            android:layout_width="5dp"
             android:layout_height="6dp"
-            android:layout_weight="1"
-            android:progress="35"
-            app:trackThickness="6dp"
-            app:trackColor="@color/bsm_divider"
+            android:progress="40"
             app:indicatorColor="@color/bsm_green"
-            android:layout_marginBottom="12dp"
-            android:layout_gravity="top"/>
-
-        <Space android:layout_width="0dp" android:layout_height="0dp"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:trackColor="@color/bsm_divider"
+            app:trackThickness="6dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnClose"
+            style="@style/Widget.Material3.Button.ElevatedButton"
             android:layout_width="0dp"
             android:layout_height="48dp"
-            android:layout_weight="1"
+            android:layout_marginEnd="12dp"
+            android:enabled="false"
             android:text="Đóng"
             android:textStyle="bold"
+            app:backgroundTint="@color/bsm_divider"
             app:cornerRadius="16dp"
-            app:backgroundTint="@color/bsm_divider"/>
-
-        <Space android:layout_width="12dp" android:layout_height="0dp"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnNext"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnNext"
+            style="@style/Widget.Material3.Button"
             android:layout_width="0dp"
             android:layout_height="48dp"
-            android:layout_weight="1"
             android:text="Tiếp theo"
+            android:textColor="@android:color/white"
             android:textStyle="bold"
-            app:cornerRadius="16dp"
             app:backgroundTint="@color/bsm_green"
-            android:textColor="@android:color/white"/>
-    </LinearLayout>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+            app:cornerRadius="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@id/btnClose" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>

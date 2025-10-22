@@ -10,7 +10,11 @@
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> <!-- Phần cứng (nếu thật sự cần camera cho tính năng quét QR, giữ lại) -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Camera cho QR -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
@@ -28,7 +32,6 @@
         <activity
             android:name=".ui.contract.ContractDetailActivity"
             android:exported="false" />
-
         <service android:name=".service.NotificationService" />
 
         <activity
@@ -54,8 +57,17 @@
             android:name=".ui.hostel.AddHostelActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.qr.QrScanActivity"
+            android:name=".ui.hostel.AddHostelStep2Activity"
             android:exported="false" />
+        <activity
+            android:name=".ui.intro.EmptyStateActivity"
+            android:exported="false" /> <!-- AddHostel -->
+        <activity
+            android:name=".ui.hostel.AddHostelActivity"
+            android:exported="false" /> <!-- QR Scan -->
+        <activity
+            android:name=".ui.qr.QrScanActivity"
+            android:exported="false" /> <!-- Invoices -->
         <activity
             android:name=".ui.invoice.InvoiceListActivity"
             android:exported="false" />
@@ -64,7 +76,7 @@
             android:exported="false" />
         <activity
             android:name=".ui.invoice.InvoiceActivity"
-            android:exported="false" />
+            android:exported="false" /> <!-- Contracts -->
         <activity
             android:name=".ui.contract.ContractListActivity"
             android:exported="false" />
@@ -72,8 +84,11 @@
             android:name=".ui.contract.ContractRoomActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.contract.AddContractActivity"
+            android:exported="false" /> <!-- Profile -->
+        <activity
             android:name=".ui.profile.ChangePasswordActivity"
-            android:exported="false" />
+            android:exported="false" /> <!-- Auth -->
         <activity
             android:name=".ui.auth.RegisterActivity"
             android:exported="false" />

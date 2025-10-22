@@ -1,0 +1,18 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="64dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Nền bo tròn -->
+    <path
+        android:fillColor="#E8F5E9"
+        android:pathData="M4,2h16a2,2 0,0 1,2 2v16a2,2 0,0 1,-2 2H4a2,2 0,0 1,-2 -2V4a2,2 0,0 1,2 -2z"/>
+    <!-- Màn hình điện thoại -->
+    <path
+        android:fillColor="#43A047"
+        android:pathData="M8,3h8a1,1 0,0 1,1 1v16a1,1 0,0 1,-1 1H8a1,1 0,0 1,-1 -1V4a1,1 0,0 1,1 -1zM9,5v14h6V5H9z" />
+    <!-- Chấm tròn bên trong (app) -->
+    <path
+        android:fillColor="#81C784"
+        android:pathData="M12,14a1,1 0,1 1,0 2a1,1 0,0 1,0 -2z" />
+</vector>

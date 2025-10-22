@@ -1,0 +1,17 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="@color/bsm_green">
+
+    <!-- Hình folder -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M10,4L12,6H20a2,2 0,0 1,2 2v10a2,2 0,0 1,-2 2H4a2,2 0,0 1,-2 -2V6a2,2 0,0 1,2 -2h6zM4,8v10h16V8H4z" />
+
+    <!-- Tờ giấy hợp đồng bên trong -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M7,10h10v1.5H7zM7,13h10v1.5H7zM7,16h6v1.5H7z" />
+</vector>

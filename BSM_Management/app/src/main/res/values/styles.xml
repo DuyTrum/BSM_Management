@@ -10,5 +10,13 @@
         <item name="itemPaddingBottom">2dp</item>
 
     </style>
+    <style name="Bsm.AssistChip" parent="Widget.Material3.Chip.Assist">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/bsm_text_primary</item>
+        <item name="chipCornerRadius">20dp</item>
+        <item name="chipStrokeWidth">0dp</item>
+        <item name="chipBackgroundColor">@color/bsm_sheet_bg</item>
+    </style>
+
 
 </resources>
