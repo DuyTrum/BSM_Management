@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Label"
-        android:textSize="14sp"
+        android:textSize="@dimen/txt_m"
         android:textStyle="bold"
         android:textColor="@color/txt_sec"
         android:layout_marginBottom="6dp"/>
@@ -22,6 +22,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Giá trị"
-        android:textSize="14sp"
+        android:textSize="@dimen/txt_m"
         android:textColor="@color/txt_pri"/>
 </LinearLayout>

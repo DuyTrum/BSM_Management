@@ -51,26 +51,6 @@
                     android:spinnerMode="dialog"
                     android:background="@drawable/bg_border" />
 
-                <!-- DatePicker custom: Hạn đóng tiền -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Hạn đóng tiền *"
-                    android:textSize="@dimen/txt_m"
-                    android:textColor="@color/txt_pri"
-                    android:layout_marginTop="@dimen/mar_l"/>
-
-                <TextView
-                    android:id="@+id/tvDueDate"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/edt_h"
-                    android:gravity="center_vertical"
-                    android:paddingStart="@dimen/pad_m"
-                    android:paddingEnd="@dimen/pad_m"
-                    android:background="@drawable/bg_border"
-                    android:textColor="@color/txt_pri"
-                    android:textSize="@dimen/txt_m"
-                    android:text="25/09/2025" />
             </LinearLayout>
 
             <!-- PANEL: Thu tiền tháng đầu tiên -->
@@ -159,73 +139,36 @@
                         </LinearLayout>
                     </LinearLayout>
 
-
-                    <!-- Bảng 2x2 -->
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <!-- THAY toàn bộ ConstraintLayout màu xanh bằng block 1 hàng này -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/mar_l"
                         android:background="@drawable/bg_box_green"
-                        android:padding="@dimen/pad_m"
-                        xmlns:app="http://schemas.android.com/apk/res-auto">
-
-                        <androidx.constraintlayout.widget.Guideline
-                            android:id="@+id/g2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            app:layout_constraintGuide_percent="0.5"/>
+                        android:padding="@dimen/pad_l"
+                        android:orientation="horizontal">
 
                         <TextView
-                            android:id="@+id/tvMonthDay"
+                            android:id="@+id/tvSubtotalLabel"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="0 tháng, 24 ngày"
-                            android:textSize="@dimen/txt_s"
-                            android:textColor="@color/txt_pri"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toStartOf="@id/g2"
-                            app:layout_constraintTop_toTopOf="parent"/>
-
-                        <TextView
-                            android:id="@+id/tvAmountPerMonth"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:text="Thành tiền:"
-                            android:textSize="@dimen/txt_s"
-                            android:textColor="@color/txt_pri"
-                            android:gravity="end"
-                            app:layout_constraintStart_toStartOf="@id/g2"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="@id/tvMonthDay"/>
-
-                        <TextView
-                            android:id="@+id/tvNoteCycle"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:text="Chu kỳ 1 tháng, ngày 30 thu"
-                            android:textSize="@dimen/txt_s"
-                            android:textStyle="bold"
-                            android:textColor="@color/txt_pri"
-                            android:layout_marginTop="@dimen/mar_s"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toStartOf="@id/g2"
-                            app:layout_constraintTop_toBottomOf="@id/tvMonthDay"/>
+                            android:layout_weight="1"
+                            android:text="Thành tiền"
+                            android:textSize="@dimen/txt_m"
+                            android:textColor="@color/txt_pri"/>
 
                         <TextView
                             android:id="@+id/tvSubTotal"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="Thành tiền 2.400.000 đ"
-                            android:textStyle="bold"
-                            android:textSize="@dimen/txt_s"
-                            android:textColor="@color/txt_pri"
+                            android:layout_weight="1"
                             android:gravity="end"
-                            android:layout_marginTop="@dimen/mar_s"
-                            app:layout_constraintStart_toStartOf="@id/g2"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/tvAmountPerMonth"/>
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                            android:text="0 đ"
+                            android:textStyle="bold"
+                            android:textSize="@dimen/txt_m"
+                            android:textColor="@color/txt_pri"/>
+                    </LinearLayout>
+
                 </LinearLayout>
             </LinearLayout>
 

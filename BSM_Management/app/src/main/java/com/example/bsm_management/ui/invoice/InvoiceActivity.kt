@@ -5,6 +5,7 @@ import android.database.Cursor
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -45,7 +46,6 @@ class InvoiceActivity : AppCompatActivity() {
         rv = findViewById(R.id.rvInvoices)
         tvEmpty = findViewById(R.id.tvEmpty) // nhớ đã thêm vào activity_in_voice.xml
 
-        // RecyclerView + Adapter
         adapter = InvoiceAdapter { item ->
             val i = Intent(this, AddInvoiceActivity::class.java)
             i.putExtra("roomId", item.roomId)
@@ -55,7 +55,10 @@ class InvoiceActivity : AppCompatActivity() {
         }
         rv.layoutManager = LinearLayoutManager(this)
         rv.adapter = adapter
-
+        com.example.bsm_management.bg.ReminderScheduler.scheduleDueReminder(
+            this, 999, "Phòng test", System.currentTimeMillis() +10_000
+        )
+        Toast.makeText(this, "Đã hẹn báo sau 10 giây", Toast.LENGTH_SHORT).show()
         // Load lần đầu
         reload()
     }
