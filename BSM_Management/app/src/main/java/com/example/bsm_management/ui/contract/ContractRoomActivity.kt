@@ -1,44 +1,132 @@
 package com.example.bsm_management.ui.contract
 
 import android.content.Intent
+import android.database.Cursor
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bsm_management.R
+import database.DatabaseHelper
 
 class ContractRoomActivity : AppCompatActivity() {
+
+    private lateinit var rvRooms: RecyclerView
+    private lateinit var edtSearch: EditText
+    private lateinit var btnSearch: ImageButton
+    private lateinit var db: DatabaseHelper
+    private lateinit var adapter: ContractRoomAdapter
+    private var allRooms = mutableListOf<ContractRoomItem>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_room_contract)
 
-        // Fit system bars cho root id=main
-        findViewById<View>(R.id.main)?.let { root ->
-            ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
-                val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-                v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
-                insets
+        db = DatabaseHelper(this)
+        rvRooms = findViewById(R.id.rvRooms)
+        rvRooms.layoutManager = LinearLayoutManager(this)
+        edtSearch = findViewById(R.id.edtSearchRoom)
+        btnSearch = findViewById(R.id.btnSearch)
+
+        setupHeader()
+        loadRooms()
+        setupSearch()
+    }
+
+    /** ---------------- HEADER ---------------- */
+    private fun setupHeader() {
+        val ivBack = findViewById<ImageView>(R.id.ivBack)
+        val tvTitle = findViewById<TextView>(R.id.tvHeaderTitle)
+        val tvSubtitle = findViewById<TextView>(R.id.tvHeaderSubtitle)
+
+        tvTitle.text = "Chọn phòng để lập hợp đồng"
+        tvSubtitle.text = "Chỉ hiển thị các phòng trống"
+
+        ivBack.setOnClickListener { finish() }
+    }
+
+    /** ---------------- LOAD DANH SÁCH PHÒNG ---------------- */
+    private fun loadRooms(keyword: String? = null) {
+        val whereClause = if (!keyword.isNullOrBlank()) {
+            "WHERE status='EMPTY' AND name LIKE ?"
+        } else {
+            "WHERE status='EMPTY'"
+        }
+
+        val cursor: Cursor = if (!keyword.isNullOrBlank()) {
+            db.readableDatabase.rawQuery(
+                "SELECT id, name, baseRent, status FROM rooms $whereClause",
+                arrayOf("%$keyword%")
+            )
+        } else {
+            db.readableDatabase.rawQuery(
+                "SELECT id, name, baseRent, status FROM rooms $whereClause",
+                null
+            )
+        }
+
+        val roomList = mutableListOf<ContractRoomItem>()
+        while (cursor.moveToNext()) {
+            val id = cursor.getInt(0)
+            val name = cursor.getString(1)
+            val rent = cursor.getInt(2)
+            val status = cursor.getString(3)
+            roomList.add(
+                ContractRoomItem(
+                    roomId = id,
+                    roomName = name,
+                    price = "%,d ₫/tháng".format(rent),
+                    isEmpty = status == "EMPTY"
+                )
+            )
+        }
+        cursor.close()
+
+        if (roomList.isEmpty()) {
+            Toast.makeText(this, "Không có phòng trống phù hợp!", Toast.LENGTH_SHORT).show()
+        }
+
+        allRooms = roomList
+        adapter = ContractRoomAdapter(allRooms) { room ->
+            val intent = Intent(this, AddContractActivity::class.java)
+            intent.putExtra("roomId", room.roomId)
+            intent.putExtra("roomName", room.roomName)
+            startActivity(intent)
+        }
+
+        rvRooms.adapter = adapter
+    }
+
+    /** ---------------- TÌM KIẾM PHÒNG ---------------- */
+    private fun setupSearch() {
+        // Khi nhấn icon search
+        btnSearch.setOnClickListener {
+            val keyword = edtSearch.text.toString().trim()
+            loadRooms(keyword)
+        }
+
+        // Khi nhập text (search realtime)
+        edtSearch.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                val keyword = s.toString().trim()
+                if (keyword.isEmpty()) loadRooms() else loadRooms(keyword)
             }
-        }
 
-        val rv = findViewById<RecyclerView>(R.id.rvRooms)
-        rv.layoutManager = LinearLayoutManager(this)
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+    }
 
-        // Demo list phòng
-        val rooms = listOf(
-            ContractRoomItem("Phòng 101", "3.000.000 đ", isEmpty = true),
-            ContractRoomItem("Phòng 102", "3.200.000 đ", waitNextCycle = true),
-            ContractRoomItem("Phòng 201", "2.800.000 đ"),
-            ContractRoomItem("Phòng 202", "3.000.000 đ", isEmpty = true, waitNextCycle = true)
-        )
-
-        rv.adapter = ContractRoomAdapter(rooms) { item ->
-            Toast.makeText(this, "Chọn ${item.roomName}", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(this, AddContractActivity::class.java))
-        }
+    override fun onResume() {
+        super.onResume()
+        loadRooms()
     }
 }

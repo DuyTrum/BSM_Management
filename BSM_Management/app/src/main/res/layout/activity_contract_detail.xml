@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_scr">
+
+    <!-- Header -->
+    <include
+        android:id="@+id/headerBack"
+        layout="@layout/view_header_back"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Hàng action -->
+    <LinearLayout
+        android:id="@+id/rowActions"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/pad_l"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/headerBack"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Gọi điện -->
+        <LinearLayout
+            android:id="@+id/btnCall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bg_border"
+            android:orientation="vertical"
+            android:padding="@dimen/pad_l"
+            android:gravity="center"
+            android:foreground="?attr/selectableItemBackground">
+            <ImageView
+                android:layout_width="@dimen/icon_l"
+                android:layout_height="@dimen/icon_l"
+                android:src="@drawable/ic_call"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gọi điện"
+                android:textSize="@dimen/txt_m"
+                android:textColor="@color/txt_sec"
+                android:layout_marginTop="@dimen/pad_s"/>
+        </LinearLayout>
+
+        <Space android:layout_width="@dimen/mar_l" android:layout_height="1dp"/>
+
+        <!-- Chia sẻ -->
+        <LinearLayout
+            android:id="@+id/btnShare"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bg_border"
+            android:orientation="vertical"
+            android:padding="@dimen/pad_l"
+            android:gravity="center"
+            android:foreground="?attr/selectableItemBackground">
+            <ImageView
+                android:layout_width="@dimen/icon_l"
+                android:layout_height="@dimen/icon_l"
+                android:src="@drawable/ic_share"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chia sẻ"
+                android:textSize="@dimen/txt_m"
+                android:textColor="@color/txt_sec"
+                android:layout_marginTop="@dimen/pad_s"/>
+        </LinearLayout>
+
+        <Space android:layout_width="@dimen/mar_l" android:layout_height="1dp"/>
+
+        <!-- In hợp đồng -->
+        <LinearLayout
+            android:id="@+id/btnPrint"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bg_border"
+            android:orientation="vertical"
+            android:padding="@dimen/pad_l"
+            android:gravity="center"
+            android:foreground="?attr/selectableItemBackground">
+            <ImageView
+                android:layout_width="@dimen/icon_l"
+                android:layout_height="@dimen/icon_l"
+                android:src="@drawable/ic_print"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="In h.đồng"
+                android:textSize="@dimen/txt_m"
+                android:textColor="@color/txt_sec"
+                android:layout_marginTop="@dimen/pad_s"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Nội dung cuộn -->
+    <ScrollView
+        android:id="@+id/scrollContent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingBottom="@dimen/pad_xl"
+        app:layout_constraintTop_toBottomOf="@id/rowActions"
+        app:layout_constraintBottom_toTopOf="@id/btnDelete"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/pad_l">
+
+            <!-- Thông tin cơ bản -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/bg_card"
+                android:orientation="vertical"
+                android:padding="@dimen/pad_l"
+                android:gravity="center">
+                <TextView
+                    android:id="@+id/tvRoomName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Phòng 203"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/txt_l"/>
+                <TextView
+                    android:id="@+id/tvTenant"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Khách thuê: Nguyễn Văn A"
+                    android:textColor="@color/txt_sec"
+                    android:layout_marginTop="@dimen/pad_s"/>
+            </LinearLayout>
+
+            <Space android:layout_width="match_parent" android:layout_height="@dimen/mar_m"/>
+
+            <!-- Thông tin hợp đồng -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/bg_card"
+                android:orientation="vertical"
+                android:padding="@dimen/pad_l">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Thời gian thuê"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt_pri"/>
+                <TextView
+                    android:id="@+id/tvDuration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="07/09/2025 - 07/09/2026"
+                    android:layout_marginTop="4dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tiền thuê phòng"
+                    android:textStyle="bold"
+                    android:layout_marginTop="@dimen/pad_m"/>
+                <TextView
+                    android:id="@+id/tvRent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3.000.000 đ/tháng"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tiền cọc"
+                    android:textStyle="bold"
+                    android:layout_marginTop="@dimen/pad_m"/>
+                <TextView
+                    android:id="@+id/tvDeposit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3.000.000 đ"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Trạng thái"
+                    android:textStyle="bold"
+                    android:layout_marginTop="@dimen/pad_m"/>
+                <TextView
+                    android:id="@+id/tvStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Đang hiệu lực"
+                    android:textColor="@color/dark_green"/>
+            </LinearLayout>
+
+            <Space android:layout_width="match_parent" android:layout_height="@dimen/mar_m"/>
+
+            <!-- Liên hệ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/bg_card"
+                android:orientation="vertical"
+                android:padding="@dimen/pad_l">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Thông tin liên hệ"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt_pri"/>
+                <TextView
+                    android:id="@+id/tvPhone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📞 0901234567"
+                    android:layout_marginTop="4dp"/>
+            </LinearLayout>
+
+            <Space android:layout_width="match_parent" android:layout_height="@dimen/mar_m"/>
+
+            <!-- Ghi chú -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/bg_card"
+                android:orientation="vertical"
+                android:padding="@dimen/pad_l">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ghi chú"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt_pri"/>
+                <TextView
+                    android:id="@+id/tvNote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hợp đồng 12 tháng, cọc 1 tháng, thanh toán vào ngày 5 hàng tháng."
+                    android:layout_marginTop="4dp"/>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Nút xóa -->
+    <Button
+        android:id="@+id/btnDelete"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/btn_h"
+        android:text="Kết thúc hợp đồng"
+        android:textAllCaps="false"
+        android:backgroundTint="@color/err"
+        android:textColor="@color/txt_on_pri"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

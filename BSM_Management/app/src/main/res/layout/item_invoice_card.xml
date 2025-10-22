@@ -105,16 +105,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:weightSum="3"
-            android:paddingStart="@dimen/pad_l"
-            android:paddingEnd="@dimen/pad_l"
-            android:paddingTop="@dimen/pad_m"
-            android:paddingBottom="@dimen/pad_m">
+            android:weightSum="3">
 
             <!-- Col 1: Tạo -->
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/btn_h"
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:gravity="center">
@@ -142,7 +138,7 @@
             <!-- Col 2: Vào ở -->
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/btn_h"
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:gravity="center">
@@ -150,7 +146,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Vào ở"
+                    android:text="Lý do"
                     android:textColor="@color/txt_sec"
                     android:textSize="@dimen/txt_s"/>
 
@@ -170,7 +166,7 @@
             <!-- Col 3: Hết hạn -->
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/btn_h"
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:gravity="center">
@@ -190,7 +186,7 @@
                     android:textStyle="bold"/>
             </LinearLayout>
         </LinearLayout>
-
+z
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -280,7 +276,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Đã trả"
+                    android:text="Tình trạng"
                     android:textColor="@color/txt_sec"/>
 
                 <TextView

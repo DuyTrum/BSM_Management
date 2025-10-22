@@ -21,6 +21,7 @@
     <string name="invoice_list_empty">Không có hóa đơn trong tháng %1$d/%2$d</string>
 
     <string name="message">Hộp thư</string>
+    <string name="invoice_detail_title">Chi tiết hóa đơn</string>
 
 
     <string name="title_room_list">Danh sách phòng</string>

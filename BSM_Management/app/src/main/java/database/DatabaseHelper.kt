@@ -1,9 +1,11 @@
-// database/DatabaseHelper.kt
 package database
 
+import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+
+import com.example.bsm_management.ui.contract.Contract
 import android.database.DatabaseUtils
 
 class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
@@ -24,24 +26,24 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             );
         """.trimIndent())
 
-        // ROOMS
+        // ROOMS (bỏ floor)
         db.execSQL("""
             CREATE TABLE rooms (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL UNIQUE,
-                floor INTEGER NOT NULL DEFAULT 1,
                 status TEXT NOT NULL DEFAULT 'EMPTY',
                 baseRent INTEGER NOT NULL DEFAULT 0
             );
         """.trimIndent())
 
-        // CONTRACTS
+        // CONTRACTS (có tenantPhone)
         db.execSQL("""
             CREATE TABLE contracts (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 roomId INTEGER NOT NULL,
                 tenantName TEXT NOT NULL,
-                startDate INTEGER NOT NULL, -- epoch millis
+                tenantPhone TEXT NOT NULL,
+                startDate INTEGER NOT NULL,
                 endDate INTEGER,
                 deposit INTEGER NOT NULL DEFAULT 0,
                 active INTEGER NOT NULL DEFAULT 1,
@@ -49,7 +51,7 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             );
         """.trimIndent())
 
-        // INVOICES
+        // INVOICES (có dueAt + reason)
         db.execSQL("""
             CREATE TABLE invoices (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -61,8 +63,10 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
                 waterM3 INTEGER NOT NULL DEFAULT 0,
                 serviceFee INTEGER NOT NULL DEFAULT 0,
                 totalAmount INTEGER NOT NULL,
-                paid INTEGER NOT NULL DEFAULT 0, -- 1=đã thu, 0=chưa
+                paid INTEGER NOT NULL DEFAULT 0, -- 1=đã thu, 0=chưa, 2=hủy
                 createdAt INTEGER NOT NULL,
+                dueAt INTEGER,
+                reason TEXT,
                 FOREIGN KEY(roomId) REFERENCES rooms(id) ON DELETE CASCADE,
                 UNIQUE(roomId, periodYear, periodMonth)
             );
@@ -70,7 +74,7 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
 
         // ===== SEED DATA =====
 
-        // Users: số dễ nhập
+        // Users
         db.execSQL("""
             INSERT INTO users (phone, name, password) VALUES
             ('12345678','Admin','123456'),
@@ -78,7 +82,74 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             ('33333333','Le Thi C','123456');
         """.trimIndent())
 
-        // Indexes (không có hostels)
+        // Rooms (bỏ floor)
+        db.execSQL("""
+            INSERT INTO rooms (name, status, baseRent) VALUES
+            ('P101', 'RENTED', 1500000),
+            ('P102', 'RENTED', 1500000),
+            ('P201', 'EMPTY', 1800000),
+            ('P202', 'RENTED', 1800000),
+            ('P203', 'EMPTY', 1800000);
+        """.trimIndent())
+
+        // Contracts (thêm tenantPhone)
+        db.execSQL("""
+            INSERT INTO contracts (roomId, tenantName, tenantPhone, startDate, endDate, deposit, active) VALUES
+            (1, 'Le Van C',  '0901111111', strftime('%s','now','-5 months')*1000, NULL, 2000000, 1),
+            (2, 'Tran Thi B','0902222222', strftime('%s','now','-2 months')*1000, NULL, 2000000, 1),
+            (4, 'Pham D',    '0903333333', strftime('%s','now','-1 months')*1000, NULL, 2500000, 1);
+        """.trimIndent())
+
+        // Invoices (thêm dueAt, reason)
+        db.execSQL("""
+            INSERT INTO invoices
+                (roomId, periodYear, periodMonth, roomRent, electricKwh, waterM3, serviceFee,
+                 totalAmount, paid, createdAt, dueAt, reason)
+            VALUES
+                (1, 2025, 7, 1500000, 40, 7, 50000,
+                 (1500000 + 40*3500 + 7*8000 + 50000), 1,
+                 strftime('%s','now','-85 days')*1000,
+                 strftime('%s','now','-55 days')*1000,
+                 'Thanh toán định kỳ'),
+
+                (1, 2025, 8, 1500000, 43, 7, 50000,
+                 (1500000 + 43*3500 + 7*8000 + 50000), 1,
+                 strftime('%s','now','-55 days')*1000,
+                 strftime('%s','now','-25 days')*1000,
+                 'Thanh toán định kỳ'),
+
+                (1, 2025, 9, 1500000, 45, 8, 50000,
+                 (1500000 + 45*3500 + 8*8000 + 50000), 0,
+                 strftime('%s','now','-25 days')*1000,
+                 strftime('%s','now','+5 days')*1000,
+                 'Thanh toán định kỳ'),
+
+                (2, 2025, 8, 1500000, 42, 7, 50000,
+                 (1500000 + 42*3500 + 7*8000 + 50000), 1,
+                 strftime('%s','now','-60 days')*1000,
+                 strftime('%s','now','-30 days')*1000,
+                 'Thanh toán định kỳ'),
+
+                (2, 2025, 9, 1500000, 45, 8, 50000,
+                 (1500000 + 45*3500 + 8*8000 + 50000), 0,
+                 strftime('%s','now','-20 days')*1000,
+                 strftime('%s','now','+10 days')*1000,
+                 'Thanh toán định kỳ'),
+
+                (4, 2025, 10, 1800000, 38, 6, 60000,
+                 (1800000 + 38*3500 + 6*8000 + 60000), 0,
+                 strftime('%s','now')*1000,
+                 strftime('%s','now','+30 days')*1000,
+                 'Thanh toán định kỳ'),
+
+                (4, 2025, 9, 1800000, 36, 6, 60000,
+                 (1800000 + 36*3500 + 6*8000 + 60000), 1,
+                 strftime('%s','now','-18 days')*1000,
+                 strftime('%s','now','+12 days')*1000,
+                 'Thanh toán định kỳ');
+        """.trimIndent())
+
+        // Indexes
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_contracts_active ON contracts(active);")
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_invoices_paid ON invoices(paid);")
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_messages_createdAt ON messages(createdAt);")
@@ -170,7 +241,7 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
 
 
     companion object {
-        const val DB_NAME: String = "bsm.db"
-        private const val DB_VERSION = 7  // bump để xoá hostels nếu còn sót
+        const val DB_NAME = "bsm.db"
+        private const val DB_VERSION = 1  // tăng version
     }
 }

@@ -25,11 +25,9 @@ import kotlin.math.roundToInt
 class AddInvoiceActivity : AppCompatActivity() {
 
     private lateinit var spReason: Spinner
-    private lateinit var tvDueDate: TextView
+    private var tvDueDate: TextView? = null        // nullable vì bạn đã bỏ ô DueDate ở block trên
     private lateinit var tvFromDate: TextView
     private lateinit var tvToDate: TextView
-    private lateinit var tvMonthDay: TextView
-    private lateinit var tvAmountPerMonth: TextView
     private lateinit var tvSubTotal: TextView
     private lateinit var btnCreate: Button
 
@@ -63,17 +61,13 @@ class AddInvoiceActivity : AppCompatActivity() {
         // ---- Nhận dữ liệu từ Intent ----
         roomId = intent.getIntExtra("roomId", -1)
         roomName = intent.getStringExtra("roomName")
-        // Nếu bên kia có truyền "rent" dạng "3.000.000đ", bạn vẫn lấy baseRent từ DB cho chính xác
 
         // ---- View refs ----
-        spReason         = findViewById(R.id.spReason)
-        tvDueDate        = findViewById(R.id.tvDueDate)
-        tvFromDate       = findViewById(R.id.tvFromDate)
-        tvToDate         = findViewById(R.id.tvToDate)
-        tvMonthDay       = findViewById(R.id.tvMonthDay)
-        tvAmountPerMonth = findViewById(R.id.tvAmountPerMonth)
-        tvSubTotal       = findViewById(R.id.tvSubTotal)
-        btnCreate        = findViewById(R.id.btnCreateInvoice)
+        spReason   = findViewById(R.id.spReason)
+        tvFromDate = findViewById(R.id.tvFromDate)
+        tvToDate   = findViewById(R.id.tvToDate)
+        tvSubTotal = findViewById(R.id.tvSubTotal)
+        btnCreate  = findViewById(R.id.btnCreateInvoice)
 
         // Header
         setupHeader(
@@ -81,9 +75,14 @@ class AddInvoiceActivity : AppCompatActivity() {
             subtitle = "Điền thông tin và chọn ngày"
         )
 
+        val sec = findViewById<View>(R.id.secFirstMonth)
+        sec.findViewById<TextView>(R.id.tvTitle).text = "Thu tiền hàng tháng"
+        sec.findViewById<TextView>(R.id.tvSubtitle).text =
+            "Chọn khoảng ngày để tính tiền theo tháng + ngày lẻ (30 ngày = 1 tháng)"
+
+
         // Lấy baseRent từ DB
         baseRent = queryRoomBaseRent(roomId)
-        updateAmountLabels() // set “Thành tiền: …/tháng” theo baseRent ban đầu
 
         // Spinner lý do
         setupReasonSpinnerAsDialog()
@@ -91,9 +90,8 @@ class AddInvoiceActivity : AppCompatActivity() {
         // Date pickers
         setupDatePickers()
 
-        // Tính tháng/ngày + cập nhật tổng tiền ban đầu
-        recomputeMonthDay()     // tính text “x tháng, y ngày”
-        updateSubtotal()        // tính tiền theo khoảng ngày
+        // Cập nhật tổng tiền ban đầu
+        updateSubtotal()
 
         // Ghi hóa đơn
         btnCreate.setOnClickListener { createInvoice() }
@@ -142,23 +140,21 @@ class AddInvoiceActivity : AppCompatActivity() {
 
     /* ---------------------- Date pickers ---------------------- */
     private fun setupDatePickers() {
-        // gợi ý hạn đóng tiền: +7 ngày từ hôm nay
-        val cal = Calendar.getInstance()
-        cal.add(Calendar.DAY_OF_MONTH, 7)
-        tvDueDate.text = df.format(cal.time)
+        // gợi ý hạn đóng tiền: +7 ngày từ hôm nay (nếu có view due date)
+        val cal = Calendar.getInstance().apply { add(Calendar.DAY_OF_MONTH, 7) }
+        tvDueDate?.text = df.format(cal.time)
 
-        tvDueDate.setOnClickListener { openDatePickerFor(tvDueDate) }
+        tvDueDate?.setOnClickListener { openDatePickerFor(it as TextView) }
+
         tvFromDate.setOnClickListener {
             openDatePickerFor(tvFromDate) {
                 ensureToNotBeforeFrom()
-                recomputeMonthDay()
                 updateSubtotal()
             }
         }
         tvToDate.setOnClickListener {
             openDatePickerFor(tvToDate) {
                 ensureToNotBeforeFrom()
-                recomputeMonthDay()
                 updateSubtotal()
             }
         }
@@ -185,40 +181,9 @@ class AddInvoiceActivity : AppCompatActivity() {
         }
     }
 
-    /* ---------------------- Tính chu kỳ & tiền ---------------------- */
-
-    private fun recomputeMonthDay() {
-        val from = runCatching { df.parse(tvFromDate.text.toString()) }.getOrNull() ?: return
-        val to   = runCatching { df.parse(tvToDate.text.toString())   }.getOrNull() ?: return
-
-        val cFrom = Calendar.getInstance().apply { time = from }
-        val cTo   = Calendar.getInstance().apply { time = to }
-        if (cTo.before(cFrom)) cTo.time = cFrom.time
-
-        var months = (cTo.get(Calendar.YEAR) - cFrom.get(Calendar.YEAR)) * 12 +
-                (cTo.get(Calendar.MONTH) - cFrom.get(Calendar.MONTH))
-
-        val days: Int
-        if (cTo.get(Calendar.DAY_OF_MONTH) < cFrom.get(Calendar.DAY_OF_MONTH)) {
-            months = max(0, months - 1)
-            val tmp = Calendar.getInstance().apply {
-                set(cTo.get(Calendar.YEAR), cTo.get(Calendar.MONTH), 1)
-                add(Calendar.DAY_OF_MONTH, -1)
-            }
-            val daysInPrevMonth = tmp.get(Calendar.DAY_OF_MONTH)
-            days = (daysInPrevMonth - cFrom.get(Calendar.DAY_OF_MONTH)) + cTo.get(Calendar.DAY_OF_MONTH)
-        } else {
-            days = cTo.get(Calendar.DAY_OF_MONTH) - cFrom.get(Calendar.DAY_OF_MONTH)
-        }
-        tvMonthDay.text = "${months} tháng, ${days} ngày"
-    }
-
-    private fun updateAmountLabels() {
-        tvAmountPerMonth.text = "Thành tiền: ${vn.format(baseRent)} đ / tháng"
-    }
-
+    /* ---------------------- Tính tiền ---------------------- */
     private fun updateSubtotal() {
-        // Tính tiền theo số tháng + ngày lẻ (tạm quy đổi 30 ngày = 1 tháng)
+        // Tính tiền theo số tháng + ngày lẻ (30 ngày = 1 tháng)
         val from = runCatching { df.parse(tvFromDate.text.toString()) }.getOrNull() ?: return
         val to   = runCatching { df.parse(tvToDate.text.toString())   }.getOrNull() ?: return
 
@@ -247,7 +212,6 @@ class AddInvoiceActivity : AppCompatActivity() {
     }
 
     /* ---------------------- DB helpers ---------------------- */
-
     private fun queryRoomName(roomId: Int): String? {
         if (roomId <= 0) return null
         val db = DatabaseHelper(this).readableDatabase
@@ -265,7 +229,6 @@ class AddInvoiceActivity : AppCompatActivity() {
     }
 
     /* ---------------------- Insert invoice ---------------------- */
-
     private fun createInvoice() {
         if (roomId <= 0) {
             Toast.makeText(this, "Thiếu thông tin phòng!", Toast.LENGTH_SHORT).show()
@@ -274,7 +237,13 @@ class AddInvoiceActivity : AppCompatActivity() {
 
         val from = runCatching { df.parse(tvFromDate.text.toString()) }.getOrNull()
         val to   = runCatching { df.parse(tvToDate.text.toString())   }.getOrNull()
-        val due  = runCatching { df.parse(tvDueDate.text.toString())  }.getOrNull()
+
+        // Due date: nếu không có widget due-date (tvDueDate == null), fallback = from + 7 ngày
+        val dueParsed = runCatching { df.parse(tvDueDate?.text?.toString() ?: "") }.getOrNull()
+        val due = dueParsed ?: from?.let {
+            Calendar.getInstance().apply { time = it; add(Calendar.DAY_OF_MONTH, 7) }.time
+        }
+
         if (from == null || to == null || due == null) {
             Toast.makeText(this, "Ngày chưa hợp lệ!", Toast.LENGTH_SHORT).show()
             return
@@ -282,7 +251,8 @@ class AddInvoiceActivity : AppCompatActivity() {
 
         // Lấy subtotal đã hiển thị
         val subtotalText = tvSubTotal.text?.toString() ?: ""
-        val subtotal = Regex("""(\d[\d\.]*)""").find(subtotalText)?.value?.replace(".", "")?.toIntOrNull()
+        val subtotal = Regex("""(\d[\d\.]*)""")
+            .find(subtotalText)?.value?.replace(".", "")?.toIntOrNull()
             ?: baseRent
 
         // period lấy theo "tháng của fromDate"
@@ -303,15 +273,24 @@ class AddInvoiceActivity : AppCompatActivity() {
             put("totalAmount", subtotal)
             put("paid", 0) // 0 = chưa thu
             put("createdAt", now)
+            put("dueAt", due.time)                       // Ghi hạn đóng tiền
+            put("reason", spReason.selectedItem.toString()) // Ghi lý do
         }
 
         val db = DatabaseHelper(this).writableDatabase
         val rowId = db.insert("invoices", null, values)
 
         if (rowId > 0) {
+            com.example.bsm_management.bg.ReminderScheduler.scheduleDueReminder(
+                ctx = this,
+                invoiceId = rowId.toInt(),
+                roomName = roomName,
+                dueAt = due.time
+            )
             Toast.makeText(this, "Đã lập hóa đơn #$rowId cho $roomName", Toast.LENGTH_SHORT).show()
-            finish() // quay lại danh sách hoặc màn trước
-        } else {
+            finish()
+        }
+        else {
             Toast.makeText(this, "Lập hóa đơn thất bại!", Toast.LENGTH_SHORT).show()
         }
     }
