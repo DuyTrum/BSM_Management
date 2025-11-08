@@ -55,11 +55,6 @@ class InvoiceActivity : AppCompatActivity() {
         }
         rv.layoutManager = LinearLayoutManager(this)
         rv.adapter = adapter
-        com.example.bsm_management.bg.ReminderScheduler.scheduleDueReminder(
-            this, 999, "Phòng test", System.currentTimeMillis() +10_000
-        )
-        Toast.makeText(this, "Đã hẹn báo sau 10 giây", Toast.LENGTH_SHORT).show()
-        // Load lần đầu
         reload()
     }
 

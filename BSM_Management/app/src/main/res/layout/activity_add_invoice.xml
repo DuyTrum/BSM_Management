@@ -7,41 +7,41 @@
     android:orientation="vertical"
     android:background="@color/bg_scr">
 
-    <!-- Header back -->
+    <!-- Header -->
     <include
         android:id="@+id/headerBack"
-        layout="@layout/view_header_back" />
+        layout="@layout/view_header_back"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
+    <!-- ScrollView -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:fillViewport="true">
 
-        <!-- Single child của ScrollView -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="@dimen/pad_l">
 
-            <!-- BLOCK: Lý do lập hóa đơn -->
+            <!-- 🔹 Section: Lý do lập hóa đơn -->
             <LinearLayout
-                android:id="@+id/blockReason"
+                android:id="@+id/sectionReason"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="@dimen/pad_l"
                 android:background="@drawable/bg_border"
+                android:padding="@dimen/pad_l"
                 android:layout_marginBottom="@dimen/mar_m">
 
-                <TextView
-                    android:id="@+id/tvReasonLabel"
+                <include
+                    android:id="@+id/secReason"
+                    layout="@layout/view_section_header"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Lý do lập hóa đơn *"
-                    android:textSize="@dimen/txt_m"
-                    android:textColor="@color/txt_pri"/>
+                    android:layout_height="wrap_content" />
 
                 <Spinner
                     android:id="@+id/spReason"
@@ -50,12 +50,11 @@
                     android:layout_marginTop="@dimen/mar_s"
                     android:spinnerMode="dialog"
                     android:background="@drawable/bg_border" />
-
             </LinearLayout>
 
-            <!-- PANEL: Thu tiền tháng đầu tiên -->
+            <!-- 🔹 Section: Kỳ tính tiền -->
             <LinearLayout
-                android:id="@+id/panelFirstMonth"
+                android:id="@+id/sectionPeriod"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -63,123 +62,221 @@
                 android:padding="@dimen/pad_l"
                 android:layout_marginBottom="@dimen/mar_m">
 
-                <!-- Header: divider chạm mép vì panel không padding -->
                 <include
                     android:id="@+id/secFirstMonth"
-                    layout="@layout/view_section_header" />
+                    layout="@layout/view_section_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-                <!-- Nội dung: padding ngang/bottom riêng -->
                 <LinearLayout
-                    android:id="@+id/contentFirstMonth"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/mar_s">
 
-                    <!-- 2 DatePicker cùng hàng -->
-                    <!-- 2 DatePicker cùng hàng + tiêu đề -->
+                    <!-- Cột trái: Từ ngày -->
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="@dimen/mar_s">
-
-                        <!-- Cột trái: Từ ngày -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:layout_marginEnd="@dimen/mar_s">
-
-                            <TextView
-                                android:id="@+id/lblFromDate"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Từ ngày"
-                                android:textSize="@dimen/txt_s"
-                                android:textColor="@color/txt_sec" />
-
-                            <TextView
-                                android:id="@+id/tvFromDate"
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/edt_h"
-                                android:layout_marginTop="@dimen/mar_s"
-                                android:background="@drawable/bg_border"
-                                android:gravity="center_vertical"
-                                android:paddingStart="@dimen/pad_m"
-                                android:paddingEnd="@dimen/pad_m"
-                                android:text="07/09/2025" />
-                        </LinearLayout>
-
-                        <!-- Cột phải: Đến ngày -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/lblToDate"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Đến ngày"
-                                android:textSize="@dimen/txt_s"
-                                android:textColor="@color/txt_sec" />
-
-                            <TextView
-                                android:id="@+id/tvToDate"
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/edt_h"
-                                android:layout_marginTop="@dimen/mar_s"
-                                android:background="@drawable/bg_border"
-                                android:gravity="center_vertical"
-                                android:paddingStart="@dimen/pad_m"
-                                android:paddingEnd="@dimen/pad_m"
-                                android:text="30/09/2025" />
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <!-- THAY toàn bộ ConstraintLayout màu xanh bằng block 1 hàng này -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/mar_l"
-                        android:background="@drawable/bg_box_green"
-                        android:padding="@dimen/pad_l"
-                        android:orientation="horizontal">
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginEnd="@dimen/mar_s">
 
                         <TextView
-                            android:id="@+id/tvSubtotalLabel"
-                            android:layout_width="0dp"
+                            android:id="@+id/lblFromDate"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Thành tiền"
-                            android:textSize="@dimen/txt_m"
-                            android:textColor="@color/txt_pri"/>
+                            android:text="Từ ngày"
+                            android:textColor="@color/txt_sec"
+                            android:textSize="@dimen/txt_m" />
 
                         <TextView
-                            android:id="@+id/tvSubTotal"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="end"
-                            android:text="0 đ"
-                            android:textStyle="bold"
-                            android:textSize="@dimen/txt_m"
-                            android:textColor="@color/txt_pri"/>
+                            android:id="@+id/tvFromDate"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/edt_h"
+                            android:layout_marginTop="@dimen/mar_s"
+                            android:background="@drawable/bg_border"
+                            android:gravity="center_vertical"
+                            android:paddingStart="@dimen/pad_m"
+                            android:paddingEnd="@dimen/pad_m"
+                            android:text="01/11/2025" />
                     </LinearLayout>
 
+                    <!-- Cột phải: Đến ngày -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/lblToDate"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Đến ngày"
+                            android:textColor="@color/txt_sec"
+                            android:textSize="@dimen/txt_m" />
+
+                        <TextView
+                            android:id="@+id/tvToDate"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/edt_h"
+                            android:layout_marginTop="@dimen/mar_s"
+                            android:background="@drawable/bg_border"
+                            android:gravity="center_vertical"
+                            android:paddingStart="@dimen/pad_m"
+                            android:paddingEnd="@dimen/pad_m"
+                            android:text="30/11/2025" />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- 🔹 Section: Các khoản chi tiêu khác -->
+            <LinearLayout
+                android:id="@+id/sectionCosts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_border"
+                android:padding="@dimen/pad_l"
+                android:layout_marginBottom="@dimen/mar_m">
+
+                <include
+                    android:id="@+id/secExtraCosts"
+                    layout="@layout/view_section_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <!-- ⚡ Hàng điện -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="@dimen/mar_m">
+
+                    <EditText
+                        android:id="@+id/edtElectricQty"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/edt_h"
+                        android:layout_weight="1"
+                        android:hint="Số điện (kWh)"
+                        android:inputType="number"
+                        android:background="@drawable/bg_border"
+                        android:paddingStart="@dimen/pad_m"
+                        android:paddingEnd="@dimen/pad_m" />
+
+                    <TextView
+                        android:id="@+id/tvMultiplyElectric"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="×"
+                        android:textSize="@dimen/txt_l"
+                        android:textColor="@color/txt_pri"
+                        android:layout_marginHorizontal="@dimen/mar_s" />
+
+                    <EditText
+                        android:id="@+id/edtElectricRate"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/edt_h"
+                        android:layout_weight="1"
+                        android:hint="Đơn giá điện (đ)"
+                        android:inputType="number"
+                        android:background="@drawable/bg_border"
+                        android:paddingStart="@dimen/pad_m"
+                        android:paddingEnd="@dimen/pad_m" />
+                </LinearLayout>
+
+                <!-- ⚡ Hàng nước -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="@dimen/mar_m">
+
+                    <EditText
+                        android:id="@+id/edtWaterQty"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/edt_h"
+                        android:layout_weight="1"
+                        android:hint="Số nước (m³)"
+                        android:inputType="number"
+                        android:background="@drawable/bg_border"
+                        android:paddingStart="@dimen/pad_m"
+                        android:paddingEnd="@dimen/pad_m" />
+
+                    <TextView
+                        android:id="@+id/tvMultiplyWater"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="×"
+                        android:textSize="@dimen/txt_l"
+                        android:textColor="@color/txt_pri"
+                        android:layout_marginHorizontal="@dimen/mar_s" />
+
+                    <EditText
+                        android:id="@+id/edtWaterRate"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/edt_h"
+                        android:layout_weight="1"
+                        android:hint="Đơn giá nước (đ)"
+                        android:inputType="number"
+                        android:background="@drawable/bg_border"
+                        android:paddingStart="@dimen/pad_m"
+                        android:paddingEnd="@dimen/pad_m" />
+                </LinearLayout>
+
+                <!-- Phí dịch vụ -->
+                <EditText
+                    android:id="@+id/edtService"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/edt_h"
+                    android:layout_marginTop="@dimen/mar_m"
+                    android:inputType="number"
+                    android:hint="Phí dịch vụ (VNĐ)"
+                    android:background="@drawable/bg_border"
+                    android:paddingStart="@dimen/pad_m" />
+            </LinearLayout>
+
+            <!-- 🔹 Thành tiền -->
+            <LinearLayout
+                android:id="@+id/sectionTotal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_box_green"
+                android:padding="@dimen/pad_l"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/lblSubTotal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Thành tiền"
+                    android:textSize="@dimen/txt_m"
+                    android:textColor="@color/txt_pri" />
+
+                <TextView
+                    android:id="@+id/tvSubTotal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="0 đ"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/txt_m"
+                    android:textColor="@color/txt_pri" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
+    <!-- 🔹 Nút lập hóa đơn -->
     <LinearLayout
+        android:id="@+id/sectionButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white">
-
 
         <Button
             android:id="@+id/btnCreateInvoice"
@@ -188,8 +285,6 @@
             android:text="Lập hóa đơn"
             android:textColor="@color/txt_on_pri"
             android:backgroundTint="@color/pri"
-            android:layout_marginStart="@dimen/pad_l"
-            android:layout_marginEnd="@dimen/pad_l"
-            android:layout_marginTop="@dimen/mar_m"/>
+            android:layout_margin="@dimen/pad_l" />
     </LinearLayout>
 </LinearLayout>

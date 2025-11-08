@@ -54,9 +54,6 @@
             android:name=".ui.invoice.InvoiceDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.hostel.AddHostelActivity"
-            android:exported="false" />
-        <activity
             android:name=".ui.hostel.AddHostelStep2Activity"
             android:exported="false" />
         <activity
@@ -84,9 +81,6 @@
             android:name=".ui.contract.ContractRoomActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.contract.AddContractActivity"
-            android:exported="false" /> <!-- Profile -->
-        <activity
             android:name=".ui.profile.ChangePasswordActivity"
             android:exported="false" /> <!-- Auth -->
         <activity
@@ -107,6 +101,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <provider
+            android:name=".provider.ContractProvider"
+            android:authorities="com.example.bsm_management.provider"
+            android:exported="true"
+            android:grantUriPermissions="true" />
     </application>
 
 </manifest>

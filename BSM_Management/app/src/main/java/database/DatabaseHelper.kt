@@ -15,7 +15,6 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        // ===== Schema chính (KHÔNG có hostels) =====
         db.execSQL("""
             CREATE TABLE users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -25,7 +24,6 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             );
         """.trimIndent())
 
-        // ROOMS (bỏ floor)
         db.execSQL("""
             CREATE TABLE rooms (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,7 +33,6 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             );
         """.trimIndent())
 
-        // CONTRACTS (có tenantPhone)
         db.execSQL("""
             CREATE TABLE contracts (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -50,7 +47,6 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             );
         """.trimIndent())
 
-        // INVOICES (có dueAt + reason)
         db.execSQL("""
             CREATE TABLE invoices (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -71,7 +67,6 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             );
         """.trimIndent())
 
-        // ✅ FIX CRASH: thêm bảng messages trước khi tạo index
         db.execSQL("""
             CREATE TABLE IF NOT EXISTS messages (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -85,7 +80,6 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
 
         // ===== SEED DATA =====
 
-        // Users
         db.execSQL("""
             INSERT INTO users (phone, name, password) VALUES
             ('12345678','Admin','123456'),
@@ -93,7 +87,6 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             ('33333333','Le Thi C','123456');
         """.trimIndent())
 
-        // Rooms (bỏ floor)
         db.execSQL("""
             INSERT INTO rooms (name, status, baseRent) VALUES
             ('P101', 'RENTED', 1500000),
@@ -103,7 +96,6 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             ('P203', 'EMPTY', 1800000);
         """.trimIndent())
 
-        // Contracts (thêm tenantPhone)
         db.execSQL("""
             INSERT INTO contracts (roomId, tenantName, tenantPhone, startDate, endDate, deposit, active) VALUES
             (1, 'Le Van C',  '0901111111', strftime('%s','now','-5 months')*1000, NULL, 2000000, 1),
@@ -111,7 +103,6 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             (4, 'Pham D',    '0903333333', strftime('%s','now','-1 months')*1000, NULL, 2500000, 1);
         """.trimIndent())
 
-        // Invoices (thêm dueAt, reason)
         db.execSQL("""
             INSERT INTO invoices
                 (roomId, periodYear, periodMonth, roomRent, electricKwh, waterM3, serviceFee,
@@ -160,7 +151,6 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
                  'Thanh toán định kỳ');
         """.trimIndent())
 
-        // Indexes (OK sau khi có bảng messages)
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_contracts_active ON contracts(active);")
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_invoices_paid ON invoices(paid);")
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_messages_createdAt ON messages(createdAt);")

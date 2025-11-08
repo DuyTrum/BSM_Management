@@ -26,32 +26,37 @@ class InvoiceListAdapter(
     }
 
     inner class VH(view: View) : RecyclerView.ViewHolder(view) {
-        private val tvTitle: TextView      = view.findViewById(R.id.tvTitle)
-        private val tvSub: TextView        = view.findViewById(R.id.tvSub)
-        private val btnDetail: TextView    = view.findViewById(R.id.btnDetail)
+        private val tvMonthShort: TextView = view.findViewById(R.id.tvMonthShort)
+        private val tvYear: TextView = view.findViewById(R.id.tvYear)
+        private val tvTitle: TextView = view.findViewById(R.id.tvTitle)
+        private val tvSub: TextView = view.findViewById(R.id.tvSub)
+        private val btnDetail: TextView = view.findViewById(R.id.btnDetail)
         private val tvCreatedDate: TextView = view.findViewById(R.id.tvCreatedDate)
-        private val tvMoveInDate: TextView  = view.findViewById(R.id.tvMoveInDate)
-        private val tvEndDate: TextView     = view.findViewById(R.id.tvEndDate)
+        private val tvMoveInDate: TextView = view.findViewById(R.id.tvMoveInDate)
+        private val tvEndDate: TextView = view.findViewById(R.id.tvEndDate)
         private val btnCall: TextView = view.findViewById(R.id.btnCall)
-        private val tvTotal: TextView   = view.findViewById(R.id.tvTotal)
-        private val tvPaid: TextView    = view.findViewById(R.id.tvPaid)
-        private val tvRemain: TextView  = view.findViewById(R.id.tvRemain)
+        private val tvTotal: TextView = view.findViewById(R.id.tvTotal)
+        private val tvPaid: TextView = view.findViewById(R.id.tvPaid)
+        private val tvRemain: TextView = view.findViewById(R.id.tvRemain)
 
         fun bind(item: InvoiceCardItem) {
+            // 🔹 Tháng /năm
+            tvMonthShort.text = "T.${item.periodMonth}"
+            tvYear.text = item.periodYear.toString()
+
+            // 🔹 Thông tin chính
             tvTitle.text = item.title
             tvSub.text = item.mainStatus
-
             tvCreatedDate.text = item.createdDate
             tvMoveInDate.text = item.moveInDate
             tvEndDate.text = item.endDate
-
             tvTotal.text = item.rent
             tvPaid.text = item.collected
             tvRemain.text = item.deposit
 
             itemView.setOnClickListener { onItemClick(item) }
             btnDetail.setOnClickListener { v -> onMoreClick(v, item) }
-            btnCall.setOnClickListener  { onCall(item.phone) }
+            btnCall.setOnClickListener { onCall(item.phone) }
         }
     }
 
@@ -61,7 +66,5 @@ class InvoiceListAdapter(
         return VH(v)
     }
 
-    override fun onBindViewHolder(holder: VH, position: Int) {
-        holder.bind(getItem(position))
-    }
+    override fun onBindViewHolder(holder: VH, position: Int) = holder.bind(getItem(position))
 }
