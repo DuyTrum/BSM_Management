@@ -7,6 +7,24 @@
     android:background="@color/bg_scr">
 
     <!-- Header back tái sử dụng -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnExport"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Xuất dữ liệu"
+        android:textAllCaps="false"
+        android:icon="@drawable/ic_file_export"
+        app:iconPadding="8dp"
+        android:layout_margin="@dimen/mar_m"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        app:cornerRadius="12dp"
+        app:iconTint="@color/txt_pri"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/filters" />
+
     <include
         android:id="@+id/header"
         layout="@layout/view_header_back"

@@ -70,25 +70,27 @@ class HostelListBottomSheet : BottomSheetDialogFragment() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Xóa nhà?")
             .setMessage(
-                "Thao tác này sẽ xóa TẤT CẢ phòng và dữ liệu liên quan (hợp đồng, hóa đơn). " +
-                        "Bạn có chắc muốn tiếp tục?"
+                "Thao tác này sẽ xóa TẤT CẢ phòng và dữ liệu liên quan (hợp đồng, hóa đơn)." +
+                        "\nBạn có chắc muốn tiếp tục?"
             )
             .setNegativeButton("Hủy", null)
             .setPositiveButton("Xóa") { _, _ ->
                 val db = DatabaseHelper(requireContext())
-                val deleted = db.deleteAllRoomsCascade() // xóa rooms -> cascade contracts/invoices
 
-                // Xóa luôn thông tin tên/địa chỉ hiện tại
+                // Gọi hàm xóa cascade trong DatabaseHelper
+                val deletedCount = db.deleteAllRoomsCascade()
+
+                // Xóa luôn SharedPreferences hiện tại (tên, địa chỉ, v.v.)
                 requireContext().getSharedPreferences("hostel_prefs", 0)
                     .edit().clear().apply()
 
                 Toast.makeText(
                     requireContext(),
-                    "Đã xóa $deleted phòng và dữ liệu liên quan.",
+                    "Đã xóa $deletedCount phòng và dữ liệu liên quan.",
                     Toast.LENGTH_LONG
                 ).show()
 
-                // Điều hướng về màn “rỗng” để người dùng tạo nhà mới
+                // Điều hướng về màn hình rỗng (EmptyStateActivity)
                 startActivity(
                     Intent(requireContext(), EmptyStateActivity::class.java)
                         .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
