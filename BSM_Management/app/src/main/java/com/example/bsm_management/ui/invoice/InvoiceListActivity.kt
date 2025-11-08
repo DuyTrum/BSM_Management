@@ -3,19 +3,8 @@ package com.example.bsm_management.ui.invoice
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.Gravity
-import android.view.KeyEvent
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.widget.ArrayAdapter
-import android.widget.LinearLayout
-import android.widget.NumberPicker
-import android.widget.ProgressBar
-import android.widget.Spinner
-import android.widget.TextView
-import android.widget.Toast
+import android.view.*
+import android.widget.*
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -31,9 +20,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 class InvoiceListActivity : AppCompatActivity() {
 
@@ -42,15 +29,14 @@ class InvoiceListActivity : AppCompatActivity() {
     private lateinit var rv: RecyclerView
     private lateinit var emptyView: TextView
     private lateinit var progress: ProgressBar
-
     private lateinit var listAdapter: InvoiceListAdapter
 
     private var selMonth = Calendar.getInstance().get(Calendar.MONTH) + 1
-    private var selYear  = Calendar.getInstance().get(Calendar.YEAR)
+    private var selYear = Calendar.getInstance().get(Calendar.YEAR)
     private var selStatus: StatusFilter = StatusFilter.ALL
 
-    private val vn: NumberFormat by lazy { NumberFormat.getInstance(Locale("vi", "VN")) }
-    private val df: SimpleDateFormat by lazy { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
+    private val vn by lazy { NumberFormat.getInstance(Locale("vi", "VN")) }
+    private val df by lazy { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,30 +52,27 @@ class InvoiceListActivity : AppCompatActivity() {
         }
 
         // Header
-        findViewById<TextView?>(R.id.tvHeaderTitle)?.text = getString(R.string.invoice_list_title)
-        findViewById<TextView?>(R.id.tvHeaderSubtitle)?.text = getString(R.string.invoice_list_subtitle)
-        findViewById<View?>(R.id.ivBack)?.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        findViewById<TextView>(R.id.tvHeaderTitle)?.text = getString(R.string.invoice_list_title)
+        findViewById<TextView>(R.id.tvHeaderSubtitle)?.text = getString(R.string.invoice_list_subtitle)
+        findViewById<View>(R.id.ivBack)?.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         // Views
-        spMonth   = findViewById(R.id.spMonth)
-        spStatus  = findViewById(R.id.spStatus)
-        rv        = findViewById(R.id.rvInvoices)
+        spMonth = findViewById(R.id.spMonth)
+        spStatus = findViewById(R.id.spStatus)
+        rv = findViewById(R.id.rvInvoices)
         emptyView = findViewById(R.id.tvEmpty)
-        progress  = findViewById(R.id.progress)
+        progress = findViewById(R.id.progress)
 
         listAdapter = InvoiceListAdapter(
             onItemClick = { item ->
-                // item.id hiện đang là String -> đổi sang Int an toàn
-                val invId = item.id.toIntOrNull()
-                if (invId != null) {
-                    InvoiceDetailActivity.start(this, invId)
-                } else {
-                    Toast.makeText(this, "ID hóa đơn không hợp lệ", Toast.LENGTH_SHORT).show()
+                item.id.toIntOrNull()?.let {
+                    startActivity(Intent(this, InvoiceDetailActivity::class.java).putExtra("invoiceId", it))
                 }
             },
-            onMoreClick = { item, _ ->
-                val invId = item.id.toString().toIntOrNull() ?: return@InvoiceListAdapter
-                startActivity(Intent(this, InvoiceDetailActivity::class.java).putExtra("invoiceId", invId))
+            onMoreClick = { _, item ->
+                item.id.toIntOrNull()?.let {
+                    startActivity(Intent(this, InvoiceDetailActivity::class.java).putExtra("invoiceId", it))
+                }
             },
             onCall = { phone -> dial(phone) }
         )
@@ -99,11 +82,9 @@ class InvoiceListActivity : AppCompatActivity() {
 
         initMonthPickerLikeSpinner()
         initStatusSpinner()
-
         reload()
     }
 
-    /* ---------- Call ---------- */
     private fun dial(phone: String) {
         if (phone.isBlank()) {
             Toast.makeText(this, "Chưa có số điện thoại", Toast.LENGTH_SHORT).show()
@@ -112,52 +93,35 @@ class InvoiceListActivity : AppCompatActivity() {
         startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:${phone.trim()}")))
     }
 
-    /* ---------- Pickers & Filters ---------- */
+    /* ---------------- Filters ---------------- */
     private fun initMonthPickerLikeSpinner() {
-        val curText = monthText(selMonth - 1, selYear)
         spMonth.adapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_spinner_dropdown_item,
-            listOf(curText)
+            this, android.R.layout.simple_spinner_dropdown_item,
+            listOf(monthText(selMonth - 1, selYear))
         )
-
-        // Chạm vào spinner -> MỞ DatePicker (nuốt event để spinner KHÔNG mở dropdown)
         spMonth.setOnTouchListener { _, ev ->
             if (ev.action == MotionEvent.ACTION_UP) showMonthPicker()
             true
         }
-
-        // Hỗ trợ bàn phím (Enter/Center)
-        spMonth.setOnKeyListener { _, keyCode, event ->
-            if (event.action == KeyEvent.ACTION_UP &&
-                (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER)
-            ) { showMonthPicker(); true } else false
-        }
-
-        // Không gắn click cho parent để tránh double-trigger
     }
-
 
     private fun initStatusSpinner() {
         val labels = listOf("Tất cả", "Chưa thu", "Đã thu", "Hủy")
         spStatus.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, labels)
         spStatus.setSelection(StatusFilter.ALL.ordinal)
-        spStatus.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long) {
+        spStatus.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 selStatus = StatusFilter.values()[position]; reload()
             }
-            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) = Unit
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
     }
 
     private fun showMonthPicker() {
-        val y = selYear
-        val m = selMonth - 1
-
         val dialog = android.app.DatePickerDialog(
             this,
-            { _, year, month, _ /* day bỏ qua */ ->
-                selYear  = year
+            { _, year, month, _ ->
+                selYear = year
                 selMonth = month + 1
                 spMonth.adapter = ArrayAdapter(
                     this,
@@ -166,43 +130,22 @@ class InvoiceListActivity : AppCompatActivity() {
                 )
                 reload()
             },
-            y, m, 1 /* luôn đặt day = 1 */
+            selYear, selMonth - 1, 1
         )
-
-        // Ẩn phần chọn NGÀY sau khi dialog hiển thị
         dialog.setOnShowListener {
             val dp = dialog.datePicker
-            // cách phổ biến: tìm id hệ thống "day"
             runCatching {
                 val dayId = resources.getIdentifier("day", "id", "android")
                 dp.findViewById<View>(dayId)?.visibility = View.GONE
             }
-            // dự phòng: ẩn mọi NumberPicker có tag chứa "day"
-            hideDayRecursive(dp)
         }
-
-        dialog.setTitle(getString(R.string.pick_month))
         dialog.show()
     }
 
-    private fun hideDayRecursive(v: View?) {
-        if (v == null) return
-        if (v.javaClass.name.contains("NumberPicker", true) &&
-            (v.tag?.toString()?.lowercase(Locale.getDefault())?.contains("day") == true)
-        ) {
-            v.visibility = View.GONE
-            return
-        }
-        if (v is ViewGroup) {
-            for (i in 0 until v.childCount) hideDayRecursive(v.getChildAt(i))
-        }
-    }
+    private fun monthText(month0: Int, year: Int) =
+        String.format(Locale.getDefault(), "Tháng %d/%d", month0 + 1, year)
 
-
-
-    private fun monthText(month0: Int, year: Int) = String.format(Locale.getDefault(), "Tháng %d/%d", month0 + 1, year)
-
-    /* ---------- Loading ---------- */
+    /* ---------------- Load data ---------------- */
     private fun reload() {
         showLoading(true)
         lifecycleScope.launch(Dispatchers.IO) {
@@ -221,45 +164,47 @@ class InvoiceListActivity : AppCompatActivity() {
         rv.alpha = if (show) 0.4f else 1f
     }
 
-    /* ---------- DB Query ---------- */
+    /* ---------------- Query DB ---------------- */
     private fun queryInvoices(periodMonth: Int, periodYear: Int, filter: StatusFilter): List<InvoiceCardItem> {
         val db = DatabaseHelper(this).readableDatabase
-
         val sql = buildString {
-            append("""
+            append(
+                """
                 SELECT inv.id,
                        r.name AS roomName,
                        inv.totalAmount, inv.roomRent, inv.paid,
                        inv.createdAt, inv.dueAt, inv.reason,
-                       c.tenantPhone
+                       c.tenantPhone,
+                       inv.periodMonth, inv.periodYear
                 FROM invoices inv
                 JOIN rooms r ON r.id = inv.roomId
                 LEFT JOIN contracts c ON c.roomId = inv.roomId AND c.active = 1
                 WHERE inv.periodMonth = ? AND inv.periodYear = ?
-            """.trimIndent())
+            """.trimIndent()
+            )
             when (filter) {
                 StatusFilter.UNPAID -> append(" AND inv.paid = 0 ")
-                StatusFilter.PAID   -> append(" AND inv.paid = 1 ")
+                StatusFilter.PAID -> append(" AND inv.paid = 1 ")
                 StatusFilter.CANCEL -> append(" AND inv.paid = 2 ")
-                StatusFilter.ALL    -> {}
+                StatusFilter.ALL -> {}
             }
             append(" ORDER BY inv.createdAt DESC ")
         }
 
         val args = arrayOf(periodMonth.toString(), periodYear.toString())
         val list = mutableListOf<InvoiceCardItem>()
-
         db.rawQuery(sql, args).use { c ->
             while (c.moveToNext()) {
-                val invoiceId   = c.getInt(0).toString()
-                val roomName    = c.getString(1) ?: ""
-                val total       = c.getInt(2)
-                val roomRent    = c.getInt(3)
-                val paidCode    = c.getInt(4)
+                val invoiceId = c.getInt(0).toString()
+                val roomName = c.getString(1) ?: ""
+                val total = c.getInt(2)
+                val paidCode = c.getInt(4)
                 val createdAtMs = c.getLong(5)
-                val dueAtMs     = c.getLong(6)
-                val reasonTxt   = c.getString(7)
-                val phone       = c.getString(8) ?: ""
+                val dueAtMs = c.getLong(6)
+                val reasonTxt = c.getString(7)
+                val phone = c.getString(8) ?: ""
+                val periodMonthDb = c.getInt(9)
+                val periodYearDb = c.getInt(10)
 
                 val mainStatus = when (paidCode) {
                     1 -> "Đã thu"
@@ -268,10 +213,9 @@ class InvoiceListActivity : AppCompatActivity() {
                 }
 
                 val createdStr = if (createdAtMs > 0) df.format(Date(createdAtMs)) else "—"
-                val dueStr     = if (dueAtMs > 0) df.format(Date(dueAtMs)) else "—"
-                val reasonStr  = if (reasonTxt.isNullOrBlank()) "—" else reasonTxt.trim()
-
-                val remainStr  = if (paidCode == 1) "0đ" else "${vn.format(total)}đ"
+                val dueStr = if (dueAtMs > 0) df.format(Date(dueAtMs)) else "—"
+                val reasonStr = if (reasonTxt.isNullOrBlank()) "—" else reasonTxt.trim()
+                val remainStr = if (paidCode == 1) "0đ" else "${vn.format(total)}đ"
                 val collectedStr = if (paidCode == 1) "Đã thu ${vn.format(total)}đ" else "Chưa thu"
 
                 list.add(
@@ -283,9 +227,11 @@ class InvoiceListActivity : AppCompatActivity() {
                         deposit = remainStr,
                         collected = collectedStr,
                         createdDate = createdStr,
-                        moveInDate  = reasonStr,
-                        endDate     = dueStr,
-                        phone = phone
+                        moveInDate = reasonStr,
+                        endDate = dueStr,
+                        phone = phone,
+                        periodMonth = periodMonthDb,
+                        periodYear = periodYearDb
                     )
                 )
             }

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/bg_scr">
 
-    <!-- HEADER DÙNG INCLUDE -->
+    <!-- HEADER -->
     <include
         android:id="@+id/headerBack"
         layout="@layout/view_header_back"
@@ -15,7 +15,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- NỘI DUNG CHÍNH CUỘN ĐƯỢC -->
+    <!-- NỘI DUNG CHÍNH -->
     <ScrollView
         android:id="@+id/scrollContent"
         android:layout_width="0dp"
@@ -120,20 +120,11 @@
                     android:padding="@dimen/pad_m"
                     android:inputType="phone"
                     android:layout_marginBottom="@dimen/mar_m"/>
-
-                <EditText
-                    android:id="@+id/edtTongThanhVien"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Số lượng thành viên (nếu có)"
-                    android:background="@drawable/bg_border"
-                    android:padding="@dimen/pad_m"
-                    android:inputType="number"/>
             </LinearLayout>
 
-            <!-- SECTION 3: GIÁ TRỊ HỢP ĐỒNG -->
+            <!-- SECTION 3: TIỀN CỌC -->
             <LinearLayout
-                android:id="@+id/sectionGiaTri"
+                android:id="@+id/sectionDeposit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -144,38 +135,12 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="💰 Giá trị hợp đồng"
+                    android:text="💰 Tiền cọc"
                     android:textStyle="bold"
                     android:textColor="@color/txt_pri"
                     android:textSize="@dimen/txt_m"
                     android:layout_marginBottom="@dimen/mar_m"/>
 
-                <!-- Giá thuê -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Giá thuê"
-                    android:textStyle="bold"
-                    android:textColor="@color/txt_sec"
-                    android:layout_marginBottom="4dp"/>
-                <EditText
-                    android:id="@+id/edtGiaThue"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Nhập giá thuê (₫)"
-                    android:inputType="number"
-                    android:background="@drawable/bg_border"
-                    android:padding="@dimen/pad_m"
-                    android:layout_marginBottom="@dimen/mar_m"/>
-
-                <!-- Tiền cọc -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Tiền cọc"
-                    android:textStyle="bold"
-                    android:textColor="@color/txt_sec"
-                    android:layout_marginBottom="4dp"/>
                 <EditText
                     android:id="@+id/edtMucCoc"
                     android:layout_width="match_parent"
@@ -183,47 +148,12 @@
                     android:hint="Nhập tiền cọc (₫)"
                     android:inputType="number"
                     android:background="@drawable/bg_border"
-                    android:padding="@dimen/pad_m"
-                    android:layout_marginBottom="@dimen/mar_m"/>
-
-                <!-- Chu kỳ thu tiền -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Chu kỳ thu tiền"
-                    android:textStyle="bold"
-                    android:textColor="@color/txt_sec"
-                    android:layout_marginBottom="4dp"/>
-                <Spinner
-                    android:id="@+id/spnChuKyThuTien"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_border"
-                    android:padding="@dimen/pad_m"
-                    android:layout_marginBottom="@dimen/mar_m"/>
-
-                <!-- Ngày thu tiền -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Ngày thu tiền"
-                    android:textStyle="bold"
-                    android:textColor="@color/txt_sec"
-                    android:layout_marginBottom="4dp"/>
-                <EditText
-                    android:id="@+id/edtNgayThuTien"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Ngày thu tiền hàng tháng (1–31)"
-                    android:inputType="number"
-                    android:background="@drawable/bg_border"
                     android:padding="@dimen/pad_m"/>
             </LinearLayout>
-
         </LinearLayout>
     </ScrollView>
 
-    <!-- NÚT LƯU GIM DƯỚI -->
+    <!-- NÚT LƯU -->
     <Button
         android:id="@+id/btnSave"
         android:layout_width="match_parent"
