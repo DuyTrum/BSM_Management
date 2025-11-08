@@ -33,8 +33,6 @@
         motion:constraintSetEnd="@id/end"
         motion:duration="2000"
         motion:staggered="0.25">
-        <!-- nảy nhẹ ở cuối -->
-        <OnSwipe motion:touchAnchorId="@id/imgMid" motion:touchAnchorSide="top" motion:dragDirection="dragUp" />
     </Transition>
 
 </MotionScene>

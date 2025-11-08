@@ -21,21 +21,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BSM_Management">
+        <provider
+            android:name=".ui.provider.RoomsProvider"
+            android:authorities="com.example.bsm_management.ui.provider"
+            android:exported="true" />
         <activity
             android:name=".ui.room.RoomListActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.hostel.AddHostelStep2Activity"
             android:exported="false" />
         <activity
             android:name=".ui.intro.EmptyStateActivity"
             android:exported="false" /> <!-- AddHostel -->
         <activity
             android:name=".ui.hostel.AddHostelActivity"
-            android:exported="false" /> <!-- QR Scan -->
+            android:exported="false" />
         <activity
             android:name=".ui.qr.QrScanActivity"
-            android:exported="false" /> <!-- Invoices -->
+            android:exported="false" />
         <activity
             android:name=".ui.invoice.InvoiceListActivity"
             android:exported="false" />
@@ -66,10 +67,10 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

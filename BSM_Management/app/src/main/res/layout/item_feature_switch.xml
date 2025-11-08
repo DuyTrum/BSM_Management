@@ -1,55 +1,57 @@
-<com.google.android.material.card.MaterialCardView
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/featRoot"
-    style="@style/Widget.Material3.CardView.Elevated"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="10dp"
-    app:cardCornerRadius="16dp"
-    app:strokeColor="@color/bsm_divider">
+    android:minHeight="64dp"
+    android:padding="12dp"
+    android:background="@android:color/white">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <!-- Icon -->
+    <ImageView
+        android:id="@+id/imgFeatureIcon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:contentDescription="Icon"
+        app:srcCompat="@drawable/ic_check_circle"
+        app:tint="@color/bsm_success"/>
+
+    <!-- Tiêu đề -->
+    <TextView
+        android:id="@+id/tvFeatureTitle"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="12dp"
-        android:gravity="center_vertical">
+        android:text="Tên tính năng"
+        android:textStyle="bold"
+        android:textColor="@color/bsm_text_primary"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@id/imgFeatureIcon"
+        app:layout_constraintTop_toTopOf="@id/imgFeatureIcon"
+        app:layout_constraintEnd_toStartOf="@id/swFeature"
+        android:layout_marginStart="12dp" />
 
-        <ImageView
-            android:id="@+id/imgFeatureIcon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_hostel"
-            android:background="@drawable/bg_icon_circle_soft"
-            android:padding="8dp"/>
+    <!-- Mô tả -->
+    <TextView
+        android:id="@+id/tvFeatureDesc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Mô tả tính năng"
+        android:textColor="@color/bsm_text_secondary"
+        android:textSize="13sp"
+        app:layout_constraintStart_toStartOf="@id/tvFeatureTitle"
+        app:layout_constraintTop_toBottomOf="@id/tvFeatureTitle"
+        app:layout_constraintEnd_toEndOf="@id/tvFeatureTitle"/>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="12dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tvFeatureTitle"
-                android:text="Tính năng"
-                android:textStyle="bold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <TextView
-                android:id="@+id/tvFeatureDesc"
-                android:text="Mô tả"
-                android:textColor="@color/bsm_text_secondary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
-
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/swFeature"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"/>
-    </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+    <!-- Switch -->
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/swFeature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

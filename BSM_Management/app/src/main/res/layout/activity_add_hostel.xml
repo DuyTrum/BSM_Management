@@ -534,8 +534,8 @@ app:cardElevation="8dp">
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/progress"
-            android:layout_width="5dp"
-            android:layout_height="6dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:progress="40"
             app:indicatorColor="@color/bsm_green"
             app:layout_constraintEnd_toEndOf="parent"

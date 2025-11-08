@@ -1,89 +1,82 @@
 package com.example.bsm_management.ui.room
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bsm_management.R
-import com.example.bsm_management.databinding.ItemRoomBinding
-import java.text.NumberFormat
-import java.util.Locale
 
 class RoomAdapter(
     private val onPhoneClick: (String?) -> Unit,
     private val onMoreClick: (Long) -> Unit,
     private val onFillClick: (Long) -> Unit,
     private val onPostClick: (Long) -> Unit
-) : ListAdapter<UiRoom, RoomAdapter.VH>(DIFF) {
+) : ListAdapter<UiRoom, RoomAdapter.RoomVH>(Diff()) {
 
-    companion object {
-        private val DIFF = object : DiffUtil.ItemCallback<UiRoom>() {
-            override fun areItemsTheSame(o: UiRoom, n: UiRoom) = o.id == n.id
-            override fun areContentsTheSame(o: UiRoom, n: UiRoom) = o == n
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RoomVH {
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.item_room, parent, false)
+        return RoomVH(v)
+    }
+
+    override fun onBindViewHolder(holder: RoomVH, position: Int) {
+        holder.bind(getItem(position))
+    }
+
+    inner class RoomVH(v: View) : RecyclerView.ViewHolder(v) {
+        private val tvRoomName: TextView = v.findViewById(R.id.tvRoomName)
+        private val tvPhone: TextView = v.findViewById(R.id.tvPhone)
+        private val tvRent: TextView = v.findViewById(R.id.tvRent)
+        private val tvTenantCount: TextView = v.findViewById(R.id.tvTenantCount)
+        private val chipOccupied: TextView = v.findViewById(R.id.chipOccupied)
+        private val chipEmpty: TextView = v.findViewById(R.id.chipEmpty)
+        private val btnFill: com.google.android.material.button.MaterialButton = v.findViewById(R.id.btnFill)
+        private val btnPost: com.google.android.material.button.MaterialButton = v.findViewById(R.id.btnPost)
+        private val btnMore: ImageButton = v.findViewById(R.id.btnMore)
+
+        fun bind(item: UiRoom) {
+            val ctx = itemView.context
+            tvRoomName.text = item.name.ifBlank { "Phòng chưa đặt tên" }
+            tvPhone.text = item.phone ?: "Chưa có số điện thoại"
+            tvRent.text = if (item.baseRent != null && item.baseRent > 0)
+                "${item.baseRent} đ/tháng" else "Chưa có giá"
+            tvTenantCount.text = "${item.tenantCount ?: 0} người"
+
+            chipOccupied.isVisible = item.status == "OCCUPIED"
+            chipEmpty.isVisible = item.status == "EMPTY"
+
+            // Nút lấp phòng / trả phòng toggle
+            btnFill.apply {
+                if (item.status == "OCCUPIED") {
+                    text = "Trả phòng"
+                    setIconResource(R.drawable.ic_logout)
+                    setTextColor(ContextCompat.getColor(ctx, R.color.bsm_orange))
+                    iconTint = ContextCompat.getColorStateList(ctx, R.color.bsm_orange)
+                    strokeColor = ContextCompat.getColorStateList(ctx, R.color.bsm_orange)
+                } else {
+                    text = "Lấp phòng"
+                    setIconResource(R.drawable.ic_bolt)
+                    setTextColor(ContextCompat.getColor(ctx, R.color.bsm_green))
+                    iconTint = ContextCompat.getColorStateList(ctx, R.color.bsm_green)
+                    strokeColor = ContextCompat.getColorStateList(ctx, R.color.bsm_green)
+                }
+                setOnClickListener { onFillClick(item.id) }
+            }
+
+            btnPost.setOnClickListener { onPostClick(item.id) }
+            btnMore.setOnClickListener { onMoreClick(item.id) }
+            tvPhone.setOnClickListener { onPhoneClick(item.phone) }
         }
     }
 
-    inner class VH(val vb: ItemRoomBinding) : RecyclerView.ViewHolder(vb.root)
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        val vb = ItemRoomBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return VH(vb)
-    }
-
-    override fun onBindViewHolder(h: VH, pos: Int) = with(h.vb) {
-        val room = getItem(pos)
-        val ctx = h.itemView.context
-
-        // Tên, giá thuê, số khách
-        tvRoomName.text = room.name
-        val nf = NumberFormat.getInstance(Locale("vi", "VN"))
-        tvRent.text = "${nf.format(room.baseRent)} đ"
-        tvTenantCount.text = "${room.tenantCount}/1 người"
-
-        // Phone
-        tvPhone.apply {
-            text = room.phone ?: ctx.getString(R.string.no_phone)
-            val color = if (room.phone != null)
-                ContextCompat.getColor(ctx, R.color.bsm_link)
-            else
-                ContextCompat.getColor(ctx, R.color.bsm_text_secondary)
-            setTextColor(color)
-            setOnClickListener { onPhoneClick(room.phone) }
-        }
-
-        // Contract rows
-        rowContractDate.value.text =
-            room.contractEnd ?: ctx.getString(R.string.contract_empty)
-
-        rowApp.value.text = ctx.getString(
-            if (room.appUsed) R.string.app_used else R.string.app_not_used
-        )
-        rowApp.value.setTextColor(
-            ContextCompat.getColor(
-                ctx, if (room.appUsed) R.color.bsm_success else R.color.bsm_orange
-            )
-        )
-
-        rowOnline.value.text = ctx.getString(
-            if (room.onlineSigned) R.string.online_signed else R.string.online_not_signed
-        )
-        rowOnline.value.setTextColor(
-            ContextCompat.getColor(
-                ctx, if (room.onlineSigned) R.color.bsm_success else R.color.bsm_orange
-            )
-        )
-
-        // Status chips
-        chipOccupied.isVisible = room.status == "OCCUPIED"
-        chipWaiting.isVisible  = true // luôn hiển thị “Chờ kỳ thu tới”
-        chipEmpty.isVisible    = room.status != "OCCUPIED"
-
-        // Click 3-chấm & actions
-        btnMore.setOnClickListener { onMoreClick(room.id) }
-        btnFill.setOnClickListener { onFillClick(room.id) }
-        btnPost.setOnClickListener { onPostClick(room.id) }
+    class Diff : DiffUtil.ItemCallback<UiRoom>() {
+        override fun areItemsTheSame(oldItem: UiRoom, newItem: UiRoom) = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: UiRoom, newItem: UiRoom) = oldItem == newItem
     }
 }

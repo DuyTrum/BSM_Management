@@ -29,7 +29,7 @@
             android:id="@+id/tvRoomName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Phòng 1"
+            android:text="P001"
             android:textStyle="bold"
             android:textSize="16sp"
             app:layout_constraintStart_toEndOf="@id/ivAvatar"
@@ -41,7 +41,7 @@
             android:id="@+id/tvPhone"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/no_phone"
+            android:text="Chưa có số điện thoại"
             android:autoLink="phone"
             app:layout_constraintStart_toStartOf="@id/tvRoomName"
             app:layout_constraintTop_toBottomOf="@id/tvRoomName"
@@ -50,13 +50,14 @@
 
         <ImageButton
             android:id="@+id/btnMore"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="@drawable/bg_icon_circle_soft"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             app:srcCompat="@drawable/ic_more_vert"
-            app:tint="@color/bsm_text_primary"
+            app:tint="@color/bsm_green"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
+
 
         <!-- Info block -->
         <com.google.android.material.card.MaterialCardView
@@ -130,16 +131,6 @@
                         android:background="@drawable/bg_chip_success"/>
 
                     <TextView
-                        android:id="@+id/chipWaiting"
-                        style="@style/Bsm.AssistChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
-                        android:text="@string/status_next_cycle"
-                        android:paddingHorizontal="10dp"
-                        android:background="@drawable/bg_chip_soft"/>
-
-                    <TextView
                         android:id="@+id/chipEmpty"
                         style="@style/Bsm.AssistChip"
                         android:layout_width="wrap_content"
@@ -171,7 +162,7 @@
                 android:drawableStart="@drawable/ic_attach_money"
                 android:drawablePadding="6dp"
                 android:textStyle="bold"
-                android:text="3.000.000 đ"/>
+                android:text="10.000 đ/tháng"/>
 
             <TextView
                 android:id="@+id/tvTenantCount"
@@ -179,7 +170,7 @@
                 android:layout_height="wrap_content"
                 android:drawableStart="@drawable/ic_person"
                 android:drawablePadding="6dp"
-                android:text="1/1 người"/>
+                android:text="0 người"/>
         </LinearLayout>
 
         <!-- Actions -->
@@ -191,31 +182,42 @@
             android:orientation="horizontal"
             android:layout_marginTop="6dp">
 
+            <!-- Nút Lấp / Trả phòng -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnFill"
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="wrap_content"
-                android:layout_height="38dp"
-                android:text="@string/fill_room"
-                app:cornerRadius="20dp"
+                android:layout_height="40dp"
+                android:minWidth="100dp"
+                android:text="Lấp phòng"
+                android:textAllCaps="false"
+                android:textColor="@color/bsm_green"
                 app:strokeColor="@color/bsm_green"
+                app:strokeWidth="2dp"
+                app:cornerRadius="22dp"
                 app:icon="@drawable/ic_bolt"
+                app:iconGravity="textStart"
                 app:iconTint="@color/bsm_green"
-                app:iconPadding="6dp"/>
+                app:iconPadding="8dp"
+                android:paddingHorizontal="16dp"/>
 
             <Space android:layout_width="8dp" android:layout_height="0dp"/>
 
+            <!-- Nút Đăng tin -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnPost"
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="wrap_content"
-                android:layout_height="38dp"
-                android:text="@string/post_news"
-                app:cornerRadius="20dp"
+                android:layout_height="40dp"
+                android:text="Đăng tin"
+                android:textAllCaps="false"
+                android:textColor="@color/bsm_green"
                 app:strokeColor="@color/bsm_green"
+                app:cornerRadius="22dp"
                 app:icon="@drawable/ic_fiber_new"
                 app:iconTint="@color/bsm_green"
-                app:iconPadding="6dp"/>
+                app:iconPadding="8dp"
+                android:paddingHorizontal="16dp"/>
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

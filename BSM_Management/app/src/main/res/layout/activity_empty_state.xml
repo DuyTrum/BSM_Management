@@ -141,8 +141,7 @@
                         <ImageView
                             android:layout_width="28dp"
                             android:layout_height="28dp"
-                            android:src="@drawable/ic_zalo"
-                            app:tint="@color/bsm_text_primary" />
+                            android:src="@drawable/ic_zalo" />
 
                         <TextView
                             android:layout_width="0dp"
