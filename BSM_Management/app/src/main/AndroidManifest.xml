@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+    <!-- Quyền cần thiết -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- Camera cho QR -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
@@ -26,7 +34,28 @@
             android:authorities="com.example.bsm_management.ui.provider"
             android:exported="true" />
         <activity
-            android:name=".ui.room.RoomListActivity"
+            android:name=".ui.contract.ContractDetailActivity"
+            android:exported="false" />
+        <service android:name=".service.NotificationService" />
+
+        <activity
+            android:name=".ui.auth.LoginActivity"
+            android:exported="false" />
+
+        <receiver
+            android:name=".receiver.InvoiceDueReceiver"
+            android:exported="false" />
+        <receiver
+            android:name=".receiver.BootReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".ui.invoice.InvoiceDetailActivity"
             android:exported="false" />
         <activity
             android:name=".ui.intro.EmptyStateActivity"
@@ -53,24 +82,30 @@
             android:name=".ui.contract.ContractRoomActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.contract.AddContractActivity"
-            android:exported="false" /> <!-- Profile -->
-        <activity
             android:name=".ui.profile.ChangePasswordActivity"
             android:exported="false" /> <!-- Auth -->
         <activity
             android:name=".ui.auth.RegisterActivity"
-            android:exported="false" /> <!-- <activity android:name=".ui.auth.LoginActivity" android:exported="false" /> -->
-        <!-- MainActivity (router + dashboard) -->
+            android:exported="false" />
+        <activity
+            android:name=".ui.contract.AddContractActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.main.MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.intro.IntroActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <provider
+            android:name=".provider.ContractProvider"
+            android:authorities="com.example.bsm_management.provider"
+            android:exported="true"
+            android:grantUriPermissions="true" />
     </application>
 
 </manifest>

@@ -50,9 +50,9 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/btnFilterRoom"
             android:layout_width="0dp"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingHorizontal="@dimen/pad_m"
+            android:paddingHorizontal="@dimen/pad_l"
             android:background="@drawable/bg_border"
             android:layout_marginEnd="@dimen/mar_m">
 
@@ -63,10 +63,11 @@
                 android:layout_height="wrap_content"
                 android:text="Chọn phòng"
                 android:textColor="@color/txt_sec"
-                android:textSize="@dimen/txt_s"
+                android:textSize="@dimen/txt_m"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                android:paddingBottom="@dimen/pad_s"/>
 
             <!-- Giá trị -->
             <TextView
@@ -97,9 +98,9 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/btnFilterStatus"
             android:layout_width="0dp"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingHorizontal="@dimen/pad_m"
+            android:paddingHorizontal="@dimen/pad_l"
             android:background="@drawable/bg_border"
             android:layout_marginStart="@dimen/mar_m">
 
@@ -108,12 +109,13 @@
                 android:id="@+id/tvStatusLabel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Trạng thái hợp đồng"
+                android:text="Trạng thái"
                 android:textColor="@color/txt_sec"
-                android:textSize="@dimen/txt_s"
+                android:textSize="@dimen/txt_m"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                android:paddingBottom="@dimen/pad_s"/>
 
             <!-- Giá trị -->
             <TextView

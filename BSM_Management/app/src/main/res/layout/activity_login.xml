@@ -124,7 +124,7 @@
         android:layout_height="wrap_content"
         android:text="Quên mật khẩu?"
         android:textColor="@color/pri"
-        android:textSize="@dimen/txt_s"
+        android:textSize="@dimen/txt_m"
         android:layout_marginTop="@dimen/mar_m"
         android:layout_gravity="end" />
 
@@ -139,6 +139,16 @@
         android:layout_marginTop="@dimen/mar_l"
         android:padding="@dimen/pad_l" />
 
+    <CheckBox
+        android:id="@+id/cbRemember"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ghi nhớ đăng nhập"
+        android:textSize="@dimen/txt_m"
+        android:checked="true"
+        android:layout_gravity="end"
+        android:layout_marginTop="@dimen/mar_s"/>
+
     <!-- Đăng ký -->
     <LinearLayout
         android:id="@+id/llRegister"
@@ -152,7 +162,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Chưa có tài khoản?"
-            android:textColor="@color/txt_pri" />
+            android:textColor="@color/txt_pri"
+            android:textSize="@dimen/txt_m"
+            />
 
         <TextView
             android:id="@+id/tvRegister"
@@ -160,7 +172,9 @@
             android:layout_height="wrap_content"
             android:text="Đăng ký"
             android:textColor="@color/pri"
-            android:layout_marginStart="@dimen/mar_s" />
+            android:layout_marginStart="@dimen/mar_s"
+            android:textSize="@dimen/txt_m"
+            />
     </LinearLayout>
 
 </LinearLayout>

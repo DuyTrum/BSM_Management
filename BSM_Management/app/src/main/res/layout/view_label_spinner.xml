@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Label Spinner"
-        android:textSize="14sp"
+        android:textSize="@dimen/txt_m"
         android:textStyle="bold"
         android:textColor="@color/txt_sec"
         android:layout_marginBottom="4dp"/>

@@ -9,5 +9,9 @@ data class InvoiceCardItem(
     val collected: String,
     val createdDate: String,
     val moveInDate: String,
-    val endDate: String
+    val endDate: String,
+    val phone: String = "",
+    val periodMonth: Int = 0,
+    val periodYear: Int = 0
 )
+

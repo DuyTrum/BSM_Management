@@ -1,18 +1,16 @@
 package com.example.bsm_management.ui.invoice
 
-import android.app.DatePickerDialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.MotionEvent
-import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.ProgressBar
-import android.widget.Spinner
-import android.widget.TextView
+import android.view.*
+import android.widget.*
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bsm_management.R
@@ -20,7 +18,6 @@ import database.DatabaseHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import androidx.lifecycle.lifecycleScope
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -32,23 +29,20 @@ class InvoiceListActivity : AppCompatActivity() {
     private lateinit var rv: RecyclerView
     private lateinit var emptyView: TextView
     private lateinit var progress: ProgressBar
-
     private lateinit var listAdapter: InvoiceListAdapter
 
-    // state đang chọn
-    private var selMonth = Calendar.getInstance().get(Calendar.MONTH) + 1 // 1..12
-    private var selYear  = Calendar.getInstance().get(Calendar.YEAR)
+    private var selMonth = Calendar.getInstance().get(Calendar.MONTH) + 1
+    private var selYear = Calendar.getInstance().get(Calendar.YEAR)
     private var selStatus: StatusFilter = StatusFilter.ALL
 
-    private val vn: NumberFormat by lazy { NumberFormat.getInstance(Locale("vi", "VN")) }
-    private val df: SimpleDateFormat by lazy { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
+    private val vn by lazy { NumberFormat.getInstance(Locale("vi", "VN")) }
+    private val df by lazy { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_invoice_list)
 
-        // window insets
         findViewById<View?>(R.id.main)?.let { root ->
             ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
                 val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -57,105 +51,105 @@ class InvoiceListActivity : AppCompatActivity() {
             }
         }
 
-        // Header (nếu có)
-        findViewById<TextView?>(R.id.tvHeaderTitle)?.text = getString(R.string.invoice_list_title)
-        findViewById<TextView?>(R.id.tvHeaderSubtitle)?.text = getString(R.string.invoice_list_subtitle)
-        findViewById<View?>(R.id.ivBack)?.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        // Header
+        findViewById<TextView>(R.id.tvHeaderTitle)?.text = getString(R.string.invoice_list_title)
+        findViewById<TextView>(R.id.tvHeaderSubtitle)?.text = getString(R.string.invoice_list_subtitle)
+        findViewById<View>(R.id.ivBack)?.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         // Views
-        spMonth   = findViewById(R.id.spMonth)
-        spStatus  = findViewById(R.id.spStatus)
-        rv        = findViewById(R.id.rvInvoices)
+        spMonth = findViewById(R.id.spMonth)
+        spStatus = findViewById(R.id.spStatus)
+        rv = findViewById(R.id.rvInvoices)
         emptyView = findViewById(R.id.tvEmpty)
-        progress  = findViewById(R.id.progress)
+        progress = findViewById(R.id.progress)
 
-        // RecyclerView
         listAdapter = InvoiceListAdapter(
-            onItemClick = { /* TODO: mở chi tiết hóa đơn */ },
-            onMoreClick = { _, _ -> /* TODO: popup Sửa/Xóa/Chia sẻ */ }
+            onItemClick = { item ->
+                item.id.toIntOrNull()?.let {
+                    startActivity(Intent(this, InvoiceDetailActivity::class.java).putExtra("invoiceId", it))
+                }
+            },
+            onMoreClick = { _, item ->
+                item.id.toIntOrNull()?.let {
+                    startActivity(Intent(this, InvoiceDetailActivity::class.java).putExtra("invoiceId", it))
+                }
+            },
+            onCall = { phone -> dial(phone) }
         )
+
         rv.layoutManager = LinearLayoutManager(this)
         rv.adapter = listAdapter
 
-        // Month picker (spinner-giả)
         initMonthPickerLikeSpinner()
-
-        // Status filter
         initStatusSpinner()
-
-        // Load đầu tiên
         reload()
     }
 
-    /* ------------------------ Pickers & Filters ------------------------ */
+    private fun dial(phone: String) {
+        if (phone.isBlank()) {
+            Toast.makeText(this, "Chưa có số điện thoại", Toast.LENGTH_SHORT).show()
+            return
+        }
+        startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:${phone.trim()}")))
+    }
 
+    /* ---------------- Filters ---------------- */
     private fun initMonthPickerLikeSpinner() {
-        val curText = monthText(selMonth - 1, selYear)
-        spMonth.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, listOf(curText))
-
+        spMonth.adapter = ArrayAdapter(
+            this, android.R.layout.simple_spinner_dropdown_item,
+            listOf(monthText(selMonth - 1, selYear))
+        )
         spMonth.setOnTouchListener { _, ev ->
-            if (ev.action == MotionEvent.ACTION_UP) { showMonthPicker(); true } else false
+            if (ev.action == MotionEvent.ACTION_UP) showMonthPicker()
+            true
         }
-        spMonth.setOnKeyListener { _, keyCode, event ->
-            if (event.action == KeyEvent.ACTION_UP &&
-                (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER)
-            ) { showMonthPicker(); true } else false
-        }
-        (spMonth.parent as? View)?.setOnClickListener { showMonthPicker() }
     }
 
     private fun initStatusSpinner() {
-        // Thứ tự phải khớp enum StatusFilter
         val labels = listOf("Tất cả", "Chưa thu", "Đã thu", "Hủy")
         spStatus.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, labels)
         spStatus.setSelection(StatusFilter.ALL.ordinal)
-        spStatus.setOnItemSelectedListener(SimpleItemSelected {
-            selStatus = StatusFilter.values()[spStatus.selectedItemPosition]
-            reload()
-        })
+        spStatus.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                selStatus = StatusFilter.values()[position]; reload()
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
     }
 
     private fun showMonthPicker() {
-        val cal = Calendar.getInstance().apply {
-            set(Calendar.YEAR, selYear)
-            set(Calendar.MONTH, selMonth - 1)
-            set(Calendar.DAY_OF_MONTH, 1)
-        }
-        val y = cal.get(Calendar.YEAR)
-        val m = cal.get(Calendar.MONTH)
-
-        val dialog = DatePickerDialog(
+        val dialog = android.app.DatePickerDialog(
             this,
-            { _, yPicked, mPicked, _ ->
-                selYear = yPicked
-                selMonth = mPicked + 1
+            { _, year, month, _ ->
+                selYear = year
+                selMonth = month + 1
                 spMonth.adapter = ArrayAdapter(
                     this,
                     android.R.layout.simple_spinner_dropdown_item,
-                    listOf(monthText(mPicked, yPicked))
+                    listOf(monthText(selMonth - 1, selYear))
                 )
                 reload()
             },
-            y, m, cal.get(Calendar.DAY_OF_MONTH)
+            selYear, selMonth - 1, 1
         )
-        // Ẩn chọn ngày
-        try {
-            val dayId = resources.getIdentifier("day", "id", "android")
-            dialog.datePicker.findViewById<View>(dayId)?.visibility = View.GONE
-        } catch (_: Exception) { }
-        dialog.setTitle(getString(R.string.pick_month))
+        dialog.setOnShowListener {
+            val dp = dialog.datePicker
+            runCatching {
+                val dayId = resources.getIdentifier("day", "id", "android")
+                dp.findViewById<View>(dayId)?.visibility = View.GONE
+            }
+        }
         dialog.show()
     }
 
-    private fun monthText(month0Based: Int, year: Int): String =
-        String.format(Locale.getDefault(), "Tháng %d/%d", month0Based + 1, year)
+    private fun monthText(month0: Int, year: Int) =
+        String.format(Locale.getDefault(), "Tháng %d/%d", month0 + 1, year)
 
-    /* ------------------------ Loading ------------------------ */
-
+    /* ---------------- Load data ---------------- */
     private fun reload() {
         showLoading(true)
         lifecycleScope.launch(Dispatchers.IO) {
-            val data = queryInvoices(periodMonth = selMonth, periodYear = selYear, filter = selStatus)
+            val data = queryInvoices(selMonth, selYear, selStatus)
             withContext(Dispatchers.Main) {
                 showLoading(false)
                 listAdapter.submitList(data)
@@ -170,63 +164,74 @@ class InvoiceListActivity : AppCompatActivity() {
         rv.alpha = if (show) 0.4f else 1f
     }
 
-    /* ------------------------ DB Query ------------------------ */
-
+    /* ---------------- Query DB ---------------- */
     private fun queryInvoices(periodMonth: Int, periodYear: Int, filter: StatusFilter): List<InvoiceCardItem> {
         val db = DatabaseHelper(this).readableDatabase
-
-        // Base SQL
-        val base = StringBuilder(
-            """
-            SELECT inv.id, r.name, inv.totalAmount, inv.roomRent, inv.paid, inv.createdAt
-            FROM invoices inv
-            JOIN rooms r ON r.id = inv.roomId
-            WHERE inv.periodMonth = ? AND inv.periodYear = ?
+        val sql = buildString {
+            append(
+                """
+                SELECT inv.id,
+                       r.name AS roomName,
+                       inv.totalAmount, inv.roomRent, inv.paid,
+                       inv.createdAt, inv.dueAt, inv.reason,
+                       c.tenantPhone,
+                       inv.periodMonth, inv.periodYear
+                FROM invoices inv
+                JOIN rooms r ON r.id = inv.roomId
+                LEFT JOIN contracts c ON c.roomId = inv.roomId AND c.active = 1
+                WHERE inv.periodMonth = ? AND inv.periodYear = ?
             """.trimIndent()
-        )
-
-        val args = ArrayList<String>(3).apply {
-            add(periodMonth.toString())
-            add(periodYear.toString())
+            )
+            when (filter) {
+                StatusFilter.UNPAID -> append(" AND inv.paid = 0 ")
+                StatusFilter.PAID -> append(" AND inv.paid = 1 ")
+                StatusFilter.CANCEL -> append(" AND inv.paid = 2 ")
+                StatusFilter.ALL -> {}
+            }
+            append(" ORDER BY inv.createdAt DESC ")
         }
 
-        // Status filter
-        when (filter) {
-            StatusFilter.UNPAID -> { base.append(" AND inv.paid = 0 ") }
-            StatusFilter.PAID   -> { base.append(" AND inv.paid = 1 ") }
-            StatusFilter.CANCEL -> { base.append(" AND inv.paid = 2 ") } // ví dụ: 2 = Hủy (nếu bạn dùng mã khác, chỉnh lại)
-            StatusFilter.ALL    -> { /* no-op */ }
-        }
-
-        base.append(" ORDER BY inv.createdAt DESC ")
-
+        val args = arrayOf(periodMonth.toString(), periodYear.toString())
         val list = mutableListOf<InvoiceCardItem>()
-        db.rawQuery(base.toString(), args.toTypedArray()).use { cur ->
-            while (cur.moveToNext()) {
-                val invoiceId = cur.getInt(0).toString()
-                val roomName  = cur.getString(1)
-                val total     = cur.getInt(2)
-                val rent      = cur.getInt(3)
-                val paidCode  = cur.getInt(4)        // 0/1/(2=hủy) tuỳ DB bạn
-                val createdAt = cur.getLong(5)
+        db.rawQuery(sql, args).use { c ->
+            while (c.moveToNext()) {
+                val invoiceId = c.getInt(0).toString()
+                val roomName = c.getString(1) ?: ""
+                val total = c.getInt(2)
+                val paidCode = c.getInt(4)
+                val createdAtMs = c.getLong(5)
+                val dueAtMs = c.getLong(6)
+                val reasonTxt = c.getString(7)
+                val phone = c.getString(8) ?: ""
+                val periodMonthDb = c.getInt(9)
+                val periodYearDb = c.getInt(10)
 
                 val mainStatus = when (paidCode) {
-                    1    -> "Đã thu"
-                    2    -> "Hủy"
+                    1 -> "Đã thu"
+                    2 -> "Hủy"
                     else -> "Chưa thu"
                 }
 
+                val createdStr = if (createdAtMs > 0) df.format(Date(createdAtMs)) else "—"
+                val dueStr = if (dueAtMs > 0) df.format(Date(dueAtMs)) else "—"
+                val reasonStr = if (reasonTxt.isNullOrBlank()) "—" else reasonTxt.trim()
+                val remainStr = if (paidCode == 1) "0đ" else "${vn.format(total)}đ"
+                val collectedStr = if (paidCode == 1) "Đã thu ${vn.format(total)}đ" else "Chưa thu"
+
                 list.add(
                     InvoiceCardItem(
-                        id          = invoiceId,
-                        title       = roomName,
-                        mainStatus  = mainStatus,
-                        rent        = "${vn.format(total)}đ",
-                        deposit     = "${vn.format(rent)}đ",
-                        collected   = if (paidCode == 1) "Đã thu ${vn.format(total)}đ" else "Chưa thu",
-                        createdDate = df.format(Date(createdAt)),
-                        moveInDate  = "—",
-                        endDate     = "—"
+                        id = invoiceId,
+                        title = roomName,
+                        mainStatus = mainStatus,
+                        rent = "${vn.format(total)}đ",
+                        deposit = remainStr,
+                        collected = collectedStr,
+                        createdDate = createdStr,
+                        moveInDate = reasonStr,
+                        endDate = dueStr,
+                        phone = phone,
+                        periodMonth = periodMonthDb,
+                        periodYear = periodYearDb
                     )
                 )
             }
@@ -234,22 +239,5 @@ class InvoiceListActivity : AppCompatActivity() {
         return list
     }
 
-    /* ------------------------ Helpers ------------------------ */
-
     private enum class StatusFilter { ALL, UNPAID, PAID, CANCEL }
-
-    /**
-     * OnItemSelectedListener rút gọn cho Spinner
-     */
-    private class SimpleItemSelected(
-        val onSelected: () -> Unit
-    ) : android.widget.AdapterView.OnItemSelectedListener {
-        override fun onItemSelected(
-            parent: android.widget.AdapterView<*>?,
-            view: View?,
-            position: Int,
-            id: Long
-        ) = onSelected()
-        override fun onNothingSelected(parent: android.widget.AdapterView<*>?) = Unit
-    }
 }
