@@ -19,7 +19,7 @@ class InboxFragment : Fragment() {
     private var _vb: FragmentInboxBinding? = null
     private val vb get() = _vb!!
     private lateinit var db: DatabaseHelper
-    private val adapter = InboxAdapter()
+    private val adapter = MessageAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?

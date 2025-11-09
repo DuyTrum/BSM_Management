@@ -11,7 +11,6 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.bsm_management.R
 import com.example.bsm_management.ui.hostel.AddHostelActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import database.DatabaseHelper
 import android.net.Uri
 
 class MainActivity : AppCompatActivity() {

@@ -14,6 +14,7 @@ import com.example.bsm_management.R
 import com.example.bsm_management.databinding.ActivityRoomListBinding
 import database.DatabaseHelper
 
+
 data class UiRoom(
     val id: Long,
     val name: String,
@@ -69,8 +70,6 @@ class RoomListActivity : AppCompatActivity() {
         vb.fabAdd.setOnClickListener { addNewRoom() }
 
         loadData()
-        testContentProvider()
-        insertRoomViaProvider()
     }
 
     // ================== ĐỌC DỮ LIỆU PHÒNG ==================
@@ -187,41 +186,6 @@ class RoomListActivity : AppCompatActivity() {
                 }
             }.show()
     }
-    // ================== TEST ContentProvider ==================
-    private fun testContentProvider() {
-        val uri = Uri.parse("content://com.example.bsm_management.ui.provider/rooms")
-        val cursor = contentResolver.query(uri, arrayOf("id", "name", "status"), null, null, null)
-
-        if (cursor != null && cursor.moveToFirst()) {
-            val sb = StringBuilder()
-            do {
-                val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
-                val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
-                val status = cursor.getString(cursor.getColumnIndexOrThrow("status"))
-                sb.append("Phòng #$id - $name - $status\n")
-            } while (cursor.moveToNext())
-            cursor.close()
-
-            Toast.makeText(this, sb.toString(), Toast.LENGTH_LONG).show()
-        } else {
-            Toast.makeText(this, "Không có dữ liệu từ ContentProvider", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    // ================== TEST INSERT QUA PROVIDER ==================
-    private fun insertRoomViaProvider() {
-        val uri = Uri.parse("content://com.example.bsm_management.ui.provider/rooms")
-        val values = ContentValues().apply {
-            put("name", "P_Test")
-            put("floor", 2)
-            put("status", "EMPTY")
-            put("baseRent", 1500000)
-        }
-        val newUri = contentResolver.insert(uri, values)
-        Toast.makeText(this, "Đã thêm phòng qua Provider: $newUri", Toast.LENGTH_SHORT).show()
-        loadData()
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) { onBackPressedDispatcher.onBackPressed(); return true }
         return super.onOptionsItemSelected(item)
