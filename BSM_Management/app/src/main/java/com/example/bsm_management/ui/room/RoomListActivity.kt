@@ -4,7 +4,8 @@ import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.MenuItem
+import android.text.InputType
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -13,20 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bsm_management.R
 import com.example.bsm_management.databinding.ActivityRoomListBinding
 import database.DatabaseHelper
-
-
-data class UiRoom(
-    val id: Long,
-    val name: String,
-    val baseRent: Int?,
-    val floor: Int?,
-    val status: String?,
-    val tenantCount: Int?,
-    val contractEnd: String?,
-    val appUsed: Boolean?,
-    val onlineSigned: Boolean?,
-    val phone: String?
-)
 
 class RoomListActivity : AppCompatActivity() {
 
@@ -42,57 +29,47 @@ class RoomListActivity : AppCompatActivity() {
 
         setSupportActionBar(vb.topBar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = getString(R.string.title_room_list)
+        supportActionBar?.title = "Danh sách phòng"
 
+        val db = DatabaseHelper(this)
         adapter = RoomAdapter(
             onPhoneClick = { phone ->
-                if (!phone.isNullOrBlank()) {
-                    startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone")))
-                } else {
-                    Toast.makeText(this, "Phòng này chưa có số điện thoại", Toast.LENGTH_SHORT).show()
-                }
+                if (!phone.isNullOrBlank()) startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone")))
+                else Toast.makeText(this, "Phòng này chưa có số điện thoại", Toast.LENGTH_SHORT).show()
             },
-            onMoreClick = { roomId ->
-                showRoomOptions(roomId)
-            },
+            onMoreClick = { roomId -> showRoomOptions(roomId) },
             onFillClick = { roomId ->
                 val room = allRooms.find { it.id == roomId }
                 updateRoomStatus(roomId, room?.status)
             },
             onPostClick = { roomId ->
                 Toast.makeText(this, "Đăng tin cho phòng #$roomId (đang phát triển)", Toast.LENGTH_SHORT).show()
-            }
+            },
+            onEditRoomPriceClick = { id, price -> editRoomPrice(id, price) }
         )
 
         vb.rvRooms.layoutManager = LinearLayoutManager(this)
         vb.rvRooms.adapter = adapter
 
+        adapter.setActiveServices(db.getAllServicesDetailed())
         vb.fabAdd.setOnClickListener { addNewRoom() }
-
         loadData()
     }
 
-    // ================== ĐỌC DỮ LIỆU PHÒNG ==================
     private fun loadData() {
         val db = DatabaseHelper(this)
         val cursor = db.readableDatabase.rawQuery(
             "SELECT id, name, floor, baseRent, status FROM rooms ORDER BY floor, name", null
         )
-
         val temp = mutableListOf<UiRoom>()
         cursor.use {
             while (it.moveToNext()) {
-                val id = it.getLong(0)
-                val name = it.getString(1)
-                val floor = it.getInt(2)
-                val rent = it.getInt(3)
-                val status = it.getString(4)
                 temp += UiRoom(
-                    id = id,
-                    name = name,
-                    baseRent = rent,
-                    floor = floor,
-                    status = status,
+                    id = it.getLong(0),
+                    name = it.getString(1),
+                    baseRent = it.getInt(3),
+                    floor = it.getInt(2),
+                    status = it.getString(4),
                     tenantCount = null,
                     contractEnd = null,
                     appUsed = null,
@@ -101,94 +78,73 @@ class RoomListActivity : AppCompatActivity() {
                 )
             }
         }
-
         allRooms = temp
-        floors = allRooms.mapNotNull { it.floor }.distinct().sorted()
-        if (floors.isEmpty()) floors = listOf(0)
-
-        vb.tabs.removeAllTabs()
-        floors.forEach { f ->
-            vb.tabs.newTab()
-                .setText(if (f == 0) getString(R.string.floor_ground) else "Tầng $f")
-                .also(vb.tabs::addTab)
-        }
-
-        vb.tabs.addOnTabSelectedListener(object :
-            com.google.android.material.tabs.TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: com.google.android.material.tabs.TabLayout.Tab?) {
-                bindFloor(floors[tab?.position ?: 0])
-            }
-
-            override fun onTabUnselected(tab: com.google.android.material.tabs.TabLayout.Tab?) {}
-            override fun onTabReselected(tab: com.google.android.material.tabs.TabLayout.Tab?) {}
-        })
-
-        vb.tabs.getTabAt(0)?.select()
-        bindFloor(floors[0])
+        vb.emptyView.isVisible = allRooms.isEmpty()
+        adapter.submitList(allRooms)
     }
 
-    private fun bindFloor(floor: Int) {
-        val list = allRooms.filter { it.floor == floor }
-        vb.emptyView.isVisible = list.isEmpty()
-        adapter.submitList(list)
-    }
-
-    // ================== CẬP NHẬT TRẠNG THÁI ==================
     private fun updateRoomStatus(roomId: Long, currentStatus: String?) {
         val newStatus = if (currentStatus == "OCCUPIED") "EMPTY" else "OCCUPIED"
         val db = DatabaseHelper(this).writableDatabase
         val cv = ContentValues().apply { put("status", newStatus) }
-        val rows = db.update("rooms", cv, "id = ?", arrayOf(roomId.toString()))
-        if (rows > 0) {
-            val msg = if (newStatus == "OCCUPIED") "Phòng đã được lấp" else "Phòng đã được trả"
-            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-            loadData()
-        } else Toast.makeText(this, "Cập nhật thất bại", Toast.LENGTH_SHORT).show()
+        db.update("rooms", cv, "id=?", arrayOf(roomId.toString()))
+        loadData()
     }
 
-    // ================== XÓA PHÒNG ==================
-    private fun deleteRoom(roomId: Long) {
-        val db = DatabaseHelper(this).writableDatabase
-        val rows = db.delete("rooms", "id = ?", arrayOf(roomId.toString()))
-        if (rows > 0) {
-            Toast.makeText(this, "Đã xóa phòng #$roomId", Toast.LENGTH_SHORT).show()
-            loadData()
-        } else Toast.makeText(this, "Không thể xóa phòng", Toast.LENGTH_SHORT).show()
+    private fun editRoomPrice(roomId: Long, currentPrice: Int?) {
+        val input = EditText(this).apply {
+            hint = "Nhập giá mới (đ/tháng)"
+            inputType = InputType.TYPE_CLASS_NUMBER
+            setText(currentPrice?.toString() ?: "")
+        }
+        AlertDialog.Builder(this)
+            .setTitle("Chỉnh giá thuê phòng")
+            .setView(input)
+            .setPositiveButton("Lưu") { _, _ ->
+                val newPrice = input.text.toString().toIntOrNull()
+                if (newPrice != null && newPrice > 0) {
+                    val db = DatabaseHelper(this).writableDatabase
+                    val cv = ContentValues().apply { put("baseRent", newPrice) }
+                    db.update("rooms", cv, "id=?", arrayOf(roomId.toString()))
+                    loadData()
+                }
+            }
+            .setNegativeButton("Hủy", null)
+            .show()
     }
 
-    // ================== THÊM PHÒNG MỚI ==================
     private fun addNewRoom() {
         val db = DatabaseHelper(this).writableDatabase
         val cv = ContentValues().apply {
             put("name", "P${System.currentTimeMillis() % 1000}")
-            put("floor", 1)
             put("status", "EMPTY")
-            put("baseRent", 10000)
+            put("baseRent", 0)
         }
         db.insert("rooms", null, cv)
-        Toast.makeText(this, "Đã thêm phòng mới", Toast.LENGTH_SHORT).show()
         loadData()
     }
 
-    // ================== MENU 3 CHẤM ==================
     private fun showRoomOptions(roomId: Long) {
-        val items = arrayOf("Đổi trạng thái", "Xóa phòng", "Chi tiết")
+        val items = arrayOf("Đổi trạng thái", "Xóa phòng")
         AlertDialog.Builder(this)
-            .setTitle("Tùy chọn phòng #$roomId")
+            .setTitle("Phòng #$roomId")
             .setItems(items) { _, which ->
                 when (which) {
-                    0 -> {
-                        val room = allRooms.find { it.id == roomId }
-                        updateRoomStatus(roomId, room?.status)
+                    0 -> updateRoomStatus(roomId, allRooms.find { it.id == roomId }?.status)
+                    1 -> {
+                        val db = DatabaseHelper(this).writableDatabase
+                        db.delete("rooms", "id=?", arrayOf(roomId.toString()))
+                        loadData()
                     }
-                    1 -> deleteRoom(roomId)
-                    2 -> Toast.makeText(this, "Chi tiết phòng đang phát triển", Toast.LENGTH_SHORT).show()
                 }
             }.show()
     }
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) { onBackPressedDispatcher.onBackPressed(); return true }
+
+    override fun onOptionsItemSelected(item: android.view.MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressedDispatcher.onBackPressed()
+            return true
+        }
         return super.onOptionsItemSelected(item)
     }
-
 }

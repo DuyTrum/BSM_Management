@@ -119,6 +119,23 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             ('Nhà trọ Duy', 'Chủ trọ', 'Xin chào, đây là tin nhắn mẫu đầu tiên', '08:45 01/11/2025', 0),
             ('Nhà trọ Duy', 'Hệ thống', 'Hóa đơn tháng 10 đã được tạo', '09:30 02/11/2025', 1);
         """)
+        db.execSQL("""
+        CREATE TABLE IF NOT EXISTS services (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            price float DEFAULT 0,
+            enabled INTEGER NOT NULL DEFAULT 0
+        );
+    """.trimIndent())
+
+        // Seed mặc định
+        db.execSQL("""
+        INSERT INTO services (name, price, enabled) VALUES
+        ('Dịch vụ điện', 25000, 1),
+        ('Dịch vụ nước', 25000, 1),
+        ('Dịch vụ rác', 50000, 0),
+        ('Dịch vụ internet/mạng', 250000, 0);
+    """)
 
         // ===== INDEXES =====
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_contracts_active ON contracts(active);")
@@ -200,6 +217,39 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
     fun deleteMessage(msg: Message): Int {
         return writableDatabase.delete("messages", "id=?", arrayOf(msg.id.toString()))
     }
+    fun updateService(name: String, enabled: Boolean) {
+        val cv = ContentValues().apply { put("enabled", if (enabled) 1 else 0) }
+        writableDatabase.update("services", cv, "name=?", arrayOf(name))
+    }
+
+    fun getAllServices(): List<Pair<String, Boolean>> {
+        val result = mutableListOf<Pair<String, Boolean>>()
+        val c = readableDatabase.rawQuery("SELECT name, enabled FROM services", null)
+        c.use {
+            while (it.moveToNext()) {
+                result += it.getString(0) to (it.getInt(1) == 1)
+            }
+        }
+        return result
+    }
+    fun getAllServicesDetailed(): List<Triple<String, Boolean, Int>> {
+        val list = mutableListOf<Triple<String, Boolean, Int>>()
+        val c = readableDatabase.rawQuery("SELECT name, enabled, price FROM services", null)
+        c.use {
+            while (it.moveToNext()) {
+                list.add(
+                    Triple(
+                        it.getString(0),
+                        it.getInt(1) == 1,
+                        it.getInt(2)
+                    )
+                )
+            }
+        }
+        return list
+    }
+
+
 
     // ============================================================
     // ✅ ROOM HELPERS
@@ -259,6 +309,6 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
     // ============================================================
     companion object {
         const val DB_NAME = "bsm.db"
-        private const val DB_VERSION = 6
+        private const val DB_VERSION = 2
     }
 }

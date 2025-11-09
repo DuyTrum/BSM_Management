@@ -12,11 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.animation.DecelerateInterpolator
-import android.widget.ArrayAdapter
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.view.isGone
@@ -40,7 +36,7 @@ class AddHostelActivity : AppCompatActivity() {
     private lateinit var edtPrice: TextInputEditText
     private lateinit var edtInvoiceDay: TextInputEditText
     private lateinit var edtDueDays: TextInputEditText
-    private lateinit var ddlMaxPeople: android.widget.AutoCompleteTextView
+    private lateinit var ddlMaxPeople: AutoCompleteTextView
     private lateinit var switchAuto: MaterialSwitch
     private lateinit var btnClose: MaterialButton
     private lateinit var btnNext: MaterialButton
@@ -52,13 +48,15 @@ class AddHostelActivity : AppCompatActivity() {
 
     private val REQ_LOC = 1001
     private var isOnStep2 = false
-    private var step2Wired = false // <-- chỉ wire step2 1 lần khi đã hiện
+    private var step2Wired = false
+
+    // ✅ Lưu trạng thái dịch vụ
+    private val serviceStates = mutableMapOf<String, Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_hostel)
 
-        // Top bar back
         findViewById<MaterialToolbar>(R.id.topBar)
             .setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
@@ -70,17 +68,12 @@ class AddHostelActivity : AppCompatActivity() {
         edtDueDays    = findViewById(R.id.edtDueDays)
         ddlMaxPeople  = findViewById(R.id.ddlMaxPeople)
         switchAuto    = findViewById(R.id.switchAuto)
-
-        // Bottom bar
         btnClose      = findViewById(R.id.btnClose)
         btnNext       = findViewById(R.id.btnNext)
         progress      = findViewById(R.id.progress)
+        step1         = findViewById(R.id.step1Container)
+        step2         = findViewById(R.id.step2Container)
 
-        // Containers
-        step1 = findViewById(R.id.step1Container)
-        step2 = findViewById(R.id.step2Container)
-
-        // dropdown “Tối đa người ở / phòng”
         ddlMaxPeople.setAdapter(
             ArrayAdapter(
                 this, android.R.layout.simple_list_item_1,
@@ -88,44 +81,35 @@ class AddHostelActivity : AppCompatActivity() {
             )
         )
 
-        btnClose.isEnabled = false  // giống ảnh mẫu bước 1
+        btnClose.isEnabled = false
         btnClose.setOnClickListener {
             if (isOnStep2) {
-                // quay lại bước 1
-                animateProgress(from = 100, to = 40)
+                animateProgress(100, 40)
                 crossfade(step2, step1)
                 isOnStep2 = false
                 btnClose.isEnabled = false
                 btnNext.text = "Tiếp theo"
-            } else {
-                finish()
-            }
+            } else finish()
         }
         btnNext.setOnClickListener { onNextClicked() }
-
-        // KHÔNG wire step2 ở đây để tránh NPE khi layout (hoặc ID) chưa khớp
     }
 
     // ================== FLOW BƯỚC 1 -> 2 ==================
     private fun onNextClicked() {
         if (!isOnStep2) {
-            // Validate nhanh nếu tạo tự động
             if (switchAuto.isChecked) {
                 val count = edtSampleRoom.text?.toString()?.toIntOrNull() ?: 0
                 val price = edtPrice.text?.toString()?.toIntOrNull() ?: 0
                 if (count <= 0) { toast("Nhập số lượng phòng mẫu > 0"); return }
                 if (price <= 0) { toast("Nhập giá thuê mẫu > 0"); return }
             }
-            // progress trượt 40 -> 100 + chuyển layout
-            animateProgress(from = 40, to = 100)
+            animateProgress(40, 100)
             crossfade(step1, step2)
             isOnStep2 = true
             btnClose.isEnabled = true
             btnNext.text = "Lưu thông tin"
-
-            wireStep2() // <-- chỉ wire lúc này, tránh crash
+            wireStep2()
         } else {
-            // Bước 2: lưu rooms-only rồi về Dashboard
             saveRoomsOnlyAndFinish()
         }
     }
@@ -148,41 +132,26 @@ class AddHostelActivity : AppCompatActivity() {
         }.start()
     }
 
-    // ================== BƯỚC 2: wire an toàn ==================
+    // ================== BƯỚC 2 ==================
     private fun wireStep2() {
         if (step2Wired) return
         step2Wired = true
-        setupStep2SectionSafe()
+        setupStep2Section()
     }
 
-    private fun setupStep2SectionSafe() {
-        // Dịch vụ (4 dòng với nút X)
-        setupServiceSafe(R.id.svcElectric, "Dịch vụ điện", "Tính theo đồng hồ (phổ biến)")
-        setupServiceSafe(R.id.svcWater,   "Dịch vụ nước", "Tính theo đồng hồ (phổ biến)")
-        setupServiceSafe(R.id.svcTrash,   "Dịch vụ rác",  "Miễn phí / không sử dụng")
-        setupServiceSafe(R.id.svcInternet,"Dịch vụ internet/mạng", "Miễn phí / không sử dụng")
+    private fun setupStep2Section() {
+        // ==== Dịch vụ ====
+        setupService(R.id.svcElectric, "Dịch vụ điện", "Tính theo đồng hồ (phổ biến)")
+        setupService(R.id.svcWater, "Dịch vụ nước", "Tính theo đồng hồ (phổ biến)")
+        setupService(R.id.svcTrash, "Dịch vụ rác", "Miễn phí / không sử dụng")
+        setupService(R.id.svcInternet, "Dịch vụ internet/mạng", "Miễn phí / không sử dụng")
 
-        // 3 tính năng (App/Zalo/File)
-        setupFeatureSafe(
-            rootId = R.id.featApp,
-            icon   = R.drawable.ic_app,
-            title  = "APP dành riêng cho khách thuê",
-            desc   = "Tạo & kết nối dễ dàng, hoá đơn tự động…"
-        )
-        setupFeatureSafe(
-            rootId = R.id.featZalo,
-            icon   = R.drawable.ic_zalo,
-            title  = "Gửi hoá đơn tự động qua ZALO",
-            desc   = "Gửi hoá đơn hàng loạt qua ZALO"
-        )
-        setupFeatureSafe(
-            rootId = R.id.featImage,
-            icon   = R.drawable.ic_file,
-            title  = "Hình ảnh, File chứng từ hợp đồng",
-            desc   = "Lưu CCCD, hợp đồng giấy…"
-        )
+        // ==== Tính năng ====
+        setupFeature(R.id.featApp, R.drawable.ic_app, "APP dành riêng cho khách thuê", "Tạo & kết nối dễ dàng, hoá đơn tự động…")
+        setupFeature(R.id.featZalo, R.drawable.ic_zalo, "Gửi hoá đơn tự động qua ZALO", "Gửi hoá đơn hàng loạt qua ZALO")
+        setupFeature(R.id.featImage, R.drawable.ic_file, "Hình ảnh, File chứng từ hợp đồng", "Lưu CCCD, hợp đồng giấy…")
 
-        // Địa chỉ & vị trí
+        // ==== Địa chỉ & vị trí ====
         val edtAddress = step2.findViewById<TextInputEditText?>(R.id.edtAddress)
         step2.findViewById<MaterialButton?>(R.id.btnMyLocation)?.setOnClickListener {
             getMyLocationAddress { addr ->
@@ -197,21 +166,26 @@ class AddHostelActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupServiceSafe(rootId: Int, title: String, desc: String) {
-        val root = step2.findViewById<View?>(rootId) ?: return
-        val tvTitle = root.findViewById<TextView?>(R.id.tvServiceTitle) ?: return
-        val tvDesc  = root.findViewById<TextView?>(R.id.tvServiceDesc)  ?: return
-        val btnClear= root.findViewById<ImageButton?>(R.id.btnClear)
+    private fun setupService(rootId: Int, title: String, desc: String) {
+        val root = findViewById<View>(rootId)
+        val tvTitle = root.findViewById<TextView>(R.id.tvServiceTitle)
+        val tvDesc = root.findViewById<TextView>(R.id.tvServiceDesc)
+        val sw = root.findViewById<MaterialSwitch>(R.id.swService)
 
         tvTitle.text = title
-        tvDesc.text  = desc
-        btnClear?.setOnClickListener {
-            tvDesc.text = "Miễn phí / không sử dụng"
-            toast("$title: đã đặt miễn phí")
+        tvDesc.text = desc
+
+        val defaultChecked = title.contains("điện") || title.contains("nước")
+        sw.isChecked = defaultChecked
+        serviceStates[title] = defaultChecked
+
+        sw.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
+            serviceStates[title] = isChecked
+            tvDesc.text = if (isChecked) "Đang sử dụng" else "Miễn phí / không sử dụng"
         }
     }
 
-    private fun setupFeatureSafe(rootId: Int, icon: Int, title: String, desc: String) {
+    private fun setupFeature(rootId: Int, icon: Int, title: String, desc: String) {
         val root = step2.findViewById<View?>(rootId) ?: return
         root.findViewById<ImageView?>(R.id.imgFeatureIcon)?.setImageResource(icon)
         root.findViewById<TextView?>(R.id.tvFeatureTitle)?.text = title
@@ -219,7 +193,7 @@ class AddHostelActivity : AppCompatActivity() {
         root.findViewById<MaterialSwitch?>(R.id.swFeature)?.isChecked = true
     }
 
-    // ================== LƯU ROOMS-ONLY ==================
+    // ================== LƯU ROOMS & DỊCH VỤ ==================
     private fun saveRoomsOnlyAndFinish() {
         val auto = switchAuto.isChecked
         if (!auto) { goDashboard(); return }
@@ -227,14 +201,18 @@ class AddHostelActivity : AppCompatActivity() {
         val count = edtSampleRoom.text?.toString()?.toIntOrNull() ?: 0
         val price = edtPrice.text?.toString()?.toIntOrNull() ?: 0
         if (count <= 0 || price <= 0) { toast("Thiếu số phòng/giá thuê"); return }
-        val name = findViewById<TextInputEditText>(R.id.edtName)?.text?.toString()?.trim().orEmpty()
-        val address = step2.findViewById<TextInputEditText>(R.id.edtAddress)?.text?.toString()?.trim().orEmpty()
+
+        // 🏡 Lưu tên & địa chỉ nhà trọ
+        val edtAddress = step2.findViewById<TextInputEditText>(R.id.edtAddress)
+        val address = edtAddress?.text?.toString()?.trim().orEmpty()
+        val hostelName = "Nhà trọ của bạn"
         val prefs = getSharedPreferences("hostel_prefs", MODE_PRIVATE)
         prefs.edit().apply {
-            putString("hostel_name", name)
+            putString("hostel_name", hostelName)
             putString("hostel_address", address)
             apply()
         }
+
         val db = DatabaseHelper(this).writableDatabase
         db.beginTransaction()
         try {
@@ -247,34 +225,45 @@ class AddHostelActivity : AppCompatActivity() {
                 }
                 db.insertOrThrow("rooms", null, cv)
             }
+
+            // 💾 Lưu danh sách dịch vụ
+            db.execSQL("CREATE TABLE IF NOT EXISTS services (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "name TEXT NOT NULL," +
+                    "enabled INTEGER NOT NULL DEFAULT 0)")
+            db.execSQL("DELETE FROM services")
+            val insertSvc = db.compileStatement("INSERT INTO services (name, enabled) VALUES (?, ?)")
+            serviceStates.forEach { (name, enabled) ->
+                insertSvc.bindString(1, name)
+                insertSvc.bindLong(2, if (enabled) 1 else 0)
+                insertSvc.executeInsert()
+            }
+
             db.setTransactionSuccessful()
-            toast("Đã tạo $count phòng.")
+            toast("Đã tạo $count phòng và lưu dịch vụ.")
         } catch (e: Exception) {
             toast("Lỗi lưu: ${e.message}")
         } finally {
             db.endTransaction()
         }
+
         goDashboard()
     }
 
     private fun goDashboard() {
-        startActivity(
-            Intent(this, MainActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-        )
+        startActivity(Intent(this, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK))
         finish()
     }
 
-    // ================== VỊ TRÍ HIỆN TẠI (API 33+ OK) ==================
+    // ================== LẤY VỊ TRÍ ==================
     private fun getMyLocationAddress(callback: (String?) -> Unit) {
         val okFine = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
         val okCoarse = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
         if (!okFine && !okCoarse) {
-            ActivityCompat.requestPermissions(
-                this,
+            ActivityCompat.requestPermissions(this,
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
-                REQ_LOC
-            )
+                REQ_LOC)
             callback(null)
             return
         }
