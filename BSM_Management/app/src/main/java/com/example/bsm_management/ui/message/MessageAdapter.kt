@@ -2,14 +2,18 @@ package com.example.bsm_management.ui.message
 
 import android.graphics.Typeface
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bsm_management.databinding.ItemInboxBinding
+import database.DatabaseHelper  // <-- Quan trọng
 
-class InboxAdapter : RecyclerView.Adapter<InboxAdapter.VH>() {
+class MessageAdapter : RecyclerView.Adapter<MessageAdapter.VH>() {
 
-    private val items = mutableListOf<InboxItem>()
+    // ✅ Danh sách tin nhắn đúng kiểu dữ liệu
+    private val items = mutableListOf<DatabaseHelper.Message>()
 
+    /** Xóa item tại vị trí */
     fun removeAt(pos: Int) {
         if (pos in items.indices) {
             items.removeAt(pos)
@@ -17,15 +21,15 @@ class InboxAdapter : RecyclerView.Adapter<InboxAdapter.VH>() {
         }
     }
 
-    /** Nạp danh sách mới */
-    fun submitList(list: List<InboxItem>) {
+    /** Nạp danh sách mới từ SQLite */
+    fun submitList(list: List<DatabaseHelper.Message>) {
         items.clear()
         items.addAll(list)
         notifyDataSetChanged()
     }
 
-    /** ✅ Hàm dùng cho Swipe-to-delete */
-    fun getCurrentItems(): List<InboxItem> = items
+    /** Dùng cho Swipe-to-delete */
+    fun getCurrentItems(): List<DatabaseHelper.Message> = items
 
     /** ViewHolder */
     inner class VH(val vb: ItemInboxBinding) : RecyclerView.ViewHolder(vb.root)
@@ -39,12 +43,15 @@ class InboxAdapter : RecyclerView.Adapter<InboxAdapter.VH>() {
 
     override fun onBindViewHolder(holder: VH, pos: Int) = with(holder.vb) {
         val msg = items[pos]
-        tvHostel.text = msg.hostelName
+
+        // Nếu layout có tvHostel, gán tên trọ nếu có
+        tvHostel?.text = msg.hostelName ?: ""
+
         tvSender.text = msg.sender
         tvMessage.text = msg.message
         tvTime.text = msg.time
 
-        // nếu chưa đọc => in đậm
+        // In đậm nếu tin chưa đọc
         val style = if (msg.isRead) Typeface.NORMAL else Typeface.BOLD
         tvMessage.setTypeface(null, style)
         tvSender.setTypeface(null, style)

@@ -2,23 +2,27 @@ package database
 
 import android.content.ContentValues
 import android.content.Context
-import android.database.DatabaseUtils
-import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.example.bsm_management.ui.contract.Contract
 import android.database.DatabaseUtils
 
 class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
+    // ============================================================
+    // CONFIG
+    // ============================================================
     override fun onConfigure(db: SQLiteDatabase) {
         super.onConfigure(db)
         db.setForeignKeyConstraintsEnabled(true)
     }
 
+    // ============================================================
+    // CREATE SCHEMA
+    // ============================================================
     override fun onCreate(db: SQLiteDatabase) {
+        // ===== USERS =====
         db.execSQL("""
-            CREATE TABLE users (
+            CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 phone TEXT NOT NULL UNIQUE,
                 name TEXT NOT NULL,
@@ -26,17 +30,20 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             );
         """.trimIndent())
 
+        // ===== ROOMS =====
         db.execSQL("""
-            CREATE TABLE rooms (
+            CREATE TABLE IF NOT EXISTS rooms (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL UNIQUE,
+                floor INTEGER NOT NULL DEFAULT 1,
                 status TEXT NOT NULL DEFAULT 'EMPTY',
                 baseRent INTEGER NOT NULL DEFAULT 0
             );
         """.trimIndent())
 
+        // ===== CONTRACTS =====
         db.execSQL("""
-            CREATE TABLE contracts (
+            CREATE TABLE IF NOT EXISTS contracts (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 roomId INTEGER NOT NULL,
                 tenantName TEXT NOT NULL,
@@ -49,8 +56,9 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             );
         """.trimIndent())
 
+        // ===== INVOICES =====
         db.execSQL("""
-            CREATE TABLE invoices (
+            CREATE TABLE IF NOT EXISTS invoices (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 roomId INTEGER NOT NULL,
                 periodYear INTEGER NOT NULL,
@@ -60,7 +68,7 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
                 waterM3 INTEGER NOT NULL DEFAULT 0,
                 serviceFee INTEGER NOT NULL DEFAULT 0,
                 totalAmount INTEGER NOT NULL,
-                paid INTEGER NOT NULL DEFAULT 0, -- 1=đã thu, 0=chưa, 2=hủy
+                paid INTEGER NOT NULL DEFAULT 0,
                 createdAt INTEGER NOT NULL,
                 dueAt INTEGER,
                 reason TEXT,
@@ -69,25 +77,25 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             );
         """.trimIndent())
 
+        // ===== MESSAGES (INBOX) =====
         db.execSQL("""
             CREATE TABLE IF NOT EXISTS messages (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                hostelName TEXT,
                 sender TEXT,
-                receiver TEXT,
-                content TEXT,
-                pinned INTEGER NOT NULL DEFAULT 0,
-                createdAt INTEGER NOT NULL
+                message TEXT,
+                time TEXT,
+                isRead INTEGER NOT NULL DEFAULT 0
             );
         """.trimIndent())
 
         // ===== SEED DATA =====
-
         db.execSQL("""
             INSERT INTO users (phone, name, password) VALUES
             ('12345678','Admin','123456'),
             ('22222222','Nguyen Van A','123456'),
             ('33333333','Le Thi C','123456');
-        """.trimIndent())
+        """)
 
         db.execSQL("""
             INSERT INTO rooms (name, status, baseRent) VALUES
@@ -96,97 +104,119 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             ('P201', 'EMPTY', 1800000),
             ('P202', 'RENTED', 1800000),
             ('P203', 'EMPTY', 1800000);
-        """.trimIndent())
+        """)
 
         db.execSQL("""
             INSERT INTO contracts (roomId, tenantName, tenantPhone, startDate, endDate, deposit, active) VALUES
             (1, 'Le Van C',  '0901111111', strftime('%s','now','-5 months')*1000, NULL, 2000000, 1),
             (2, 'Tran Thi B','0902222222', strftime('%s','now','-2 months')*1000, NULL, 2000000, 1),
             (4, 'Pham D',    '0903333333', strftime('%s','now','-1 months')*1000, NULL, 2500000, 1);
-        """.trimIndent())
+        """)
 
+        // Tin nhắn mẫu
         db.execSQL("""
-            INSERT INTO invoices
-                (roomId, periodYear, periodMonth, roomRent, electricKwh, waterM3, serviceFee,
-                 totalAmount, paid, createdAt, dueAt, reason)
-            VALUES
-                (1, 2025, 7, 1500000, 40, 7, 50000,
-                 (1500000 + 40*3500 + 7*8000 + 50000), 1,
-                 strftime('%s','now','-85 days')*1000,
-                 strftime('%s','now','-55 days')*1000,
-                 'Thanh toán định kỳ'),
+            INSERT INTO messages (hostelName, sender, message, time, isRead) VALUES
+            ('Nhà trọ Duy', 'Chủ trọ', 'Xin chào, đây là tin nhắn mẫu đầu tiên', '08:45 01/11/2025', 0),
+            ('Nhà trọ Duy', 'Hệ thống', 'Hóa đơn tháng 10 đã được tạo', '09:30 02/11/2025', 1);
+        """)
 
-                (1, 2025, 8, 1500000, 43, 7, 50000,
-                 (1500000 + 43*3500 + 7*8000 + 50000), 1,
-                 strftime('%s','now','-55 days')*1000,
-                 strftime('%s','now','-25 days')*1000,
-                 'Thanh toán định kỳ'),
-
-                (1, 2025, 9, 1500000, 45, 8, 50000,
-                 (1500000 + 45*3500 + 8*8000 + 50000), 0,
-                 strftime('%s','now','-25 days')*1000,
-                 strftime('%s','now','+5 days')*1000,
-                 'Thanh toán định kỳ'),
-
-                (2, 2025, 8, 1500000, 42, 7, 50000,
-                 (1500000 + 42*3500 + 7*8000 + 50000), 1,
-                 strftime('%s','now','-60 days')*1000,
-                 strftime('%s','now','-30 days')*1000,
-                 'Thanh toán định kỳ'),
-
-                (2, 2025, 9, 1500000, 45, 8, 50000,
-                 (1500000 + 45*3500 + 8*8000 + 50000), 0,
-                 strftime('%s','now','-20 days')*1000,
-                 strftime('%s','now','+10 days')*1000,
-                 'Thanh toán định kỳ'),
-
-                (4, 2025, 10, 1800000, 38, 6, 60000,
-                 (1800000 + 38*3500 + 6*8000 + 60000), 0,
-                 strftime('%s','now')*1000,
-                 strftime('%s','now','+30 days')*1000,
-                 'Thanh toán định kỳ'),
-
-                (4, 2025, 9, 1800000, 36, 6, 60000,
-                 (1800000 + 36*3500 + 6*8000 + 60000), 1,
-                 strftime('%s','now','-18 days')*1000,
-                 strftime('%s','now','+12 days')*1000,
-                 'Thanh toán định kỳ');
-        """.trimIndent())
-
+        // ===== INDEXES =====
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_contracts_active ON contracts(active);")
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_invoices_paid ON invoices(paid);")
         db.execSQL("CREATE INDEX IF NOT EXISTS idx_messages_isRead ON messages(isRead);")
     }
 
+    // ============================================================
+    // ON UPGRADE / DOWNGRADE
+    // ============================================================
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if (oldVersion < 7) {
-            db.beginTransaction()
-            try {
-                db.execSQL("DROP INDEX IF EXISTS idx_hostels_createdAt;")
-                db.execSQL("DROP TABLE IF EXISTS hostels;")
-                onCreate(db)
-                db.setTransactionSuccessful()
-            } finally { db.endTransaction() }
-            return
+        db.beginTransaction()
+        try {
+            db.execSQL("DROP TABLE IF EXISTS users")
+            db.execSQL("DROP TABLE IF EXISTS rooms")
+            db.execSQL("DROP TABLE IF EXISTS contracts")
+            db.execSQL("DROP TABLE IF EXISTS invoices")
+            db.execSQL("DROP TABLE IF EXISTS messages")
+            db.setTransactionSuccessful()
+        } finally {
+            db.endTransaction()
         }
         onCreate(db)
     }
 
-    // ======= Helpers =======
+    override fun onDowngrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        onUpgrade(db, oldVersion, newVersion)
+    }
 
+    // ============================================================
+    // ✅ MESSAGE CRUD (Inbox)
+    // ============================================================
+    data class Message(
+        val id: Int,
+        val hostelName: String?,
+        val sender: String,
+        val message: String,
+        val time: String,
+        val isRead: Boolean
+    )
+
+    fun insertMessage(
+        sender: String,
+        message: String,
+        time: String,
+        isRead: Boolean = false,
+        hostelName: String? = "Nhà trọ Duy"
+    ) {
+        val cv = ContentValues().apply {
+            put("hostelName", hostelName)
+            put("sender", sender)
+            put("message", message)
+            put("time", time)
+            put("isRead", if (isRead) 1 else 0)
+        }
+        writableDatabase.insert("messages", null, cv)
+    }
+
+    fun getAllMessages(): List<Message> {
+        val list = mutableListOf<Message>()
+        val c = readableDatabase.rawQuery("SELECT * FROM messages ORDER BY id DESC", null)
+        c.use {
+            while (it.moveToNext()) {
+                list.add(
+                    Message(
+                        id = it.getInt(it.getColumnIndexOrThrow("id")),
+                        hostelName = it.getString(it.getColumnIndexOrThrow("hostelName")),
+                        sender = it.getString(it.getColumnIndexOrThrow("sender")),
+                        message = it.getString(it.getColumnIndexOrThrow("message")),
+                        time = it.getString(it.getColumnIndexOrThrow("time")),
+                        isRead = it.getInt(it.getColumnIndexOrThrow("isRead")) == 1
+                    )
+                )
+            }
+        }
+        return list
+    }
+
+    fun deleteMessage(msg: Message): Int {
+        return writableDatabase.delete("messages", "id=?", arrayOf(msg.id.toString()))
+    }
+
+    // ============================================================
+    // ✅ ROOM HELPERS
+    // ============================================================
     fun hasAnyRoom(): Boolean {
         readableDatabase.rawQuery("SELECT 1 FROM rooms LIMIT 1", null).use { c ->
             return c.moveToFirst()
         }
     }
 
-    fun insertRoomsAuto(count: Int, baseRent: Int, startIndex: Int = 1, floor: Int = 1) {
+    fun insertRoomsAuto(count: Int, baseRent: Int, startIndex: Int = 1) {
         if (count <= 0) return
         val db = writableDatabase
         db.beginTransaction()
         try {
             val stmt = db.compileStatement(
-                "INSERT INTO rooms (name, floor, status, baseRent) VALUES (?, ?, 'EMPTY', ?)"
+                "INSERT INTO rooms (name, status, baseRent) VALUES (?, 'EMPTY', ?)"
             )
             var idx = startIndex
             var created = 0
@@ -195,8 +225,7 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
                 try {
                     stmt.clearBindings()
                     stmt.bindString(1, name)
-                    stmt.bindLong(2, floor.toLong())
-                    stmt.bindLong(3, baseRent.toLong())
+                    stmt.bindLong(2, baseRent.toLong())
                     stmt.executeInsert()
                     created++
                 } catch (_: Exception) { }
@@ -219,14 +248,17 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             db.delete("rooms", null, null)
             db.execSQL("DELETE FROM sqlite_sequence WHERE name IN ('rooms','contracts','invoices')")
             db.setTransactionSuccessful()
-            count
+            current
         } finally {
             db.endTransaction()
         }
     }
 
+    // ============================================================
+    // CONSTANTS
+    // ============================================================
     companion object {
         const val DB_NAME = "bsm.db"
-        private const val DB_VERSION = 1  // giữ nguyên
+        private const val DB_VERSION = 6
     }
 }
