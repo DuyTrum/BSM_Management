@@ -1,50 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="56dp"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="12dp"
-    android:background="@android:color/white">
+    android:orientation="horizontal"
+    android:paddingVertical="8dp"
+    android:gravity="center_vertical">
 
-    <!-- Tiêu đề -->
-    <TextView
-        android:id="@+id/tvServiceTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Tên dịch vụ"
-        android:textStyle="bold"
-        android:textSize="15sp"
-        android:textColor="@color/bsm_text_primary"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!-- Mô tả -->
-    <TextView
-        android:id="@+id/tvServiceDesc"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Miễn phí / không sử dụng"
-        android:textSize="13sp"
-        android:textColor="@color/bsm_text_secondary"
-        app:layout_constraintStart_toStartOf="@id/tvServiceTitle"
-        app:layout_constraintTop_toBottomOf="@id/tvServiceTitle"
-        app:layout_constraintEnd_toStartOf="@id/btnClear"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginTop="2dp" />
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-    <!-- Nút X -->
-    <ImageButton
-        android:id="@+id/btnClear"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Xóa"
-        app:srcCompat="@drawable/ic_close"
-        app:tint="@color/bsm_text_secondary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/tvServiceTitle"
+            android:text="Tên dịch vụ"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tvServiceDesc"
+            android:text="Miễn phí / không sử dụng"
+            android:textSize="14sp"
+            android:textColor="@color/bsm_muted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <!-- ✅ Nút bật/tắt dịch vụ -->
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/swService"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        app:useMaterialThemeColors="true" />
+
+</LinearLayout>

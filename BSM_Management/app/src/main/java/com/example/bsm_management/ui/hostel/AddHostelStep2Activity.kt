@@ -3,6 +3,7 @@ package com.example.bsm_management.ui.hostel
 import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.bsm_management.R
@@ -16,6 +17,9 @@ class AddHostelStep2Activity : AppCompatActivity() {
     private lateinit var db: DatabaseHelper
     private var sampleRooms = 0
     private var price = 0
+
+    // Danh sách dịch vụ lưu tạm để ghi DB
+    private val serviceStates = mutableMapOf<String, Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,8 +38,8 @@ class AddHostelStep2Activity : AppCompatActivity() {
         // ==== Dịch vụ ====
         setupService(R.id.svcElectric, "Dịch vụ điện", "Tính theo đồng hồ (phổ biến)")
         setupService(R.id.svcWater, "Dịch vụ nước", "Tính theo đồng hồ (phổ biến)")
-        setupService(R.id.svcTrash, "Dịch vụ rác", "Miễn phí tiền điện/không sử dụng")
-        setupService(R.id.svcInternet, "Dịch vụ internet/mạng", "Miễn phí tiền điện/không sử dụng")
+        setupService(R.id.svcTrash, "Dịch vụ rác", "Miễn phí / không sử dụng")
+        setupService(R.id.svcInternet, "Dịch vụ internet/mạng", "Miễn phí / không sử dụng")
 
         // ==== Tính năng ====
         setupFeature(
@@ -67,6 +71,7 @@ class AddHostelStep2Activity : AppCompatActivity() {
             val dbw = db.writableDatabase
             dbw.beginTransaction()
             try {
+                // 🏠 Tạo phòng mẫu
                 for (i in 1..sampleRooms) {
                     val cv = ContentValues().apply {
                         put("name", "P%03d".format(i))
@@ -76,36 +81,62 @@ class AddHostelStep2Activity : AppCompatActivity() {
                     }
                     dbw.insertOrThrow("rooms", null, cv)
                 }
+
+                // 💾 Lưu danh sách dịch vụ
+                dbw.execSQL("CREATE TABLE IF NOT EXISTS services (" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "name TEXT NOT NULL," +
+                        "enabled INTEGER NOT NULL DEFAULT 0)")
+                dbw.execSQL("DELETE FROM services")
+
+                val insertSvc = dbw.compileStatement(
+                    "INSERT INTO services (name, enabled) VALUES (?, ?)"
+                )
+                serviceStates.forEach { (name, enabled) ->
+                    insertSvc.bindString(1, name)
+                    insertSvc.bindLong(2, if (enabled) 1 else 0)
+                    insertSvc.executeInsert()
+                }
+
                 dbw.setTransactionSuccessful()
-                Toast.makeText(this, "Đã tạo $sampleRooms phòng trống.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Đã tạo $sampleRooms phòng và lưu dịch vụ.", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 Toast.makeText(this, "Lỗi lưu: ${e.message}", Toast.LENGTH_LONG).show()
             } finally {
                 dbw.endTransaction()
             }
 
-            startActivity(Intent(this, MainActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK))
+            startActivity(
+                Intent(this, MainActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            )
             finish()
         }
     }
 
+    /** Cấu hình mỗi dòng dịch vụ */
     private fun setupService(rootId: Int, title: String, desc: String) {
-        val root = findViewById<android.view.View>(rootId)
+        val root = findViewById<View>(rootId)
         val tvTitle = root.findViewById<TextView>(R.id.tvServiceTitle)
         val tvDesc = root.findViewById<TextView>(R.id.tvServiceDesc)
-        val btnClear = root.findViewById<ImageButton>(R.id.btnClear)
+        val sw = root.findViewById<MaterialSwitch>(R.id.swService)
 
         tvTitle.text = title
         tvDesc.text = desc
-        btnClear.setOnClickListener {
-            tvDesc.text = "Miễn phí / không sử dụng"
-            Toast.makeText(this, "$title: đã đặt miễn phí", Toast.LENGTH_SHORT).show()
+
+        // Giá trị mặc định (điện & nước bật, rác & internet tắt)
+        val defaultChecked = title.contains("điện") || title.contains("nước")
+        sw.isChecked = defaultChecked
+        serviceStates[title] = defaultChecked
+
+        sw.setOnCheckedChangeListener { _, isChecked ->
+            serviceStates[title] = isChecked
+            tvDesc.text = if (isChecked) "Đang sử dụng" else "Miễn phí / không sử dụng"
         }
     }
 
     private fun setupFeature(rootId: Int, icon: Int, title: String, desc: String) {
-        val root = findViewById<android.view.View>(rootId)
+        val root = findViewById<View>(rootId)
         root.findViewById<ImageView>(R.id.imgFeatureIcon).setImageResource(icon)
         root.findViewById<TextView>(R.id.tvFeatureTitle).text = title
         root.findViewById<TextView>(R.id.tvFeatureDesc).text = desc
