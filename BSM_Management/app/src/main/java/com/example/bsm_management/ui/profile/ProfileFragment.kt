@@ -27,7 +27,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         val tvPhone       = view.findViewById<TextView>(R.id.tvPhone)
         val tvJoinedDate  = view.findViewById<TextView>(R.id.tvJoinedDate)
         val btnCopy       = view.findViewById<LinearLayout>(R.id.btnCopy)
-        val rowCompany    = view.findViewById<LinearLayout>(R.id.rowCompany)
         val rowChangePass = view.findViewById<LinearLayout>(R.id.rowChangePassword)
         val rowRate       = view.findViewById<LinearLayout>(R.id.rowAppPermission)
         val rowHelp       = view.findViewById<LinearLayout>(R.id.rowHelp)
@@ -59,7 +58,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
             startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:$p")))
         }
 
-        rowCompany.setOnClickListener { toast("Tính năng đang phát triển") }
         rowChangePass.setOnClickListener {
             startActivity(Intent(requireContext(), ChangePasswordActivity::class.java))
         }
