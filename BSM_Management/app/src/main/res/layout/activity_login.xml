@@ -117,17 +117,6 @@
         android:textColorHint="@color/txt_hint"
         android:layout_marginTop="@dimen/mar_s" />
 
-    <!-- Quên mật khẩu -->
-    <TextView
-        android:id="@+id/tvForgotPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Quên mật khẩu?"
-        android:textColor="@color/pri"
-        android:textSize="@dimen/txt_m"
-        android:layout_marginTop="@dimen/mar_m"
-        android:layout_gravity="end" />
-
     <!-- Nút đăng nhập -->
     <Button
         android:id="@+id/btnLogin"

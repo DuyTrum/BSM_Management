@@ -1,13 +1,17 @@
 package com.example.bsm_management.ui.invoice
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.*
 import android.widget.*
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
@@ -18,6 +22,8 @@ import database.DatabaseHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -43,6 +49,14 @@ class InvoiceListActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_invoice_list)
 
+        val tvTitle = findViewById<TextView>(R.id.tvHeaderTitle)
+        val tvSubtitle = findViewById<TextView>(R.id.tvHeaderSubtitle)
+        val btnBack = findViewById<ImageView>(R.id.ivBack)
+
+        tvTitle.text = "Danh sách hóa đơn"
+        tvSubtitle.text = "Xem và quản lý tất cả hóa đơn theo tháng"
+        btnBack.setOnClickListener { finish() }
+
         findViewById<View?>(R.id.main)?.let { root ->
             ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
                 val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -51,12 +65,6 @@ class InvoiceListActivity : AppCompatActivity() {
             }
         }
 
-        // Header
-        findViewById<TextView>(R.id.tvHeaderTitle)?.text = getString(R.string.invoice_list_title)
-        findViewById<TextView>(R.id.tvHeaderSubtitle)?.text = getString(R.string.invoice_list_subtitle)
-        findViewById<View>(R.id.ivBack)?.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
-
-        // Views
         spMonth = findViewById(R.id.spMonth)
         spStatus = findViewById(R.id.spStatus)
         rv = findViewById(R.id.rvInvoices)
@@ -74,7 +82,8 @@ class InvoiceListActivity : AppCompatActivity() {
                     startActivity(Intent(this, InvoiceDetailActivity::class.java).putExtra("invoiceId", it))
                 }
             },
-            onCall = { phone -> dial(phone) }
+            onCall = { phone -> dial(phone) },
+            onSend = { item -> sendInvoice(item) }
         )
 
         rv.layoutManager = LinearLayoutManager(this)
@@ -93,7 +102,6 @@ class InvoiceListActivity : AppCompatActivity() {
         startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:${phone.trim()}")))
     }
 
-    /* ---------------- Filters ---------------- */
     private fun initMonthPickerLikeSpinner() {
         spMonth.adapter = ArrayAdapter(
             this, android.R.layout.simple_spinner_dropdown_item,
@@ -111,7 +119,8 @@ class InvoiceListActivity : AppCompatActivity() {
         spStatus.setSelection(StatusFilter.ALL.ordinal)
         spStatus.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                selStatus = StatusFilter.values()[position]; reload()
+                selStatus = StatusFilter.values()[position]
+                reload()
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
@@ -132,6 +141,7 @@ class InvoiceListActivity : AppCompatActivity() {
             },
             selYear, selMonth - 1, 1
         )
+
         dialog.setOnShowListener {
             val dp = dialog.datePicker
             runCatching {
@@ -143,9 +153,8 @@ class InvoiceListActivity : AppCompatActivity() {
     }
 
     private fun monthText(month0: Int, year: Int) =
-        String.format(Locale.getDefault(), "Tháng %d/%d", month0 + 1, year)
+        "Tháng ${month0 + 1}/$year"
 
-    /* ---------------- Load data ---------------- */
     private fun reload() {
         showLoading(true)
         lifecycleScope.launch(Dispatchers.IO) {
@@ -164,80 +173,145 @@ class InvoiceListActivity : AppCompatActivity() {
         rv.alpha = if (show) 0.4f else 1f
     }
 
-    /* ---------------- Query DB ---------------- */
-    private fun queryInvoices(periodMonth: Int, periodYear: Int, filter: StatusFilter): List<InvoiceCardItem> {
+    private fun queryInvoices(month: Int, year: Int, filter: StatusFilter): List<InvoiceCardItem> {
         val db = DatabaseHelper(this).readableDatabase
+
         val sql = buildString {
-            append(
-                """
+            append("""
                 SELECT inv.id,
-                       r.name AS roomName,
-                       inv.totalAmount, inv.roomRent, inv.paid,
-                       inv.createdAt, inv.dueAt, inv.reason,
+                       r.name,
+                       inv.totalAmount,
+                       inv.roomRent,
+                       inv.paid,
+                       inv.createdAt,
+                       inv.dueAt,
+                       inv.reason,
                        c.tenantPhone,
-                       inv.periodMonth, inv.periodYear
+                       c.tenantName,
+                       inv.periodMonth,
+                       inv.periodYear
                 FROM invoices inv
                 JOIN rooms r ON r.id = inv.roomId
                 LEFT JOIN contracts c ON c.roomId = inv.roomId AND c.active = 1
                 WHERE inv.periodMonth = ? AND inv.periodYear = ?
-            """.trimIndent()
-            )
+            """.trimIndent())
+
             when (filter) {
-                StatusFilter.UNPAID -> append(" AND inv.paid = 0 ")
-                StatusFilter.PAID -> append(" AND inv.paid = 1 ")
-                StatusFilter.CANCEL -> append(" AND inv.paid = 2 ")
+                StatusFilter.UNPAID -> append(" AND inv.paid = 0")
+                StatusFilter.PAID -> append(" AND inv.paid = 1")
+                StatusFilter.CANCEL -> append(" AND inv.paid = 2")
                 StatusFilter.ALL -> {}
             }
-            append(" ORDER BY inv.createdAt DESC ")
+
+            append(" ORDER BY inv.createdAt DESC")
         }
 
-        val args = arrayOf(periodMonth.toString(), periodYear.toString())
+        val args = arrayOf(month.toString(), year.toString())
         val list = mutableListOf<InvoiceCardItem>()
+
         db.rawQuery(sql, args).use { c ->
             while (c.moveToNext()) {
-                val invoiceId = c.getInt(0).toString()
-                val roomName = c.getString(1) ?: ""
-                val total = c.getInt(2)
                 val paidCode = c.getInt(4)
-                val createdAtMs = c.getLong(5)
-                val dueAtMs = c.getLong(6)
-                val reasonTxt = c.getString(7)
-                val phone = c.getString(8) ?: ""
-                val periodMonthDb = c.getInt(9)
-                val periodYearDb = c.getInt(10)
-
                 val mainStatus = when (paidCode) {
                     1 -> "Đã thu"
                     2 -> "Hủy"
                     else -> "Chưa thu"
                 }
 
-                val createdStr = if (createdAtMs > 0) df.format(Date(createdAtMs)) else "—"
-                val dueStr = if (dueAtMs > 0) df.format(Date(dueAtMs)) else "—"
-                val reasonStr = if (reasonTxt.isNullOrBlank()) "—" else reasonTxt.trim()
-                val remainStr = if (paidCode == 1) "0đ" else "${vn.format(total)}đ"
-                val collectedStr = if (paidCode == 1) "Đã thu ${vn.format(total)}đ" else "Chưa thu"
-
                 list.add(
                     InvoiceCardItem(
-                        id = invoiceId,
-                        title = roomName,
+                        id = c.getInt(0).toString(),
+                        title = c.getString(1),
                         mainStatus = mainStatus,
-                        rent = "${vn.format(total)}đ",
-                        deposit = remainStr,
-                        collected = collectedStr,
-                        createdDate = createdStr,
-                        moveInDate = reasonStr,
-                        endDate = dueStr,
-                        phone = phone,
-                        periodMonth = periodMonthDb,
-                        periodYear = periodYearDb
+                        rent = "${vn.format(c.getInt(2))}đ",
+                        deposit = if (paidCode == 1) "0đ" else "${vn.format(c.getInt(2))}đ",
+                        collected = if (paidCode == 1) "Đã thu ${vn.format(c.getInt(2))}đ" else "Chưa thu",
+                        createdDate = df.format(Date(c.getLong(5))),
+                        endDate = df.format(Date(c.getLong(6))),
+                        moveInDate = c.getString(7) ?: "—",
+                        phone = c.getString(8) ?: "",
+                        tenantName = c.getString(9) ?: "",
+                        periodMonth = c.getInt(10),
+                        periodYear = c.getInt(11)
                     )
                 )
             }
         }
         return list
     }
+
+    private fun inflateInvoiceView(item: InvoiceCardItem): View {
+        val view = layoutInflater.inflate(R.layout.invoice_export_view, null)
+
+        view.findViewById<TextView>(R.id.tvRoom).text = item.title
+        view.findViewById<TextView>(R.id.tvPeriod).text = "T.${item.periodMonth}, ${item.periodYear}"
+        view.findViewById<TextView>(R.id.tvCreatedDate).text = item.createdDate
+        view.findViewById<TextView>(R.id.tvDueDate).text = item.endDate
+        view.findViewById<TextView>(R.id.tvTenantName).text = item.tenantName
+        view.findViewById<TextView>(R.id.tvTenantPhone).text = "SĐT: ${item.phone}"
+        view.findViewById<TextView>(R.id.tvReason).text = item.moveInDate
+        view.findViewById<TextView>(R.id.tvRentAmount).text = item.rent
+        view.findViewById<TextView>(R.id.tvDepositAmount).text = item.deposit
+        view.findViewById<TextView>(R.id.tvTimes).text = "1 lần"
+        view.findViewById<TextView>(R.id.tvTotalPaid).text = item.collected
+        view.findViewById<TextView>(R.id.tvNote).text =
+            "* Chú ý: Vui lòng thanh toán đúng hạn và trước ngày ${item.endDate}"
+
+        return view
+    }
+
+    private fun renderBitmap(view: View): Bitmap {
+        val width = 1080
+        view.measure(
+            View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        )
+        view.layout(0, 0, width, view.measuredHeight)
+
+        val bmp = Bitmap.createBitmap(width, view.measuredHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bmp)
+        view.draw(canvas)
+
+        return bmp
+    }
+
+    private fun saveBitmapFile(bmp: Bitmap, fileName: String): File {
+        val file = File(cacheDir, "$fileName.png")
+        FileOutputStream(file).use { out -> bmp.compress(Bitmap.CompressFormat.PNG, 100, out) }
+        return file
+    }
+
+    private fun shareInvoiceImage(file: File) {
+        val uri = FileProvider.getUriForFile(
+            this,
+            "${packageName}.provider",
+            file
+        )
+
+        val share = Intent(Intent.ACTION_SEND).apply {
+            type = "image/png"
+            putExtra(Intent.EXTRA_STREAM, uri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+
+        startActivity(Intent.createChooser(share, "Chia sẻ hóa đơn"))
+    }
+
+    private fun sendInvoice(item: InvoiceCardItem) {
+
+        // 1) Inflate layout hóa đơn
+        val view = inflateInvoiceView(item)
+
+        // 2) Render bitmap
+        val bmp = renderBitmap(view)
+
+        // 3) Lưu file vào cache
+        val file = saveBitmapFile(bmp, "invoice_${item.id}")
+
+        // 4) Share trực tiếp (không Zalo)
+        shareInvoiceImage(file)
+    }
+
 
     private enum class StatusFilter { ALL, UNPAID, PAID, CANCEL }
 }

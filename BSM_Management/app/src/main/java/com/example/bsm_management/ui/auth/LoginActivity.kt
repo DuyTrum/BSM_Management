@@ -21,7 +21,6 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var etPhone: EditText
     private lateinit var etPassword: EditText
     private lateinit var btnLogin: Button
-    private lateinit var tvForgotPassword: TextView
     private lateinit var tvRegister: TextView
     private lateinit var cbRemember: CheckBox
 
@@ -42,7 +41,6 @@ class LoginActivity : AppCompatActivity() {
         etPhone = findViewById(R.id.etPhone)
         etPassword = findViewById(R.id.etPassword)
         btnLogin = findViewById(R.id.btnLogin)
-        tvForgotPassword = findViewById(R.id.tvForgotPassword)
         tvRegister = findViewById(R.id.tvRegister)
         cbRemember = findViewById(R.id.cbRemember)
 
@@ -69,10 +67,6 @@ class LoginActivity : AppCompatActivity() {
         // Sự kiện đăng nhập
         btnLogin.setOnClickListener { attemptLogin() }
 
-        // Chức năng khác
-        tvForgotPassword.setOnClickListener {
-            Toast.makeText(this, "Chức năng quên mật khẩu (đang phát triển)", Toast.LENGTH_SHORT).show()
-        }
         tvRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }

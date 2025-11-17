@@ -12,7 +12,8 @@ import com.example.bsm_management.R
 class InvoiceListAdapter(
     private val onItemClick: (InvoiceCardItem) -> Unit,
     private val onMoreClick: (view: View, item: InvoiceCardItem) -> Unit,
-    private val onCall: (String) -> Unit
+    private val onCall: (String) -> Unit,
+    private val onSend: (InvoiceCardItem) -> Unit     // 👉 thêm callback gửi hóa đơn
 ) : ListAdapter<InvoiceCardItem, InvoiceListAdapter.VH>(DIFF) {
 
     companion object {
@@ -26,6 +27,7 @@ class InvoiceListAdapter(
     }
 
     inner class VH(view: View) : RecyclerView.ViewHolder(view) {
+
         private val tvMonthShort: TextView = view.findViewById(R.id.tvMonthShort)
         private val tvYear: TextView = view.findViewById(R.id.tvYear)
         private val tvTitle: TextView = view.findViewById(R.id.tvTitle)
@@ -35,16 +37,15 @@ class InvoiceListAdapter(
         private val tvMoveInDate: TextView = view.findViewById(R.id.tvMoveInDate)
         private val tvEndDate: TextView = view.findViewById(R.id.tvEndDate)
         private val btnCall: TextView = view.findViewById(R.id.btnCall)
+        private val btnSend: TextView = view.findViewById(R.id.btnSend)
         private val tvTotal: TextView = view.findViewById(R.id.tvTotal)
         private val tvPaid: TextView = view.findViewById(R.id.tvPaid)
         private val tvRemain: TextView = view.findViewById(R.id.tvRemain)
 
         fun bind(item: InvoiceCardItem) {
-            // 🔹 Tháng /năm
+
             tvMonthShort.text = "T.${item.periodMonth}"
             tvYear.text = item.periodYear.toString()
-
-            // 🔹 Thông tin chính
             tvTitle.text = item.title
             tvSub.text = item.mainStatus
             tvCreatedDate.text = item.createdDate
@@ -57,6 +58,7 @@ class InvoiceListAdapter(
             itemView.setOnClickListener { onItemClick(item) }
             btnDetail.setOnClickListener { v -> onMoreClick(v, item) }
             btnCall.setOnClickListener { onCall(item.phone) }
+            btnSend.setOnClickListener { onSend(item) }
         }
     }
 
