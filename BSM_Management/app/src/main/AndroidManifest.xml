@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
     <!-- Quyền cần thiết -->
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -11,9 +10,7 @@
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
-    <!-- Camera + Vị trí -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> <!-- Camera + Vị trí -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -32,6 +29,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BSM_Management">
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
 
         <!-- CONTRACT -->
         <activity
@@ -46,16 +53,14 @@
         <activity
             android:name=".ui.contract.AddContractActivity"
             android:exported="false" />
+
         <provider
             android:name=".ui.provider.RoomsProvider"
             android:authorities="com.example.bsm_management.ui.provider"
-            android:exported="true" />
-
-        <!-- ROOM -->
+            android:exported="true" /> <!-- ROOM -->
         <activity
             android:name=".ui.room.RoomListActivity"
             android:exported="false" /> <!-- ✅ Thêm dòng này để fix lỗi -->
-
         <!-- SERVICE -->
         <service
             android:name=".service.NotificationService"
@@ -70,9 +75,7 @@
             android:exported="false" />
         <activity
             android:name=".ui.auth.RegisterActivity"
-            android:exported="false" />
-
-        <!-- RECEIVERS -->
+            android:exported="false" /> <!-- RECEIVERS -->
         <receiver
             android:name=".receiver.InvoiceDueReceiver"
             android:exported="false" />
@@ -83,9 +86,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
-        </receiver>
-
-        <!-- INVOICE -->
+        </receiver> <!-- INVOICE -->
         <activity
             android:name=".ui.invoice.InvoiceDetailActivity"
             android:exported="false" />
@@ -97,9 +98,7 @@
             android:exported="false" />
         <activity
             android:name=".ui.invoice.InvoiceActivity"
-            android:exported="false" />
-
-        <!-- HOSTEL / QR / PROFILE -->
+            android:exported="false" /> <!-- HOSTEL / QR / PROFILE -->
         <activity
             android:name=".ui.intro.EmptyStateActivity"
             android:exported="false" />
@@ -111,9 +110,7 @@
             android:exported="false" />
         <activity
             android:name=".ui.profile.ChangePasswordActivity"
-            android:exported="false" />
-
-        <!-- MAIN -->
+            android:exported="false" /> <!-- MAIN -->
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="false" />
@@ -130,6 +127,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -142,7 +140,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
-
     </application>
+
 </manifest>

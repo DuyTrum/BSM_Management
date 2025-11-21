@@ -12,6 +12,7 @@ data class InvoiceCardItem(
     val endDate: String,
     val phone: String = "",
     val periodMonth: Int = 0,
-    val periodYear: Int = 0
+    val periodYear: Int = 0,
+    val tenantName: String = ""
 )
 

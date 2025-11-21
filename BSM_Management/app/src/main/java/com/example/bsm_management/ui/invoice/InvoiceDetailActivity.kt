@@ -1,6 +1,8 @@
 package com.example.bsm_management.ui.invoice
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -8,11 +10,14 @@ import android.widget.*
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat.enableEdgeToEdge
 import androidx.core.view.WindowInsetsCompat
 import com.example.bsm_management.R
 import database.DatabaseHelper
+import java.io.File
+import java.io.FileOutputStream
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -135,24 +140,47 @@ class InvoiceDetailActivity : AppCompatActivity() {
 
     /* ====== ACTIONS ====== */
     private fun doPrint() {
-        // Chừa hook cho in PDF. Tạm thời thông báo.
-        Toast.makeText(this, "Chức năng In phiếu: sẽ xuất PDF/biên lai", Toast.LENGTH_SHORT).show()
+        // chuyển hóa đơn thành View
+        val view = inflateInvoiceView()
+
+        // render thành bitmap
+        val bmp = renderBitmap(view)
+
+        // In bằng PrintHelper
+        val printHelper = androidx.print.PrintHelper(this)
+        printHelper.scaleMode = androidx.print.PrintHelper.SCALE_MODE_FIT
+        printHelper.printBitmap("Hoá đơn phòng", bmp)
     }
 
+
+
     private fun doShare() {
-        val msg = buildString {
-            appendLine("Hóa đơn: ${roomName ?: ""} (T.$periodMonth/$periodYear)")
-            appendLine("Tổng tiền: ${vn.format(totalAmount)} đ")
-            appendLine("Hạn nạp: ${if (dueAt > 0) df.format(Date(dueAt)) else "—"}")
-            appendLine("Lý do: ${reason ?: "—"}")
-            if (!tenantName.isNullOrBlank()) appendLine("Khách thuê: $tenantName")
+        // 1) Inflate layout hình hóa đơn
+        val view = inflateInvoiceView()
+
+        // 2) Render ảnh
+        val bmp = renderBitmap(view)
+
+        // 3) Lưu file vào cache
+        val file = saveBitmapFile(bmp)
+
+        // 4) Lấy URI bằng FileProvider
+        val uri = FileProvider.getUriForFile(
+            this,
+            "${packageName}.provider",
+            file
+        )
+
+        // 5) Share ảnh
+        val share = Intent(Intent.ACTION_SEND).apply {
+            type = "image/png"
+            putExtra(Intent.EXTRA_STREAM, uri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
-        val it = Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
-            putExtra(Intent.EXTRA_TEXT, msg)
-        }
-        startActivity(Intent.createChooser(it, "Gửi hóa đơn"))
+
+        startActivity(Intent.createChooser(share, "Chia sẻ hình hóa đơn"))
     }
+
 
     private fun doCall() {
         val phone = tenantPhone?.trim().orEmpty()
@@ -187,4 +215,54 @@ class InvoiceDetailActivity : AppCompatActivity() {
             Toast.makeText(this, "Xóa thất bại", Toast.LENGTH_SHORT).show()
         }
     }
+
+    /* ====== RENDER HÓA ĐƠN THÀNH ẢNH ====== */
+    private fun inflateInvoiceView(): View {
+        val view = layoutInflater.inflate(R.layout.invoice_export_view, null)
+
+        view.findViewById<TextView>(R.id.tvRoom).text = roomName ?: ""
+        view.findViewById<TextView>(R.id.tvPeriod).text = "T.$periodMonth, $periodYear"
+        view.findViewById<TextView>(R.id.tvCreatedDate).text =
+            if (createdAt > 0) df.format(Date(createdAt)) else "—"
+        view.findViewById<TextView>(R.id.tvDueDate).text =
+            if (dueAt > 0) df.format(Date(dueAt)) else "—"
+        view.findViewById<TextView>(R.id.tvTenantName).text = tenantName ?: ""
+        view.findViewById<TextView>(R.id.tvTenantPhone).text = "SĐT: ${tenantPhone ?: ""}"
+
+        view.findViewById<TextView>(R.id.tvReason).text =
+            reason?.takeIf { it.isNotBlank() } ?: "—"
+
+        view.findViewById<TextView>(R.id.tvRentAmount).text = "${vn.format(rentAmount)} đ"
+        view.findViewById<TextView>(R.id.tvDepositAmount).text = "0 đ"
+        view.findViewById<TextView>(R.id.tvTimes).text = "1 lần"
+        view.findViewById<TextView>(R.id.tvTotalPaid).text = "${vn.format(totalAmount)} đ"
+
+        view.findViewById<TextView>(R.id.tvNote).text =
+            "* Chú ý: Vui lòng thanh toán đúng hạn và trước ngày ${if (dueAt > 0) df.format(Date(dueAt)) else "—"}"
+
+        return view
+    }
+
+    private fun renderBitmap(view: View): Bitmap {
+        val width = 1080
+        view.measure(
+            View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        )
+        view.layout(0, 0, width, view.measuredHeight)
+
+        val bmp = Bitmap.createBitmap(width, view.measuredHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bmp)
+        view.draw(canvas)
+        return bmp
+    }
+
+    private fun saveBitmapFile(bmp: Bitmap): File {
+        val file = File(cacheDir, "invoice_$invoiceId.png")
+        FileOutputStream(file).use {
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, it)
+        }
+        return file
+    }
+
 }

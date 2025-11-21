@@ -13,6 +13,7 @@ navigationFragmentKtx = "2.9.6"
 navigationUiKtx = "2.9.6"
 navigationFragmentKtxVersion = "2.9.6"
 navigationUiKtxVersion = "2.9.6"
+print = "1.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -27,6 +28,7 @@ androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navi
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
 navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigationFragmentKtxVersion" }
 navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtxVersion" }
+androidx-print = { group = "androidx.print", name = "print", version.ref = "print" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
