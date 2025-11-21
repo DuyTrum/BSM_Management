@@ -1,4 +1,3 @@
-// com.example.bsm_management.ui.dashboard.DashboardFragment.kt
 package com.example.bsm_management.ui.dashboard
 
 import android.content.Intent

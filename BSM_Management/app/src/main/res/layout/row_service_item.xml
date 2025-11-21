@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingVertical="4dp">
+
+    <ImageView
+        android:id="@+id/ivServiceIcon"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        app:tint="@color/bsm_green" />
+
+    <TextView
+        android:id="@+id/tvServiceName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="6dp"
+        android:text="Dịch vụ"
+        android:textColor="@color/bsm_text_primary" />
+
+    <TextView
+        android:id="@+id/tvServicePrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0 đ"
+        android:layout_marginEnd="6dp"
+        android:textColor="@color/bsm_text_secondary" />
+
+    <ImageButton
+        android:id="@+id/btnEditService"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_edit"
+        app:tint="@color/bsm_green" />
+</LinearLayout>

@@ -58,4 +58,6 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("com.airbnb.android:lottie:6.7.1")
     implementation("com.google.android.gms:play-services-location:21.3.0")
+    implementation("org.apache.poi:poi:5.2.3")
+    implementation("org.apache.poi:poi-ooxml:5.2.3")
 }

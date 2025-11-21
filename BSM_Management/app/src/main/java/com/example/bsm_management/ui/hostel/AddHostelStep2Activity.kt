@@ -1,6 +1,5 @@
 package com.example.bsm_management.ui.hostel
 
-import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -14,26 +13,25 @@ import database.DatabaseHelper
 
 class AddHostelStep2Activity : AppCompatActivity() {
 
-    private lateinit var db: DatabaseHelper
     private var sampleRooms = 0
     private var price = 0
+    private var maxPeople = 0
 
-    // Danh sách dịch vụ lưu tạm để ghi DB
+    // Dịch vụ được bật/tắt
     private val serviceStates = mutableMapOf<String, Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_hostel_step2)
-        db = DatabaseHelper(this)
+
+        // Nhận dữ liệu từ Bước 1
+        sampleRooms = intent.getIntExtra("sampleRooms", 0)
+        price = intent.getIntExtra("price", 0)
+        maxPeople = intent.getIntExtra("maxPeople", 0)
 
         findViewById<MaterialButton>(R.id.btnBack).setOnClickListener { finish() }
         findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.topBar)
             .setNavigationOnClickListener { finish() }
-
-        // nhận dữ liệu
-        val name = intent.getStringExtra("name") ?: ""
-        sampleRooms = intent.getIntExtra("sampleRooms", 0)
-        price = intent.getIntExtra("price", 0)
 
         // ==== Dịch vụ ====
         setupService(R.id.svcElectric, "Dịch vụ điện", "Tính theo đồng hồ (phổ biến)")
@@ -42,80 +40,82 @@ class AddHostelStep2Activity : AppCompatActivity() {
         setupService(R.id.svcInternet, "Dịch vụ internet/mạng", "Miễn phí / không sử dụng")
 
         // ==== Tính năng ====
-        setupFeature(
-            R.id.featApp,
-            R.drawable.ic_app,
-            "APP dành riêng cho khách thuê",
-            "Tạo & kết nối dễ dàng, hoá đơn tự động, ký hợp đồng online…"
-        )
-        setupFeature(
-            R.id.featZalo,
-            R.drawable.ic_zalo,
-            "Gửi hoá đơn tự động qua ZALO",
-            "Dễ dàng gửi hoá đơn hàng loạt qua ZALO"
-        )
-        setupFeature(
-            R.id.featImage,
-            R.drawable.ic_file,
-            "Hình ảnh, File chứng từ hợp đồng",
-            "Hình ảnh CCCD, hợp đồng giấy,…"
-        )
+        setupFeature(R.id.featApp, R.drawable.ic_app, "APP dành riêng cho khách thuê", "Tự động hoá hoá đơn")
+        setupFeature(R.id.featZalo, R.drawable.ic_zalo, "Gửi hoá đơn qua ZALO", "Gửi hàng loạt")
+        setupFeature(R.id.featImage, R.drawable.ic_file, "Lưu file hợp đồng", "Hình ảnh, CCCD")
 
-        // === Lưu ===
+        // Lưu nhà trọ
         findViewById<MaterialButton>(R.id.btnSave).setOnClickListener {
             if (sampleRooms <= 0) {
                 Toast.makeText(this, "Số phòng không hợp lệ!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            val dbw = db.writableDatabase
-            dbw.beginTransaction()
-            try {
-                // 🏠 Tạo phòng mẫu
-                for (i in 1..sampleRooms) {
-                    val cv = ContentValues().apply {
-                        put("name", "P%03d".format(i))
-                        put("floor", 1)
-                        put("status", "EMPTY")
-                        put("baseRent", price)
-                    }
-                    dbw.insertOrThrow("rooms", null, cv)
-                }
-
-                // 💾 Lưu danh sách dịch vụ
-                dbw.execSQL("CREATE TABLE IF NOT EXISTS services (" +
-                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                        "name TEXT NOT NULL," +
-                        "enabled INTEGER NOT NULL DEFAULT 0)")
-                dbw.execSQL("DELETE FROM services")
-
-                val insertSvc = dbw.compileStatement(
-                    "INSERT INTO services (name, enabled) VALUES (?, ?)"
-                )
-                serviceStates.forEach { (name, enabled) ->
-                    insertSvc.bindString(1, name)
-                    insertSvc.bindLong(2, if (enabled) 1 else 0)
-                    insertSvc.executeInsert()
-                }
-
-                dbw.setTransactionSuccessful()
-                Toast.makeText(this, "Đã tạo $sampleRooms phòng và lưu dịch vụ.", Toast.LENGTH_SHORT).show()
-            } catch (e: Exception) {
-                Toast.makeText(this, "Lỗi lưu: ${e.message}", Toast.LENGTH_LONG).show()
-            } finally {
-                dbw.endTransaction()
-            }
-
-            startActivity(
-                Intent(this, MainActivity::class.java)
-                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-            )
-            finish()
+            saveHostel()
         }
     }
 
-    /** Cấu hình mỗi dòng dịch vụ */
+    /** ============================
+     *      LƯU DỮ LIỆU
+     *  ============================ */
+    private fun saveHostel() {
+
+        val db = DatabaseHelper(this).writableDatabase
+        db.beginTransaction()
+
+        try {
+            // Xoá sạch dữ liệu cũ (không xóa dịch vụ của app khác)
+            db.execSQL("DELETE FROM rooms")
+            db.execSQL("DELETE FROM services")
+
+            // Statement tạo phòng
+            val insertRoom = db.compileStatement("""
+            INSERT INTO rooms (name, floor, status, baseRent, maxPeople)
+            VALUES (?, 1, 'EMPTY', ?, ?)
+        """)
+
+            // Statement tạo dịch vụ theo phòng
+            val insertSvc = db.compileStatement("""
+            INSERT INTO services (roomId, serviceName, enabled, price)
+            VALUES (?, ?, ?, 0)
+        """)
+
+            val allServices = listOf("Dịch vụ điện", "Dịch vụ nước", "Dịch vụ rác", "Dịch vụ internet/mạng")
+
+            for (i in 1..sampleRooms) {
+
+                val roomName = "P%03d".format(i)
+
+                insertRoom.bindString(1, roomName)
+                insertRoom.bindLong(2, price.toLong())
+                insertRoom.bindLong(3, maxPeople.toLong())
+
+                val roomId = insertRoom.executeInsert()  // LẤY ID PHÒNG
+
+                // tạo dịch vụ theo trạng thái user chọn
+                allServices.forEach { svc ->
+                    insertSvc.bindLong(1, roomId)
+                    insertSvc.bindString(2, svc)
+                    insertSvc.bindLong(3, if (serviceStates[svc] == true) 1 else 0)
+                    insertSvc.executeInsert()
+                }
+            }
+
+            db.setTransactionSuccessful()
+
+        } finally {
+            db.endTransaction()
+        }
+
+        startActivity(Intent(this, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK))
+        finish()
+    }
+
+
+    /** Cài đặt checkbox dịch vụ */
     private fun setupService(rootId: Int, title: String, desc: String) {
+
         val root = findViewById<View>(rootId)
         val tvTitle = root.findViewById<TextView>(R.id.tvServiceTitle)
         val tvDesc = root.findViewById<TextView>(R.id.tvServiceDesc)
@@ -124,7 +124,6 @@ class AddHostelStep2Activity : AppCompatActivity() {
         tvTitle.text = title
         tvDesc.text = desc
 
-        // Giá trị mặc định (điện & nước bật, rác & internet tắt)
         val defaultChecked = title.contains("điện") || title.contains("nước")
         sw.isChecked = defaultChecked
         serviceStates[title] = defaultChecked

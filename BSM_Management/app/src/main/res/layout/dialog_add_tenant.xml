@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="@android:color/white"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- TITLE -->
+    <TextView
+        android:text="Thêm khách thuê"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:textColor="#212121"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <!-- INPUT: TÊN -->
+    <TextView
+        android:layout_marginTop="16dp"
+        android:text="Tên khách"
+        android:textColor="#666666"
+        android:textSize="14sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/etName"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_marginTop="6dp"
+        android:padding="10dp"
+        android:background="@drawable/bg_input_box"
+        android:textSize="15sp" />
+
+    <!-- INPUT: SĐT -->
+    <TextView
+        android:layout_marginTop="14dp"
+        android:text="Số điện thoại"
+        android:textColor="#666666"
+        android:textSize="14sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/etPhone"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_marginTop="6dp"
+        android:padding="10dp"
+        android:inputType="phone"
+        android:background="@drawable/bg_input_box"
+        android:textSize="15sp" />
+
+    <!-- SAVE BUTTON -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSave"
+        style="@style/NoTintButton"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="@drawable/bg_button_green"
+        android:text="Lưu khách thuê"
+        android:textColor="@android:color/white"
+        android:textAllCaps="false"
+        android:textSize="15sp"
+        app:cornerRadius="10dp"/>
+
+
+
+    <!-- CANCEL -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCancel"
+        style="@style/NoTintButton"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="@drawable/bg_button_gray"
+        android:text="Hủy"
+        android:textAllCaps="false"
+        android:textColor="#333333"
+        android:textSize="15sp"
+        app:cornerRadius="10dp"/>
+
+
+</LinearLayout>

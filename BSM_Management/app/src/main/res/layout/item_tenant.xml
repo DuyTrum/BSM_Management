@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    android:padding="12dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="@android:color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Avatar -->
+        <ImageView
+            android:id="@+id/imgAvatar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_person_avatar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Name -->
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Tên khách"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="#000"
+            app:layout_constraintStart_toEndOf="@id/imgAvatar"
+            android:layout_marginStart="12dp"
+            app:layout_constraintTop_toTopOf="@id/imgAvatar"
+            app:layout_constraintEnd_toStartOf="@id/btnCall" />
+
+        <!-- Phone -->
+        <TextView
+            android:id="@+id/tvPhone"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="SĐT: 0123-456-789"
+            android:textColor="#666"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/tvName"
+            app:layout_constraintTop_toBottomOf="@id/tvName"
+            app:layout_constraintEnd_toEndOf="@id/tvName"/>
+
+        <!-- STATUS: Chưa sử dụng APP -->
+        <LinearLayout
+            android:id="@+id/layoutNotUseApp"
+            android:orientation="horizontal"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_status_warning"
+            app:layout_constraintStart_toStartOf="@id/tvName"
+            app:layout_constraintTop_toBottomOf="@id/tvPhone"
+            android:layout_marginTop="4dp">
+
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:src="@drawable/ic_warning"
+                android:layout_marginEnd="4dp"
+                app:tint="#D46B08" />
+
+            <TextView
+                android:id="@+id/tvNotUseApp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chưa sử dụng APP"
+                android:textSize="13sp"
+                android:textColor="#D46B08"/>
+        </LinearLayout>
+
+        <!-- Tag 1: Chưa đăng ký tạm trú -->
+        <TextView
+            android:id="@+id/tagTempResidence"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_tag_orange"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:text="Chưa đăng ký tạm trú"
+            android:textColor="#555"
+            android:textSize="13sp"
+            app:layout_constraintStart_toStartOf="@id/layoutNotUseApp"
+            app:layout_constraintTop_toBottomOf="@id/layoutNotUseApp"
+            android:layout_marginTop="4dp" />
+
+        <!-- Tag 2: Chưa đầy đủ giấy tờ -->
+        <TextView
+            android:id="@+id/tagDocuments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_tag_orange"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:text="Chưa đầy đủ giấy tờ"
+            android:textColor="#555"
+            android:textSize="13sp"
+            app:layout_constraintStart_toEndOf="@id/tagTempResidence"
+            android:layout_marginStart="8dp"
+            app:layout_constraintTop_toTopOf="@id/tagTempResidence" />
+
+        <!-- Call button -->
+        <ImageButton
+            android:id="@+id/btnCall"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_call2"
+            android:background="@android:color/transparent"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toStartOf="@id/btnMore"
+            app:layout_constraintTop_toTopOf="@id/tvName"/>
+
+
+        <!-- More button -->
+        <ImageButton
+            android:id="@+id/btnMore"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_circle_grey"
+            app:srcCompat="@drawable/ic_more_vert"
+            app:tint="#000"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/btnCall"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>
