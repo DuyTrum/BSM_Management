@@ -64,7 +64,12 @@
         <!-- SERVICE -->
         <service
             android:name=".service.NotificationService"
-            android:exported="false" /> <!-- AUTH -->
+            android:exported="false" />
+        <activity
+            android:name=".ui.service.ServiceSettingsActivity"
+            android:exported="false" />
+
+        <!-- AUTH -->
         <activity
             android:name=".ui.auth.LoginActivity"
             android:exported="false" />
@@ -108,7 +113,15 @@
             android:exported="false" /> <!-- MAIN -->
         <activity
             android:name=".ui.main.MainActivity"
-            android:exported="false" /> <!-- LAUNCHER -->
+            android:exported="false" />
+        <!-- TENANT -->
+        <activity
+            android:name=".ui.tenant.TenantListActivity"
+            android:exported="false" />
+        <activity android:name=".ui.tenant.TenantManagerActivity" />
+        <activity android:name=".ui.tenant.OldTenantActivity"/>
+
+        <!-- LAUNCHER -->
         <activity
             android:name=".ui.intro.IntroActivity"
             android:exported="true">
@@ -118,6 +131,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

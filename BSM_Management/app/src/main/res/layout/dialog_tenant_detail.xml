@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="20dp"
+    android:background="@android:color/white"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- TITLE -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:text="Thông tin khách thuê"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#222222"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+        <!-- VIEW MODE -->
+        <LinearLayout
+            android:id="@+id/layoutViewMode"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_input_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvName"
+                android:text="Tên khách: ---"
+                android:textColor="#333333"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/tvPhone"
+                android:text="SĐT: ---"
+                android:textColor="#555555"
+                android:layout_marginTop="6dp"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+
+        <!-- EDIT MODE -->
+        <LinearLayout
+            android:id="@+id/layoutEditMode"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- NAME -->
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:text="Tên khách"
+                    android:textColor="#555555"
+                    android:textSize="14sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <EditText
+                    android:id="@+id/etName"
+                    android:layout_marginTop="6dp"
+                    android:padding="12dp"
+                    android:textSize="15sp"
+                    android:background="@drawable/bg_input_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"/>
+            </LinearLayout>
+
+            <!-- PHONE -->
+            <LinearLayout
+                android:layout_marginTop="14dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:text="Số điện thoại"
+                    android:textColor="#555555"
+                    android:textSize="14sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <EditText
+                    android:id="@+id/etPhone"
+                    android:layout_marginTop="6dp"
+                    android:padding="12dp"
+                    android:inputType="phone"
+                    android:textSize="15sp"
+                    android:background="@drawable/bg_input_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <!-- BUTTON EDIT -->
+        <Button
+            android:id="@+id/btnEdit"
+            android:text="Chỉnh sửa"
+            android:layout_marginTop="28dp"
+            android:backgroundTint="#4CAF50"
+            android:textColor="@android:color/white"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:layout_width="match_parent"
+            android:layout_height="48dp" />
+
+        <!-- BUTTON SAVE -->
+        <Button
+            android:id="@+id/btnSave"
+            android:text="Lưu thay đổi"
+            android:visibility="gone"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="#4CAF50"
+            android:textColor="@android:color/white"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:layout_width="match_parent"
+            android:layout_height="48dp" />
+
+        <!-- CLOSE -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancel"
+            style="@style/NoTintButton"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:background="@drawable/bg_button_gray"
+            android:text="Hủy"
+            android:textAllCaps="false"
+            android:textColor="#333333"
+            android:textSize="15sp"
+            app:cornerRadius="10dp"/>
+
+
+    </LinearLayout>
+
+</ScrollView>

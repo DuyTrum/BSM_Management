@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import com.example.bsm_management.R
 import com.example.bsm_management.ui.intro.EmptyStateActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment

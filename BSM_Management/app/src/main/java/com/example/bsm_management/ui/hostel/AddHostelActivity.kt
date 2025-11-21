@@ -96,6 +96,11 @@ class AddHostelActivity : AppCompatActivity() {
 
     // ================== FLOW BƯỚC 1 -> 2 ==================
     private fun onNextClicked() {
+        val maxPeopleStr = ddlMaxPeople.text.toString()
+        val maxPeople =
+            if (maxPeopleStr == "Không giới hạn") 0
+            else maxPeopleStr.toInt()
+        intent.putExtra("maxPeople", maxPeople)
         if (!isOnStep2) {
             if (switchAuto.isChecked) {
                 val count = edtSampleRoom.text?.toString()?.toIntOrNull() ?: 0
@@ -195,6 +200,7 @@ class AddHostelActivity : AppCompatActivity() {
 
     // ================== LƯU ROOMS & DỊCH VỤ ==================
     private fun saveRoomsOnlyAndFinish() {
+
         val auto = switchAuto.isChecked
         if (!auto) { goDashboard(); return }
 
@@ -202,10 +208,22 @@ class AddHostelActivity : AppCompatActivity() {
         val price = edtPrice.text?.toString()?.toIntOrNull() ?: 0
         if (count <= 0 || price <= 0) { toast("Thiếu số phòng/giá thuê"); return }
 
-        // 🏡 Lưu tên & địa chỉ nhà trọ
+        // --- TÊN NHÀ TRỌ ---
+        val hostelName = findViewById<TextInputEditText>(R.id.edtHostelName)
+            ?.text?.toString()?.trim()
+            ?: "Nhà trọ của bạn"
+
+        // --- ĐỊA CHỈ ---
         val edtAddress = step2.findViewById<TextInputEditText>(R.id.edtAddress)
         val address = edtAddress?.text?.toString()?.trim().orEmpty()
-        val hostelName = "Nhà trọ của bạn"
+
+        // --- SỐ NGƯỜI TỐI ĐA ---
+        val maxPeopleStr = ddlMaxPeople.text.toString()
+        val maxPeople =
+            if (maxPeopleStr == "Không giới hạn") 0
+            else maxPeopleStr.toInt()
+
+        // Lưu tên nhà trọ
         val prefs = getSharedPreferences("hostel_prefs", MODE_PRIVATE)
         prefs.edit().apply {
             putString("hostel_name", hostelName)
@@ -216,31 +234,50 @@ class AddHostelActivity : AppCompatActivity() {
         val db = DatabaseHelper(this).writableDatabase
         db.beginTransaction()
         try {
-            for (i in 1..count) {
-                val cv = ContentValues().apply {
-                    put("name", "P%03d".format(i))
-                    put("floor", 1)
-                    put("status", "EMPTY")
-                    put("baseRent", price)
-                }
-                db.insertOrThrow("rooms", null, cv)
-            }
 
-            // 💾 Lưu danh sách dịch vụ
-            db.execSQL("CREATE TABLE IF NOT EXISTS services (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "name TEXT NOT NULL," +
-                    "enabled INTEGER NOT NULL DEFAULT 0)")
+            // ❗ XÓA PHÒNG CŨ TRƯỚC
+            db.execSQL("DELETE FROM rooms")
+
+            // ❗ XÓA BẢNG SERVICE CŨ TRƯỚC (nếu có bảng tổng)
             db.execSQL("DELETE FROM services")
-            val insertSvc = db.compileStatement("INSERT INTO services (name, enabled) VALUES (?, ?)")
-            serviceStates.forEach { (name, enabled) ->
-                insertSvc.bindString(1, name)
-                insertSvc.bindLong(2, if (enabled) 1 else 0)
-                insertSvc.executeInsert()
+
+            val insertRoom = db.compileStatement(
+                "INSERT INTO rooms (name, floor, status, baseRent, maxPeople) VALUES (?,1,'EMPTY',?,?)"
+            )
+
+            val insertSvc = db.compileStatement(
+                "INSERT INTO services (roomId, serviceName, enabled, price) VALUES (?, ?, ?, 0)"
+            )
+
+            val allServices = listOf(
+                "Dịch vụ điện",
+                "Dịch vụ nước",
+                "Dịch vụ rác",
+                "Dịch vụ internet/mạng"
+            )
+
+            for (i in 1..count) {
+
+                val roomName = "P%03d".format(i)
+
+                insertRoom.bindString(1, roomName)
+                insertRoom.bindLong(2, price.toLong())
+                insertRoom.bindLong(3, maxPeople.toLong())
+
+                val roomId = insertRoom.executeInsert()
+
+                // tạo dịch vụ
+                allServices.forEach { svc ->
+                    insertSvc.bindLong(1, roomId)
+                    insertSvc.bindString(2, svc)
+                    insertSvc.bindLong(3, if (serviceStates[svc] == true) 1 else 0)
+                    insertSvc.executeInsert()
+                }
             }
 
             db.setTransactionSuccessful()
-            toast("Đã tạo $count phòng và lưu dịch vụ.")
+            toast("Đã tạo $count phòng & dịch vụ!")
+
         } catch (e: Exception) {
             toast("Lỗi lưu: ${e.message}")
         } finally {
@@ -249,6 +286,8 @@ class AddHostelActivity : AppCompatActivity() {
 
         goDashboard()
     }
+
+
 
     private fun goDashboard() {
         startActivity(Intent(this, MainActivity::class.java)

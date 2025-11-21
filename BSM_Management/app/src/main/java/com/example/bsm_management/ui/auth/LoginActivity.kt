@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
@@ -46,12 +47,14 @@ class LoginActivity : AppCompatActivity() {
 
         // Bỏ qua màn hình đăng nhập nếu đã có session
         val prefs = getSharedPreferences("auth", MODE_PRIVATE)
-        val userId = prefs.getLong("userId", -1L)
+        val userId = prefs.getLong("user_id", -1L)
+
         if (userId != -1L) {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
             return
         }
+
 
         // Tự động điền thông tin từ file Internal Storage
         readLoginInfo()?.let { (savedPhone, savedPassword) ->

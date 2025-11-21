@@ -15,6 +15,7 @@ class OverviewAdapter(
     private val onClick: (OverviewStat) -> Unit = {}
 ) : ListAdapter<OverviewStat, OverviewAdapter.VH>(DIFF) {
 
+
     object DIFF : DiffUtil.ItemCallback<OverviewStat>() {
         override fun areItemsTheSame(o: OverviewStat, n: OverviewStat) = o.title == n.title
         override fun areContentsTheSame(o: OverviewStat, n: OverviewStat) = o == n
@@ -25,13 +26,22 @@ class OverviewAdapter(
         val tvTitle: TextView = v.findViewById(R.id.tvTitle)
         val tvValue: TextView = v.findViewById(R.id.tvValue)
         val tvPercent: TextView = v.findViewById(R.id.tvPercent)
-        init { v.setOnClickListener { onClick(getItem(bindingAdapterPosition)) } }
+        init {
+            v.setOnClickListener {
+                val pos = bindingAdapterPosition
+                if (pos != RecyclerView.NO_POSITION) {
+                    onClick(getItem(pos))
+                }
+            }
+        }
+
     }
 
     override fun onCreateViewHolder(p: ViewGroup, vt: Int) =
         VH(LayoutInflater.from(p.context).inflate(R.layout.item_overview, p, false))
 
     override fun onBindViewHolder(h: VH, pos: Int) {
+
         val it = getItem(pos)
         h.ivIcon.setImageResource(it.iconRes)
         h.tvTitle.text = it.title

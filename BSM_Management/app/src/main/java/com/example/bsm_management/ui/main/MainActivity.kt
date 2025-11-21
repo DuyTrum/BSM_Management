@@ -46,6 +46,11 @@ class MainActivity : AppCompatActivity() {
         bottomNav.setupWithNavController(navController)
         bottomNav.selectedItemId = R.id.homeFragment
 
+        // ====== Nhận tín hiệu mở Profile ======
+        if (intent.getBooleanExtra("open_profile", false)) {
+            bottomNav.selectedItemId = R.id.ProfileFragment  // đổi đúng ID menu của bạn
+            intent.removeExtra("open_profile")
+        }
         if (android.os.Build.VERSION.SDK_INT >= 33 &&
             checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
             != android.content.pm.PackageManager.PERMISSION_GRANTED

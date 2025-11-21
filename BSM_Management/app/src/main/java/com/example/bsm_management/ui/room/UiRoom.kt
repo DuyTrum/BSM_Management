@@ -7,8 +7,12 @@ data class UiRoom(
     val floor: Int?,
     val status: String?,
     val tenantCount: Int?,
+    val maxPeople: Int?,
     val contractEnd: String?,
     val appUsed: Boolean?,
     val onlineSigned: Boolean?,
-    val phone: String?
+    val phone: String?,
+    val services: List<Triple<String, Boolean, Int>> = emptyList()
+
+
 )
