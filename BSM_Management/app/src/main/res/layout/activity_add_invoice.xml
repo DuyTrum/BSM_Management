@@ -167,7 +167,6 @@
                         android:paddingEnd="@dimen/pad_m" />
 
                     <TextView
-                        android:id="@+id/tvMultiplyElectric"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="×"
@@ -187,7 +186,7 @@
                         android:paddingEnd="@dimen/pad_m" />
                 </LinearLayout>
 
-                <!-- ⚡ Hàng nước -->
+                <!-- 💧 Hàng nước -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -207,7 +206,6 @@
                         android:paddingEnd="@dimen/pad_m" />
 
                     <TextView
-                        android:id="@+id/tvMultiplyWater"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="×"
@@ -227,6 +225,84 @@
                         android:paddingEnd="@dimen/pad_m" />
                 </LinearLayout>
 
+                <!-- 🗑 Dịch vụ rác -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="@dimen/mar_m">
+
+                    <EditText
+                        android:id="@+id/edtTrashQty"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/edt_h"
+                        android:layout_weight="1"
+                        android:hint="Số rác (kg/tháng)"
+                        android:inputType="number"
+                        android:background="@drawable/bg_border"
+                        android:paddingStart="@dimen/pad_m"
+                        android:paddingEnd="@dimen/pad_m" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="×"
+                        android:textSize="@dimen/txt_l"
+                        android:textColor="@color/txt_pri"
+                        android:layout_marginHorizontal="@dimen/mar_s" />
+
+                    <EditText
+                        android:id="@+id/edtTrashRate"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/edt_h"
+                        android:layout_weight="1"
+                        android:hint="Đơn giá rác (đ)"
+                        android:inputType="number"
+                        android:background="@drawable/bg_border"
+                        android:paddingStart="@dimen/pad_m"
+                        android:paddingEnd="@dimen/pad_m" />
+                </LinearLayout>
+
+                <!-- 📡 WiFi / Internet -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="@dimen/mar_m">
+
+                    <EditText
+                        android:id="@+id/edtWifiQty"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/edt_h"
+                        android:layout_weight="1"
+                        android:hint="Số tháng WiFi"
+                        android:inputType="number"
+                        android:background="@drawable/bg_border"
+                        android:paddingStart="@dimen/pad_m"
+                        android:paddingEnd="@dimen/pad_m" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="×"
+                        android:textSize="@dimen/txt_l"
+                        android:textColor="@color/txt_pri"
+                        android:layout_marginHorizontal="@dimen/mar_s" />
+
+                    <EditText
+                        android:id="@+id/edtWifiRate"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/edt_h"
+                        android:layout_weight="1"
+                        android:hint="Đơn giá WiFi (đ)"
+                        android:inputType="number"
+                        android:background="@drawable/bg_border"
+                        android:paddingStart="@dimen/pad_m"
+                        android:paddingEnd="@dimen/pad_m" />
+                </LinearLayout>
+
                 <!-- Phí dịch vụ -->
                 <EditText
                     android:id="@+id/edtService"
@@ -234,10 +310,11 @@
                     android:layout_height="@dimen/edt_h"
                     android:layout_marginTop="@dimen/mar_m"
                     android:inputType="number"
-                    android:hint="Phí dịch vụ (VNĐ)"
+                    android:hint="Phí dịch vụ khác (VNĐ)"
                     android:background="@drawable/bg_border"
                     android:paddingStart="@dimen/pad_m" />
             </LinearLayout>
+
 
             <!-- 🔹 Thành tiền -->
             <LinearLayout

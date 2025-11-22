@@ -116,7 +116,7 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             serviceName TEXT NOT NULL,
             enabled INTEGER NOT NULL DEFAULT 1,
             price INTEGER NOT NULL DEFAULT 0,
-            FOREIGN KEY(roomId) REFERENCES rooms(id) ON DELETE CASCADE,
+            FOREIGN KEY(roomId) REFERENCES rooms(id) ON DELETE CASCADE
         );
     """.trimIndent())
 
