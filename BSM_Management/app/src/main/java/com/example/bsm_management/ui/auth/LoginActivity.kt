@@ -47,7 +47,7 @@ class LoginActivity : AppCompatActivity() {
 
         // Bỏ qua màn hình đăng nhập nếu đã có session
         val prefs = getSharedPreferences("auth", MODE_PRIVATE)
-        val userId = prefs.getLong("user_id", -1L)
+        val userId = prefs.getLong("userId", -1L)
 
         if (userId != -1L) {
             startActivity(Intent(this, MainActivity::class.java))

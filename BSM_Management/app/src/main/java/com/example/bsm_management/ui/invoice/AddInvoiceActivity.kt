@@ -2,18 +2,15 @@ package com.example.bsm_management.ui.invoice
 
 import android.app.DatePickerDialog
 import android.content.ContentValues
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.MotionEvent
 import android.view.View
 import android.widget.*
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat.enableEdgeToEdge
 import androidx.core.view.WindowInsetsCompat
 import com.example.bsm_management.R
 import database.DatabaseHelper
@@ -37,6 +34,12 @@ class AddInvoiceActivity : AppCompatActivity() {
     private lateinit var edtWaterRate: EditText
     private lateinit var edtService: EditText
 
+    // Thêm rác + wifi
+    private lateinit var edtTrashQty: EditText
+    private lateinit var edtTrashRate: EditText
+    private lateinit var edtWifiQty: EditText
+    private lateinit var edtWifiRate: EditText
+
     // Data
     private var roomId: Int = -1
     private var roomName: String? = null
@@ -45,9 +48,6 @@ class AddInvoiceActivity : AppCompatActivity() {
     // Format
     private val df = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     private val vn = NumberFormat.getInstance(Locale.forLanguageTag("vi-VN"))
-
-    // Prefs
-    private lateinit var prefs: SharedPreferences
 
     private val reasons = arrayOf(
         "Thu tiền hàng tháng",
@@ -58,7 +58,6 @@ class AddInvoiceActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_add_invoice)
 
         // Insets
@@ -67,9 +66,6 @@ class AddInvoiceActivity : AppCompatActivity() {
             v.setPadding(sysBars.left, sysBars.top, sysBars.right, sysBars.bottom)
             insets
         }
-
-        // SharedPreferences
-        prefs = getSharedPreferences("invoice_prefs", MODE_PRIVATE)
 
         // Nhận dữ liệu
         roomId = intent.getIntExtra("roomId", -1)
@@ -87,6 +83,12 @@ class AddInvoiceActivity : AppCompatActivity() {
         edtWaterRate = findViewById(R.id.edtWaterRate)
         edtService = findViewById(R.id.edtService)
 
+        // ánh xạ rác / wifi
+        edtTrashQty = findViewById(R.id.edtTrashQty)
+        edtTrashRate = findViewById(R.id.edtTrashRate)
+        edtWifiQty = findViewById(R.id.edtWifiQty)
+        edtWifiRate = findViewById(R.id.edtWifiRate)
+
         // Header
         setupHeader(
             title = "Lập hóa đơn: ${roomName ?: queryRoomName(roomId) ?: "Phòng ?"}",
@@ -98,7 +100,9 @@ class AddInvoiceActivity : AppCompatActivity() {
         setupReasonSpinnerAsDialog()
         setupDatePickers()
         setupDefaultDates()
-        loadLastRates() // 🔹 đọc đơn giá gần nhất từ SharedPreferences
+
+        // Tải cấu hình dịch vụ cho phòng -> hiển/ẩn hàng và set giá động
+        loadServicesForRoom()
 
         updateSubtotal()
         setupAutoRecalculate()
@@ -206,6 +210,81 @@ class AddInvoiceActivity : AppCompatActivity() {
         }
     }
 
+    /* ---------------- DỊCH VỤ THEO PHÒNG ---------------- */
+    private fun loadServicesForRoom() {
+        if (roomId <= 0) {
+            // nếu không có roomId vẫn hiện tất cả mặc định
+            showAllServiceRows(true)
+            return
+        }
+
+        val db = DatabaseHelper(this)
+        val services = db.getServicesForRoom(roomId.toLong())
+
+        // default: ẩn hết -> sau đó bật từng cái có enabled
+        showAllServiceRows(false)
+
+        services.forEach { triple ->
+            val name = triple.first ?: ""
+            val enabled = triple.second
+            val price = triple.third
+
+            when {
+                name.contains("điện", ignoreCase = true) -> {
+                    setRowVisibility(edtElectricQty, enabled)
+                    if (enabled) edtElectricRate.setText(price.toString())
+                }
+                name.contains("nước", ignoreCase = true) -> {
+                    setRowVisibility(edtWaterQty, enabled)
+                    if (enabled) edtWaterRate.setText(price.toString())
+                }
+                name.contains("rác", ignoreCase = true) -> {
+                    setRowVisibility(edtTrashQty, enabled)
+                    if (enabled) edtTrashRate.setText(price.toString())
+                }
+                name.contains("internet", ignoreCase = true) ||
+                        name.contains("wifi", ignoreCase = true) -> {
+                    setRowVisibility(edtWifiQty, enabled)
+                    if (enabled) edtWifiRate.setText(price.toString())
+                }
+                else -> {
+                    // unknown service -> ignore
+                }
+            }
+        }
+
+        // luôn cho phép phí dịch vụ khác
+        // edtService vẫn hiển thị (nằm trong same section)
+    }
+
+    private fun setRowVisibility(childEditText: EditText, visible: Boolean) {
+        val parent = childEditText.parent as? View
+        parent?.visibility = if (visible) View.VISIBLE else View.GONE
+        if (!visible) {
+            childEditText.setText("")
+            // tìm rate (sibling) và xóa
+            // assume sibling rate is next to qty in layout; clear all known rates if hiding
+            when (childEditText.id) {
+                R.id.edtElectricQty -> edtElectricRate.setText("")
+                R.id.edtWaterQty -> edtWaterRate.setText("")
+                R.id.edtTrashQty -> edtTrashRate.setText("")
+                R.id.edtWifiQty -> edtWifiRate.setText("")
+            }
+        }
+    }
+
+    private fun showAllServiceRows(show: Boolean) {
+        val vis = if (show) View.VISIBLE else View.GONE
+        (edtElectricQty.parent as? View)?.visibility = vis
+        (edtElectricRate.parent as? View)?.visibility = vis
+        (edtWaterQty.parent as? View)?.visibility = vis
+        (edtWaterRate.parent as? View)?.visibility = vis
+        (edtTrashQty.parent as? View)?.visibility = vis
+        (edtTrashRate.parent as? View)?.visibility = vis
+        (edtWifiQty.parent as? View)?.visibility = vis
+        (edtWifiRate.parent as? View)?.visibility = vis
+    }
+
     /* ---------------- TÍNH TIỀN ---------------- */
     private fun updateSubtotal() {
         val from = runCatching { df.parse(tvFromDate.text.toString()) }.getOrNull() ?: return
@@ -240,17 +319,23 @@ class AddInvoiceActivity : AppCompatActivity() {
         val roomSubtotal = if (sameMonthFull) baseRent
         else (months * baseRent) + ((days / 30.0) * baseRent).roundToInt()
 
-        // Tính điện, nước, dịch vụ
+        // Tính điện, nước, dịch vụ, rác, wifi
         val electricRate = edtElectricRate.text.toString().toIntOrNull() ?: 0
         val electricQty = edtElectricQty.text.toString().toIntOrNull() ?: 0
         val waterRate = edtWaterRate.text.toString().toIntOrNull() ?: 0
         val waterQty = edtWaterQty.text.toString().toIntOrNull() ?: 0
+        val trashRate = edtTrashRate.text.toString().toIntOrNull() ?: 0
+        val trashQty = edtTrashQty.text.toString().toIntOrNull() ?: 0
+        val wifiRate = edtWifiRate.text.toString().toIntOrNull() ?: 0
+        val wifiQty = edtWifiQty.text.toString().toIntOrNull() ?: 0
         val service = edtService.text.toString().toIntOrNull() ?: 0
 
         val electricTotal = electricRate * electricQty
         val waterTotal = waterRate * waterQty
+        val trashTotal = trashRate * trashQty
+        val wifiTotal = wifiRate * wifiQty
 
-        val total = roomSubtotal + electricTotal + waterTotal + service
+        val total = roomSubtotal + electricTotal + waterTotal + trashTotal + wifiTotal + service
         tvSubTotal.text = "Thành tiền ${vn.format(total)} đ"
     }
 
@@ -266,6 +351,10 @@ class AddInvoiceActivity : AppCompatActivity() {
         edtElectricRate.addTextChangedListener(watcher)
         edtWaterQty.addTextChangedListener(watcher)
         edtWaterRate.addTextChangedListener(watcher)
+        edtTrashQty.addTextChangedListener(watcher)
+        edtTrashRate.addTextChangedListener(watcher)
+        edtWifiQty.addTextChangedListener(watcher)
+        edtWifiRate.addTextChangedListener(watcher)
         edtService.addTextChangedListener(watcher)
     }
 
@@ -286,21 +375,6 @@ class AddInvoiceActivity : AppCompatActivity() {
         }
     }
 
-    /* ---------------- LƯU & GỢI Ý ---------------- */
-    private fun loadLastRates() {
-        val lastElectricRate = prefs.getInt("lastElectricRate", 3500)
-        val lastWaterRate = prefs.getInt("lastWaterRate", 8000)
-        edtElectricRate.setText(lastElectricRate.toString())
-        edtWaterRate.setText(lastWaterRate.toString())
-    }
-
-    private fun saveLastRates(electricRate: Int, waterRate: Int) {
-        prefs.edit()
-            .putInt("lastElectricRate", electricRate)
-            .putInt("lastWaterRate", waterRate)
-            .apply()
-    }
-
     /* ---------------- TẠO HÓA ĐƠN ---------------- */
     private fun createInvoice() {
         if (roomId <= 0) {
@@ -319,14 +393,24 @@ class AddInvoiceActivity : AppCompatActivity() {
         val electricRate = edtElectricRate.text.toString().toIntOrNull() ?: 0
         val waterQty = edtWaterQty.text.toString().toIntOrNull() ?: 0
         val waterRate = edtWaterRate.text.toString().toIntOrNull() ?: 0
+        val trashQty = edtTrashQty.text.toString().toIntOrNull() ?: 0
+        val trashRate = edtTrashRate.text.toString().toIntOrNull() ?: 0
+        val wifiQty = edtWifiQty.text.toString().toIntOrNull() ?: 0
+        val wifiRate = edtWifiRate.text.toString().toIntOrNull() ?: 0
         val service = edtService.text.toString().toIntOrNull() ?: 0
 
-        saveLastRates(electricRate, waterRate) // 🔹 lưu đơn giá mới
+        // tổng các khoản ngoài tiền phòng (điện + nước lưu riêng, phần còn lại gộp vào serviceFee)
+        val electricTotal = electricQty * electricRate
+        val waterTotal = waterQty * waterRate
+        val trashTotal = trashQty * trashRate
+        val wifiTotal = wifiQty * wifiRate
+
+        val otherFees = trashTotal + wifiTotal + service
 
         val subtotalText = tvSubTotal.text?.toString() ?: ""
         val subtotal = Regex("""(\d[\d\.]*)""")
             .find(subtotalText)?.value?.replace(".", "")?.toIntOrNull()
-            ?: baseRent
+            ?: (baseRent + electricTotal + waterTotal + otherFees)
 
         val cal = Calendar.getInstance().apply { time = from }
         val periodYear = cal.get(Calendar.YEAR)
@@ -341,7 +425,8 @@ class AddInvoiceActivity : AppCompatActivity() {
             put("roomRent", baseRent)
             put("electricKwh", electricQty)
             put("waterM3", waterQty)
-            put("serviceFee", service)
+            // lưu phần "dịch vụ" tổng hợp vào serviceFee
+            put("serviceFee", otherFees)
             put("totalAmount", subtotal)
             put("paid", 0)
             put("createdAt", now)
