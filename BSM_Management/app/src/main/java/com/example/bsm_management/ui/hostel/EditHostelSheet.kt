@@ -22,23 +22,19 @@ class EditHostelSheet : BottomSheetDialogFragment() {
 
         val edtName   = v.findViewById<TextInputEditText>(R.id.edtHostelName)
         val edtAddr   = v.findViewById<TextInputEditText>(R.id.edtHostelAddress)
-        val edtPeople = v.findViewById<TextInputEditText>(R.id.edtHostelMaxPeople)
 
         // Load prefs
         val prefs = requireContext().getSharedPreferences("hostel_prefs", 0)
         edtName.setText(prefs.getString("hostel_name", ""))
         edtAddr.setText(prefs.getString("hostel_address", ""))
-        edtPeople.setText(prefs.getInt("hostel_max_people", 0).toString())
 
         v.findViewById<MaterialButton>(R.id.btnSave).setOnClickListener {
             val name = edtName.text.toString().trim()
             val addr = edtAddr.text.toString().trim()
-            val maxPeople = edtPeople.text.toString().toIntOrNull() ?: 0
 
             prefs.edit().apply {
                 putString("hostel_name", name)
                 putString("hostel_address", addr)
-                putInt("hostel_max_people", maxPeople)
                 apply()
             }
 
