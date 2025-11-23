@@ -218,24 +218,25 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
 
     // Tạo default service cho 1 phòng
     fun createDefaultServicesForRoom(roomId: Long) {
-        val base = listOf(
-            "Dịch vụ điện",
-            "Dịch vụ nước",
-            "Dịch vụ rác",
-            "Dịch vụ internet/mạng"
+        val defaultServices = listOf(
+            Triple("Dịch vụ điện", true, 3500),
+            Triple("Dịch vụ nước", true, 12000),
+            Triple("Dịch vụ rác", true, 20000),
+            Triple("Dịch vụ internet/mạng", true, 100000)
         )
 
         val db = writableDatabase
-        base.forEach { name ->
+        defaultServices.forEach { (name, enabled, price) ->
             val cv = ContentValues().apply {
                 put("roomId", roomId)
                 put("serviceName", name)
-                put("enabled", 1)
-                put("price", 0)
+                put("enabled", if (enabled) 1 else 0)
+                put("price", price)
             }
             db.insert("services", null, cv)
         }
     }
+
 
     // Lấy dịch vụ theo phòng
     fun getServicesForRoom(roomId: Long): List<Triple<String, Boolean, Int>> {
@@ -287,31 +288,6 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
     fun hasAnyRoom(): Boolean {
         readableDatabase.rawQuery("SELECT 1 FROM rooms LIMIT 1", null).use { c ->
             return c.moveToFirst()
-        }
-    }
-
-    fun insertRoomsAuto(count: Int, baseRent: Int, startIndex: Int = 1) {
-        if (count <= 0) return
-        val db = writableDatabase
-        db.beginTransaction()
-        try {
-            val stmt = db.compileStatement("INSERT INTO rooms (name, status, baseRent) VALUES (?, 'EMPTY', ?)")
-            var idx = startIndex
-            var created = 0
-            while (created < count) {
-                val name = "P%03d".format(idx)
-                try {
-                    stmt.clearBindings()
-                    stmt.bindString(1, name)
-                    stmt.bindLong(2, baseRent.toLong())
-                    stmt.executeInsert()
-                    created++
-                } catch (_: Exception) {}
-                idx++
-            }
-            db.setTransactionSuccessful()
-        } finally {
-            db.endTransaction()
         }
     }
 
@@ -581,6 +557,6 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
 
     companion object {
         const val DB_NAME = "bsm.db"
-        private const val DB_VERSION = 2
+        private const val DB_VERSION = 3
     }
 }

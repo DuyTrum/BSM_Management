@@ -83,27 +83,27 @@ class DashboardFragment : Fragment() {
         val name    = prefs.getString("hostel_name", null).orEmpty()
 
 
-        val (total, occupied) = getRoomStats()
-        val empty = (total - occupied).coerceAtLeast(0)
+        val (total, empty) = getRoomStats()
 
         vb.tvHostelName.text = name
         vb.tvSubtitle.text = "Tổng $total phòng • Trống $empty"
+
     }
 
     /** Lấy thống kê phòng từ bảng `rooms` */
     private fun getRoomStats(): Pair<Int, Int> {
         val db = DatabaseHelper(requireContext()).readableDatabase
         var total = 0
-        var occupied = 0
+        var empty = 0
 
         fun Cursor.firstIntOrZero(): Int =
             if (moveToFirst()) getInt(0) else 0
 
         db.rawQuery("SELECT COUNT(*) FROM rooms", null).use { total = it.firstIntOrZero() }
-        db.rawQuery("SELECT COUNT(*) FROM rooms WHERE status='OCCUPIED'", null).use {
-            occupied = it.firstIntOrZero()
+        db.rawQuery("SELECT COUNT(*) FROM rooms WHERE status='EMPTY'", null).use {
+            empty = it.firstIntOrZero()
         }
-        return total to occupied
+        return total to empty
     }
 
     override fun onDestroyView() {
