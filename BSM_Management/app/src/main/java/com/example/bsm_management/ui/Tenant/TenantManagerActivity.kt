@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bsm_management.databinding.FragmentTenantListBinding
@@ -26,7 +28,11 @@ class TenantManagerActivity : AppCompatActivity() {
 
         vb = FragmentTenantListBinding.inflate(layoutInflater)
         setContentView(vb.root)
-
+        ViewCompat.setOnApplyWindowInsetsListener(vb.root) { v, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(v.paddingLeft, bars.top, v.paddingRight, v.paddingBottom)
+            insets
+        }
         db = DatabaseHelper(this)
         vb.btnBack.setOnClickListener { finish() }
         setupRoomDropdown()
@@ -34,6 +40,11 @@ class TenantManagerActivity : AppCompatActivity() {
         setupButtons()
 
         loadTenants()
+    }
+
+
+    private fun applyInsets() {
+
     }
 
     private fun setupRoomDropdown() {
