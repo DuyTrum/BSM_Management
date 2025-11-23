@@ -246,7 +246,7 @@ class AddHostelActivity : AppCompatActivity() {
             )
 
             val insertSvc = db.compileStatement(
-                "INSERT INTO services (roomId, serviceName, enabled, price) VALUES (?, ?, ?, 0)"
+                "INSERT INTO services (roomId, serviceName, enabled, price) VALUES (?, ?, ?, ?)"
             )
 
             val allServices = listOf(
@@ -255,6 +255,13 @@ class AddHostelActivity : AppCompatActivity() {
                 "Dịch vụ rác",
                 "Dịch vụ internet/mạng"
             )
+            val defaultPrices = mapOf(
+                "Dịch vụ điện" to 3500,
+                "Dịch vụ nước" to 12000,
+                "Dịch vụ rác" to 20000,
+                "Dịch vụ internet/mạng" to 100000
+            )
+
 
             for (i in 1..count) {
 
@@ -271,8 +278,10 @@ class AddHostelActivity : AppCompatActivity() {
                     insertSvc.bindLong(1, roomId)
                     insertSvc.bindString(2, svc)
                     insertSvc.bindLong(3, if (serviceStates[svc] == true) 1 else 0)
+                    insertSvc.bindLong(4, defaultPrices[svc]?.toLong() ?: 0L)
                     insertSvc.executeInsert()
                 }
+
             }
 
             db.setTransactionSuccessful()
