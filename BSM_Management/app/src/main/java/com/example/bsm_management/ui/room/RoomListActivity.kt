@@ -10,6 +10,8 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bsm_management.databinding.ActivityRoomListBinding
@@ -26,6 +28,12 @@ class RoomListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         vb = ActivityRoomListBinding.inflate(layoutInflater)
         setContentView(vb.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(vb.root) { v, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(v.paddingLeft, bars.top, v.paddingRight, v.paddingBottom)
+            insets
+        }
 
         // HEADER
         setSupportActionBar(vb.topBar)
@@ -62,7 +70,27 @@ class RoomListActivity : AppCompatActivity() {
             // LẤP PHÒNG → TRẢ PHÒNG
             onFillClick = { roomId ->
                 val r = allRooms.find { it.id == roomId }
-                updateRoomStatus(roomId, r?.status)
+                if (r?.status == "EMPTY") {
+                    val intent = Intent(this, com.example.bsm_management.ui.contract.AddContractActivity::class.java)
+                    intent.putExtra("roomId", roomId.toInt())
+                    intent.putExtra("roomName", r?.name)
+                    startActivity(intent)
+                } else {
+                    val db = DatabaseHelper(this).readableDatabase
+                    db.rawQuery(
+                        "SELECT id FROM contracts WHERE roomId = ? AND active = 1 ORDER BY id DESC LIMIT 1",
+                        arrayOf(roomId.toString())
+                    ).use { c ->
+                        if (c.moveToFirst()) {
+                            val contractId = c.getInt(0)
+                            val intent = Intent(this, com.example.bsm_management.ui.contract.ContractDetailActivity::class.java)
+                            intent.putExtra("contractId", contractId)
+                            startActivity(intent)
+                        } else {
+                            Toast.makeText(this, "Không tìm thấy hợp đồng đang hiệu lực cho phòng này", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
             },
 
             // SỬA DỊCH VỤ THEO TỪNG PHÒNG
@@ -83,6 +111,11 @@ class RoomListActivity : AppCompatActivity() {
             addNewRoom()
         }
 
+        loadData()
+    }
+
+    override fun onResume() {
+        super.onResume()
         loadData()
     }
 

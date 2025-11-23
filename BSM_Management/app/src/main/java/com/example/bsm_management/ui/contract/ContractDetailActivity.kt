@@ -138,6 +138,11 @@ class ContractDetailActivity : AppCompatActivity() {
             .setMessage("Bạn chắc muốn xóa hợp đồng này?")
             .setPositiveButton("Xóa") { _, _ ->
                 if (dao.delete(contractId) > 0) {
+                    // đảm bảo cập nhật trạng thái phòng về EMPTY khi hợp đồng bị xóa
+                    val db = DatabaseHelper(this).writableDatabase
+                    val cv = android.content.ContentValues().apply { put("status", "EMPTY") }
+                    db.update("rooms", cv, "id=?", arrayOf(contract.roomId.toString()))
+
                     toast("Đã xóa")
                     finish()
                 } else toast("Không thể xóa!")
