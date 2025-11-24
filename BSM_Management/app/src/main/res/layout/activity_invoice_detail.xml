@@ -134,13 +134,6 @@
                     android:text="Phòng 1"
                     android:textSize="@dimen/txt_l"
                     android:textStyle="bold"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tvTenant"
-                    android:text="Khách thuê: Thbbb"
-                    android:textColor="@color/txt_sec"
-                    android:layout_marginTop="@dimen/pad_s"/>
             </LinearLayout>
 
             <Space android:layout_width="match_parent" android:layout_height="@dimen/mar_m"/>
