@@ -2,7 +2,8 @@ package com.example.bsm_management.ui.hostel
 
 import android.Manifest
 import android.animation.ValueAnimator
-import android.content.ContentValues
+import android.text.TextWatcher
+import android.text.Editable
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Address
@@ -37,7 +38,6 @@ class AddHostelActivity : AppCompatActivity() {
     private lateinit var edtInvoiceDay: TextInputEditText
     private lateinit var edtDueDays: TextInputEditText
     private lateinit var ddlMaxPeople: AutoCompleteTextView
-    private lateinit var switchAuto: MaterialSwitch
     private lateinit var btnClose: MaterialButton
     private lateinit var btnNext: MaterialButton
 
@@ -56,31 +56,44 @@ class AddHostelActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_hostel)
+        val topBar = findViewById<MaterialToolbar>(R.id.topBar)
+        topBar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
 
-        findViewById<MaterialToolbar>(R.id.topBar)
-            .setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
-        // Bước 1
+        // ===== FIND VIEW HERE FIRST =====
         edtSampleRoom = findViewById(R.id.edtSampleRoom)
         edtArea       = findViewById(R.id.edtArea)
         edtPrice      = findViewById(R.id.edtPrice)
-        edtInvoiceDay = findViewById(R.id.edtInvoiceDay)
-        edtDueDays    = findViewById(R.id.edtDueDays)
         ddlMaxPeople  = findViewById(R.id.ddlMaxPeople)
-        switchAuto    = findViewById(R.id.switchAuto)
         btnClose      = findViewById(R.id.btnClose)
         btnNext       = findViewById(R.id.btnNext)
         progress      = findViewById(R.id.progress)
         step1         = findViewById(R.id.step1Container)
         step2         = findViewById(R.id.step2Container)
 
+        // ===== ADD LISTENER AFTER FINDVIEW =====
+        edtArea.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                val area = s?.toString()?.toIntOrNull() ?: return
+                edtPrice.setText(suggestRent(area).toString())
+            }
+        })
+
+        // ===== SETUP DROPDOWN =====
         ddlMaxPeople.setAdapter(
             ArrayAdapter(
-                this, android.R.layout.simple_list_item_1,
-                listOf("Không giới hạn","1","2","3","4","5","6","7","8")
+                this,
+                android.R.layout.simple_list_item_1,
+                listOf("1","2","3","4","5","6","7","8")
             )
         )
+        ddlMaxPeople.setText("2", false)
 
+        // ===== BUTTON EVENTS =====
         btnClose.isEnabled = false
         btnClose.setOnClickListener {
             if (isOnStep2) {
@@ -91,23 +104,35 @@ class AddHostelActivity : AppCompatActivity() {
                 btnNext.text = "Tiếp theo"
             } else finish()
         }
+
         btnNext.setOnClickListener { onNextClicked() }
     }
 
+    private fun suggestRent(area: Int): Int {
+        return when {
+            area < 15 -> 1500000
+            area < 20 -> 2000000
+            area < 25 -> 2600000
+            area < 30 -> 3400000
+            else -> 4500000
+        }
+    }
+
+
     // ================== FLOW BƯỚC 1 -> 2 ==================
     private fun onNextClicked() {
-        val maxPeopleStr = ddlMaxPeople.text.toString()
-        val maxPeople =
-            if (maxPeopleStr == "Không giới hạn") 0
-            else maxPeopleStr.toInt()
-        intent.putExtra("maxPeople", maxPeople)
-        if (!isOnStep2) {
-            if (switchAuto.isChecked) {
-                val count = edtSampleRoom.text?.toString()?.toIntOrNull() ?: 0
-                val price = edtPrice.text?.toString()?.toIntOrNull() ?: 0
-                if (count <= 0) { toast("Nhập số lượng phòng mẫu > 0"); return }
-                if (price <= 0) { toast("Nhập giá thuê mẫu > 0"); return }
+        val maxPeople = ddlMaxPeople.text.toString().toIntOrNull()
+            ?: run {
+                toast("Vui lòng chọn số người tối đa")
+                return
             }
+        intent.putExtra("maxPeople", maxPeople)
+
+        if (!isOnStep2) {
+            val count = edtSampleRoom.text?.toString()?.toIntOrNull() ?: 0
+            val price = edtPrice.text?.toString()?.toIntOrNull() ?: 0
+            if (count <= 0) { toast("Nhập số lượng phòng mẫu > 0"); return }
+            if (price <= 0) { toast("Nhập giá thuê mẫu > 0"); return }
             animateProgress(40, 100)
             crossfade(step1, step2)
             isOnStep2 = true
@@ -118,7 +143,6 @@ class AddHostelActivity : AppCompatActivity() {
             saveRoomsOnlyAndFinish()
         }
     }
-
     private fun animateProgress(from: Int, to: Int) {
         progress.setProgress(from, false)
         ValueAnimator.ofInt(from, to).apply {
@@ -150,11 +174,6 @@ class AddHostelActivity : AppCompatActivity() {
         setupService(R.id.svcWater, "Dịch vụ nước", "Tính theo đồng hồ (phổ biến)")
         setupService(R.id.svcTrash, "Dịch vụ rác", "Miễn phí / không sử dụng")
         setupService(R.id.svcInternet, "Dịch vụ internet/mạng", "Miễn phí / không sử dụng")
-
-        // ==== Tính năng ====
-        setupFeature(R.id.featApp, R.drawable.ic_app, "APP dành riêng cho khách thuê", "Tạo & kết nối dễ dàng, hoá đơn tự động…")
-        setupFeature(R.id.featZalo, R.drawable.ic_zalo, "Gửi hoá đơn tự động qua ZALO", "Gửi hoá đơn hàng loạt qua ZALO")
-        setupFeature(R.id.featImage, R.drawable.ic_file, "Hình ảnh, File chứng từ hợp đồng", "Lưu CCCD, hợp đồng giấy…")
 
         // ==== Địa chỉ & vị trí ====
         val edtAddress = step2.findViewById<TextInputEditText?>(R.id.edtAddress)
@@ -201,9 +220,6 @@ class AddHostelActivity : AppCompatActivity() {
     // ================== LƯU ROOMS & DỊCH VỤ ==================
     private fun saveRoomsOnlyAndFinish() {
 
-        val auto = switchAuto.isChecked
-        if (!auto) { goDashboard(); return }
-
         val count = edtSampleRoom.text?.toString()?.toIntOrNull() ?: 0
         val price = edtPrice.text?.toString()?.toIntOrNull() ?: 0
         if (count <= 0 || price <= 0) { toast("Thiếu số phòng/giá thuê"); return }
@@ -218,10 +234,11 @@ class AddHostelActivity : AppCompatActivity() {
         val address = edtAddress?.text?.toString()?.trim().orEmpty()
 
         // --- SỐ NGƯỜI TỐI ĐA ---
-        val maxPeopleStr = ddlMaxPeople.text.toString()
-        val maxPeople =
-            if (maxPeopleStr == "Không giới hạn") 0
-            else maxPeopleStr.toInt()
+        val maxPeople = ddlMaxPeople.text.toString().toIntOrNull()
+            ?: run {
+                toast("Vui lòng chọn số người tối đa")
+                return
+            }
 
         // Lưu tên nhà trọ
         val prefs = getSharedPreferences("hostel_prefs", MODE_PRIVATE)

@@ -24,6 +24,7 @@ class RoomListActivity : AppCompatActivity() {
     private lateinit var adapter: RoomAdapter
     private var allRooms: List<UiRoom> = emptyList()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         vb = ActivityRoomListBinding.inflate(layoutInflater)
@@ -242,22 +243,6 @@ class RoomListActivity : AppCompatActivity() {
             }
             .setNegativeButton("Hủy", null)
             .show()
-    }
-
-    // ============================================================
-    // UPDATE ROOM STATUS
-    // ============================================================
-    private fun updateRoomStatus(roomId: Long, currentStatus: String?) {
-
-        val newStatus = if (currentStatus == "EMPTY") "RENTED" else "EMPTY"
-
-        val db = DatabaseHelper(this).writableDatabase
-        val cv = ContentValues().apply { put("status", newStatus) }
-
-        db.update("rooms", cv, "id=?", arrayOf(roomId.toString()))
-
-        Toast.makeText(this, "Đã cập nhật trạng thái phòng", Toast.LENGTH_SHORT).show()
-        loadData()
     }
 
     // ============================================================

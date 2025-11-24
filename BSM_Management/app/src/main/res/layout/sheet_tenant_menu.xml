@@ -6,49 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <!-- Warning -->
+    <!-- Trạng thái CCCD + Tạm trú -->
     <TextView
         android:id="@+id/tvWarning"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Khách chưa sử dụng APP cho khách thuê"
         android:padding="12dp"
+        android:text="Trạng thái khách"
         android:textColor="#D46B08"
         android:background="#FFF7E6"
-        android:textSize="14sp" />
-
-    <!-- Chat với khách -->
-    <LinearLayout
-        android:id="@+id/rowChat"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="12dp"
-        android:layout_marginTop="12dp"
-        android:background="@color/bsm_success">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Chat với khách"
-            android:textColor="@android:color/white"
-            android:textStyle="bold"
-            android:textSize="16sp" />
-    </LinearLayout>
-
-    <!-- Cho phép khách dùng app -->
-    <LinearLayout
-        android:id="@+id/rowAllowApp"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:gravity="center_vertical"
-        android:padding="12dp">
-        <TextView
-            android:text="Cho phép sử dụng APP - Khách thuê"
-            android:textSize="15sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+        android:textSize="14sp"
+        android:textStyle="bold"/>
 
     <!-- Xem chi tiết -->
     <LinearLayout
@@ -64,34 +32,6 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-    <!-- Chỉnh sửa -->
-    <LinearLayout
-        android:id="@+id/rowEdit"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:gravity="center_vertical"
-        android:padding="12dp">
-        <TextView
-            android:text="Chỉnh sửa khách thuê"
-            android:textSize="15sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
-    <!-- In tờ khai tạm trú -->
-    <LinearLayout
-        android:id="@+id/rowPrint"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:gravity="center_vertical"
-        android:padding="12dp">
-        <TextView
-            android:text="In tờ khai tạm trú"
-            android:textSize="15sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
     <!-- Xóa khách thuê -->
     <LinearLayout
         android:id="@+id/rowDelete"
@@ -101,8 +41,8 @@
         android:padding="12dp">
         <TextView
             android:text="Xóa khách thuê"
-            android:textSize="15sp"
             android:textColor="#D32F2F"
+            android:textSize="15sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>

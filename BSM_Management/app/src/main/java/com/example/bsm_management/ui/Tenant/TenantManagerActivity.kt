@@ -5,12 +5,12 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bsm_management.databinding.FragmentTenantListBinding
+import com.example.bsm_management.ui.excel.ExcelViewerActivity
 import com.example.bsm_management.utils.ExcelExporter
 import database.DatabaseHelper
 
@@ -22,6 +22,11 @@ class TenantManagerActivity : AppCompatActivity() {
 
     private var allTenants: List<Tenant> = emptyList()
     private var selectedRoomId: Int? = null
+    sealed class TenantRow {
+        data class RoomHeader(val roomName: String) : TenantRow()
+        data class TenantItem(val tenant: Tenant) : TenantRow()
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,10 +46,9 @@ class TenantManagerActivity : AppCompatActivity() {
 
         loadTenants()
     }
-
-
-    private fun applyInsets() {
-
+    override fun onResume() {
+        super.onResume()
+        loadTenants()   // load lại mỗi khi quay trở lại màn hình
     }
 
     private fun setupRoomDropdown() {
@@ -80,17 +84,12 @@ class TenantManagerActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val intent = Intent(Intent.ACTION_VIEW).apply {
-                setDataAndType(uri, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            }
-
-            try {
-                startActivity(Intent.createChooser(intent, "Mở file Excel"))
-            } catch (e: Exception) {
-                Toast.makeText(this, "Không có ứng dụng nào mở file Excel (.xlsx)", Toast.LENGTH_LONG).show()
-            }
+            val intent = Intent(this, ExcelViewerActivity::class.java)
+            intent.putExtra("fileUri", uri.toString())
+            startActivity(intent)
         }
+
+
 
         vb.btnOldTenant.setOnClickListener {
             startActivity(Intent(this, OldTenantActivity::class.java))
@@ -125,16 +124,32 @@ class TenantManagerActivity : AppCompatActivity() {
     private fun applyFilter() {
         var list = allTenants
 
+        // Lọc theo phòng nếu chọn
         selectedRoomId?.let { rid ->
             list = list.filter { it.roomId == rid }
         }
 
+        // Lọc theo tên/sđt
         val q = vb.edtSearch.text.toString()
         if (q.isNotEmpty()) {
             list = list.filter { it.name.contains(q, true) || it.phone.contains(q) }
         }
 
-        adapter.submitList(list)
+        // === NHÓM THEO PHÒNG ===
+        val grouped = list.groupBy { it.roomId }
+
+        val finalList = mutableListOf<TenantRow>()
+
+        for ((roomId, tenants) in grouped) {
+            val roomName = db.getRoomNameById(roomId)  // bạn thêm hàm này trong DB
+            finalList.add(TenantRow.RoomHeader(roomName))
+            tenants.forEach { t ->
+                finalList.add(TenantRow.TenantItem(t))
+            }
+        }
+
+        adapter.submitList(finalList)
         vb.tvCount.text = "Tổng có (${list.size}) khách"
     }
+
 }
