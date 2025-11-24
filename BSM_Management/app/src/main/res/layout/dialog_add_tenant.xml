@@ -52,6 +52,46 @@
         android:inputType="phone"
         android:background="@drawable/bg_input_box"
         android:textSize="15sp" />
+    <!-- INPUT: CCCD -->
+    <TextView
+        android:layout_marginTop="14dp"
+        android:text="Số CCCD"
+        android:textColor="#666666"
+        android:textSize="14sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/etCccd"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_marginTop="6dp"
+        android:padding="10dp"
+        android:inputType="number"
+        android:maxLength="12"
+        android:background="@drawable/bg_input_box"
+        android:textSize="15sp" />
+
+
+    <!-- INPUT: ĐỊA CHỈ -->
+    <TextView
+        android:layout_marginTop="14dp"
+        android:text="Địa chỉ thường trú"
+        android:textColor="#666666"
+        android:textSize="14sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/etAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="46dp"
+        android:gravity="top"
+        android:layout_marginTop="6dp"
+        android:padding="10dp"
+        android:background="@drawable/bg_input_box"
+        android:textSize="15sp" />
 
     <!-- SAVE BUTTON -->
     <com.google.android.material.button.MaterialButton

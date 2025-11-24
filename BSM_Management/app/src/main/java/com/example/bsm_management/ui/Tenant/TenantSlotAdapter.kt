@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bsm_management.R
+import kotlin.collections.getOrNull
 
 class TenantSlotAdapter(
     private val maxPeople: Int,
@@ -58,7 +59,19 @@ class TenantSlotAdapter(
             holder.cardTenant.visibility = View.VISIBLE
 
             holder.tvTenantName.text = tenant.name
-            holder.tvTenantPhone.text = tenant.phone
+            holder.tvTenantPhone.text = "SĐT: ${tenant.phone}"
+            // Tag 1: Chưa đăng ký tạm trú (address)
+            val hasAddress = !tenant.address.isNullOrBlank()
+            holder.itemView.findViewById<View>(R.id.tagTempResidence)?.visibility =
+                if (hasAddress) View.GONE else View.VISIBLE
+
+            // Tag 2: Chưa đầy đủ giấy tờ (cccd)
+            val hasCccd = !tenant.cccd.isNullOrBlank()
+            holder.itemView.findViewById<View>(R.id.tagDocuments)?.visibility =
+                if (hasCccd) View.GONE else View.VISIBLE
+
+            // Ẩn block "Chưa sử dụng app"
+            holder.itemView.findViewById<View>(R.id.layoutNotUseApp)?.visibility = View.GONE
 
             holder.btnEdit.setOnClickListener { onEditTenant(tenant) }
             holder.btnDelete.setOnClickListener { onDeleteTenant(tenant) }

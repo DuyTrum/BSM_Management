@@ -21,12 +21,6 @@ class DashboardMenuBottomSheet : BottomSheetDialogFragment() {
     ): View? {
         val v = inflater.inflate(R.layout.bottom_sheet_dashboard, container, false)
 
-        // ===== 1. THÊM MỚI TÒA NHÀ =====
-        v.findViewById<View>(R.id.btnAddBuilding).setOnClickListener {
-            startActivity(Intent(requireContext(), AddHostelActivity::class.java))
-            dismiss()
-        }
-
         // ===== 2. CHỈNH SỬA THÔNG TIN NHÀ TRỌ =====
         v.findViewById<View>(R.id.btnEditHostel).setOnClickListener {
             EditHostelSheet().show(parentFragmentManager, "edit_hostel")

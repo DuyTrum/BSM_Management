@@ -32,6 +32,14 @@ object ExcelExporter {
             cellStyle = headerStyle
         }
         header.createCell(2).apply {
+            setCellValue("CCCD")
+            cellStyle = headerStyle
+        }
+        header.createCell(3).apply {
+            setCellValue("Địa chỉ")
+            cellStyle = headerStyle
+        }
+        header.createCell(4).apply {
             setCellValue("Phòng")
             cellStyle = headerStyle
         }
@@ -41,7 +49,11 @@ object ExcelExporter {
             val row = sheet.createRow(index + 1)
             row.createCell(0).setCellValue(t.name)
             row.createCell(1).setCellValue(t.phone)
-            row.createCell(2).setCellValue("P${t.roomId}")
+            row.createCell(2).setCellValue(t.cccd)
+            row.createCell(3).setCellValue(t.address)
+            row.createCell(4).setCellValue("P${t.roomId}")
+
+
         }
 
 

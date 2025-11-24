@@ -22,11 +22,6 @@
 <!--        android:name="com.example.bsm_management.ui.find.FindFragment"-->
 <!--        android:label="Tìm khách"/>-->
     <fragment
-        android:id="@+id/tenantListFragment"
-        android:name="com.example.bsm_management.ui.tenant.TenantListFragment"
-        android:label="Khách thuê"/>
-
-    <fragment
         android:id="@+id/ProfileFragment"
         android:name="com.example.bsm_management.ui.profile.ProfileFragment"
         android:label="Thêm +"/>

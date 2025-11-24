@@ -39,11 +39,6 @@ class AddHostelStep2Activity : AppCompatActivity() {
         setupService(R.id.svcTrash, "Dịch vụ rác", "Miễn phí / không sử dụng")
         setupService(R.id.svcInternet, "Dịch vụ internet/mạng", "Miễn phí / không sử dụng")
 
-        // ==== Tính năng ====
-        setupFeature(R.id.featApp, R.drawable.ic_app, "APP dành riêng cho khách thuê", "Tự động hoá hoá đơn")
-        setupFeature(R.id.featZalo, R.drawable.ic_zalo, "Gửi hoá đơn qua ZALO", "Gửi hàng loạt")
-        setupFeature(R.id.featImage, R.drawable.ic_file, "Lưu file hợp đồng", "Hình ảnh, CCCD")
-
         // Lưu nhà trọ
         findViewById<MaterialButton>(R.id.btnSave).setOnClickListener {
             if (sampleRooms <= 0) {

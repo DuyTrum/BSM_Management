@@ -10,7 +10,7 @@ import com.example.bsm_management.R
 
 class AddTenantDialog(
     private val context: Context,
-    private val onSave: (String, String) -> Unit
+    private val onSave: (name: String, phone: String, cccd: String?, address: String?) -> Unit
 ) {
 
     fun show() {
@@ -24,12 +24,17 @@ class AddTenantDialog(
         val etPhone = dialog.findViewById<EditText>(R.id.etPhone)
         val btnSave = dialog.findViewById<Button>(R.id.btnSave)
         val btnCancel = dialog.findViewById<Button>(R.id.btnCancel)
+        val etCccd = dialog.findViewById<EditText>(R.id.etCccd)
+        val etAddress = dialog.findViewById<EditText>(R.id.etAddress)
 
         btnSave.setOnClickListener {
             val name = etName.text.toString().trim()
             val phone = etPhone.text.toString().trim()
+            val cccd = etCccd.text.toString().trim()
+            val address = etAddress.text.toString().trim()
+
             if (name.isNotEmpty() && phone.isNotEmpty()) {
-                onSave(name, phone)
+                onSave(name, phone, cccd, address)
                 dialog.dismiss()
             }
         }

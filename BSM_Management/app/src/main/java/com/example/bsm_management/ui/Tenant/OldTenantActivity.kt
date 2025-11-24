@@ -1,7 +1,12 @@
 package com.example.bsm_management.ui.tenant
 
 import android.os.Bundle
+import android.view.View
+import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bsm_management.databinding.ActivityTenantListBinding
 import database.DatabaseHelper
@@ -14,12 +19,21 @@ class OldTenantActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { v, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
+            insets
+        }
 
         vb = ActivityTenantListBinding.inflate(layoutInflater)
         setContentView(vb.root)
 
         vb.tvTitle.text = "Khách thuê cũ"
         vb.btnBack.setOnClickListener { finish() }
+        vb.tvRoomName.text = ""
+        vb.tvRoomName.visibility = View.GONE
 
         db = DatabaseHelper(this)
 
@@ -28,6 +42,7 @@ class OldTenantActivity : AppCompatActivity() {
     }
 
     private fun setupRecycler() {
+
         adapter = TenantListAdapter(
             onCall = { phone ->
                 // gọi điện
@@ -38,17 +53,53 @@ class OldTenantActivity : AppCompatActivity() {
                 startActivity(intent)
             },
             onMore = { tenant ->
-                // không cho sửa nữa – chỉ cho xóa vĩnh viễn
+
+                val options = arrayOf("Khôi phục khách thuê", "Xóa vĩnh viễn")
+
                 androidx.appcompat.app.AlertDialog.Builder(this)
-                    .setTitle("Xóa vĩnh viễn")
-                    .setMessage("Bạn chắc chắn muốn xóa ${tenant.name}?")
-                    .setPositiveButton("Xóa") { _, _ ->
-                        db.writableDatabase.delete("tenants", "id=?", arrayOf(tenant.id.toString()))
-                        loadOldTenants()
+                    .setTitle(tenant.name)
+                    .setItems(options) { _, which ->
+                        when (which) {
+
+                            // ========================
+                            // 1️⃣ KHÔI PHỤC
+                            // ========================
+                            0 -> {
+                                val ok = db.restoreOldTenant(this, tenant.id)
+                                if (ok) {
+                                    Toast.makeText(this, "Khôi phục thành công!", Toast.LENGTH_SHORT).show()
+                                    loadOldTenants()
+                                } else {
+                                    Toast.makeText(
+                                        this,
+                                        "Không thể khôi phục (phòng đã đầy hoặc đã bị xoá)",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
+
+                            // ========================
+                            // 2️⃣ XOÁ VĨNH VIỄN
+                            // ========================
+                            1 -> {
+                                androidx.appcompat.app.AlertDialog.Builder(this)
+                                    .setTitle("Xóa vĩnh viễn")
+                                    .setMessage("Bạn chắc chắn muốn xoá ${tenant.name}?")
+                                    .setPositiveButton("Xóa") { _, _ ->
+                                        db.writableDatabase.delete(
+                                            "tenants", "id=?",
+                                            arrayOf(tenant.id.toString())
+                                        )
+                                        loadOldTenants()
+                                    }
+                                    .setNegativeButton("Hủy", null)
+                                    .show()
+                            }
+                        }
                     }
-                    .setNegativeButton("Hủy", null)
                     .show()
             }
+
         )
 
         vb.rvTenants.layoutManager = LinearLayoutManager(this)
@@ -57,7 +108,9 @@ class OldTenantActivity : AppCompatActivity() {
 
     private fun loadOldTenants() {
         val list = db.getOldTenants()
-        adapter.submitList(list)
-        vb.tvCount.text = "Tổng có ${list.size} khách cũ"
+        val rows = list.map { TenantManagerActivity.TenantRow.TenantItem(it) }
+        adapter.submitList(rows)
+        vb.tvCount.text = "Tổng ${list.size} khách cũ"
     }
+
 }

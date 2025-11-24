@@ -5,10 +5,9 @@ data class Tenant(
     val name: String,
     val phone: String,
     val roomId: Int?,
-    var isUsingApp: Boolean = false,
-    var hasTemporaryResidence: Boolean = false,
-    var hasEnoughDocuments: Boolean = false,
-    val slotIndex: Int
+    val cccd: String? = null,
+    val address: String? = null,
+    val dob: Long? = null,
+    val slotIndex: Int,
+    val isOld: Boolean = false
 )
-
-
