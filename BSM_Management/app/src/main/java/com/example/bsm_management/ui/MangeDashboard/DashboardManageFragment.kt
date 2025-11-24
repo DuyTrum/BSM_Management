@@ -27,21 +27,6 @@ import com.google.android.material.button.MaterialButton
 
 class DashboardManageFragment : Fragment(R.layout.fragment_dashboard_manage) {
 
-    // GRID 1 (Hợp đồng – Hóa đơn)
-    private val adapter = ActionAdapter(
-        onClick = { item ->
-            when (item.title) {
-                "Lập hợp đồng"      -> startActivity(Intent(requireContext(), ContractRoomActivity::class.java))
-                "Lập hóa đơn"       -> startActivity(Intent(requireContext(), InvoiceActivity::class.java))
-                "Quản lý hợp đồng"  -> startActivity(Intent(requireContext(), ContractListActivity::class.java))
-                "Quản lý hóa đơn"   -> startActivity(Intent(requireContext(), InvoiceListActivity::class.java))
-            }
-        },
-        onTenantClick = {
-            // Không dùng trong grid 1 → để trống
-        }
-    )
-
     // Notification launcher
     private val requestPostNotification = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -58,34 +43,29 @@ class DashboardManageFragment : Fragment(R.layout.fragment_dashboard_manage) {
         }
         updateWarnCardVisibility()
 
+        // ========== GRID MENU (PHÒNG + KHÁCH THUÊ) ==========
 
-        // ========== GRID 1 ==========
-        val rv = view.findViewById<RecyclerView>(R.id.rvActions)
-        val span = 2
-        rv.layoutManager = GridLayoutManager(requireContext(), span)
-        rv.addItemDecoration(GridSpacingItemDecoration(span, 16, true))
-        rv.adapter = adapter
-
-        adapter.submitList(
-            listOf(
-                ActionItem(R.drawable.ic_handshake, "Lập hợp đồng"),
-                ActionItem(R.drawable.ic_receipt_long, "Lập hóa đơn"),
-                ActionItem(R.drawable.ic_contract_manage, "Quản lý hợp đồng"),
-                ActionItem(R.drawable.ic_bill_due, "Quản lý hóa đơn"),
-            )
-        )
-
-
-        // ========== GRID 2 ==========
         val rvMenu = view.findViewById<RecyclerView>(R.id.rvMenu)
+        val span = 2
+
         val menuAdapter = ActionAdapter(
             onClick = { item ->
                 when (item.title) {
                     "Quản lý phòng" -> startActivity(Intent(requireContext(), RoomListActivity::class.java))
+                    "Lập hợp đồng" ->
+                        startActivity(Intent(requireContext(), ContractRoomActivity::class.java))
+
+                    "Lập hóa đơn" ->
+                        startActivity(Intent(requireContext(), InvoiceActivity::class.java))
+
+                    "Quản lý hợp đồng" ->
+                        startActivity(Intent(requireContext(), ContractListActivity::class.java))
+
+                    "Quản lý hóa đơn" ->
+                        startActivity(Intent(requireContext(), InvoiceListActivity::class.java))
                 }
             },
             onTenantClick = {
-                // Mở trang QUẢN LÝ KHÁCH THUÊ
                 startActivity(Intent(requireContext(), TenantManagerActivity::class.java))
             }
         )
@@ -96,10 +76,19 @@ class DashboardManageFragment : Fragment(R.layout.fragment_dashboard_manage) {
 
         menuAdapter.submitList(
             listOf(
+                // HỢP ĐỒNG – HÓA ĐƠN (TỪ THAO TÁC THƯỜNG DÙNG)
+                ActionItem(R.drawable.ic_handshake, "Lập hợp đồng"),
+                ActionItem(R.drawable.ic_receipt_long, "Lập hóa đơn"),
+                ActionItem(R.drawable.ic_contract_manage, "Quản lý hợp đồng"),
+                ActionItem(R.drawable.ic_bill_due, "Quản lý hóa đơn"),
+                // PHÒNG – KHÁCH
                 ActionItem(R.drawable.ic_room_manage, "Quản lý phòng"),
                 ActionItem(R.drawable.ic_tenant_manage, "Quản lý khách thuê"),
+
+
             )
         )
+
     }
 
     override fun onResume() {

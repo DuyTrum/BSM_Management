@@ -73,52 +73,14 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- TITLE + GRID -->
-    <View
-        android:id="@+id/barActions"
-        android:layout_width="3dp"
-        android:layout_height="18dp"
-        android:layout_marginTop="20dp"
-        android:background="@color/bsm_success"
-        app:layout_constraintTop_toBottomOf="@id/warnCard"
-        app:layout_constraintStart_toStartOf="parent"/>
-
-    <TextView
-        android:id="@+id/tvActionsTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Thao tác thường dùng"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:textColor="@color/bsm_text_primary"
-        app:layout_constraintStart_toEndOf="@id/barActions"
-        app:layout_constraintTop_toTopOf="@id/barActions"
-        android:layout_marginStart="8dp"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvActions"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:nestedScrollingEnabled="false"
-        app:layout_constraintTop_toBottomOf="@id/barActions"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <View
-        android:id="@+id/spaceBottom"
-        android:layout_width="0dp"
-        android:layout_height="12dp"
-        app:layout_constraintTop_toBottomOf="@id/rvActions"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+    <!-- MENU TITLE -->
     <View
         android:id="@+id/barMenu"
         android:layout_width="3dp"
         android:layout_height="18dp"
         android:layout_marginTop="24dp"
         android:background="@color/bsm_success"
-        app:layout_constraintTop_toBottomOf="@id/rvActions"
+        app:layout_constraintTop_toBottomOf="@id/warnCard"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
