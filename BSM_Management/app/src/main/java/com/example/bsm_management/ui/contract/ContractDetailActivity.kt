@@ -101,11 +101,25 @@ class ContractDetailActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.tvDuration).text = "$start - $end"
         findViewById<TextView>(R.id.tvRent).text = "${vn.format(roomPrice)} đ/tháng"
         findViewById<TextView>(R.id.tvDeposit).text = "%,d ₫".format(contract.deposit)
-        findViewById<TextView>(R.id.tvStatus).text =
-            if (contract.active == 1) "Đang hiệu lực" else "Đã hết hạn"
+        val statusText = when {
+            contract.active == 0 -> "🔴 Đã hủy"
+            contract.endDate != null && contract.endDate!! < System.currentTimeMillis() -> "🟡 Đã hết hạn"
+            else -> "🟢 Đang hiệu lực"
+        }
+        findViewById<TextView>(R.id.tvStatus).text = statusText
         findViewById<TextView>(R.id.tvPhone).text = "📞 ${contract.tenantPhone}"
         findViewById<TextView>(R.id.tvNote).text =
             "Hợp đồng ${if (contract.endDate != null) "có thời hạn" else "vô thời hạn"}, cọc ${"%,d".format(contract.deposit)} ₫."
+        val btnDelete = findViewById<Button>(R.id.btnDelete)
+
+        val isCanceled = contract.active == 0
+        val isExpired = contract.endDate != null && contract.endDate!! < System.currentTimeMillis()
+
+        if (isCanceled || isExpired) {
+            btnDelete.visibility = View.GONE
+        } else {
+            btnDelete.visibility = View.VISIBLE
+        }
     }
 
     /* ============================================================
@@ -134,20 +148,29 @@ class ContractDetailActivity : AppCompatActivity() {
 
     private fun confirmDelete() {
         AlertDialog.Builder(this)
-            .setTitle("Xóa hợp đồng")
-            .setMessage("Bạn chắc muốn xóa hợp đồng này?")
-            .setPositiveButton("Xóa") { _, _ ->
-                if (dao.delete(contractId) > 0) {
-                    // đảm bảo cập nhật trạng thái phòng về EMPTY khi hợp đồng bị xóa
-                    val db = DatabaseHelper(this).writableDatabase
-                    val cv = android.content.ContentValues().apply { put("status", "EMPTY") }
-                    db.update("rooms", cv, "id=?", arrayOf(contract.roomId.toString()))
+            .setTitle("Hủy hợp đồng")
+            .setMessage(
+                "Bạn có chắc muốn HỦY hợp đồng này?\n\n"
+            )
+            .setPositiveButton("Hủy hợp đồng") { _, _ ->
+                val db = DatabaseHelper(this).writableDatabase
 
-                    toast("Đã xóa")
-                    finish()
-                } else toast("Không thể xóa!")
+                // 1) Chỉ set active = 0 — KHÔNG CẬP NHẬT endDate
+                val cv = android.content.ContentValues().apply {
+                    put("active", 0)
+                }
+                db.update("contracts", cv, "id=?", arrayOf(contractId.toString()))
+
+                // 2) Chuyển phòng về EMPTY
+                val cvRoom = android.content.ContentValues().apply {
+                    put("status", "EMPTY")
+                }
+                db.update("rooms", cvRoom, "id=?", arrayOf(contract.roomId.toString()))
+
+                toast("Đã hủy hợp đồng")
+                finish()
             }
-            .setNegativeButton("Hủy", null)
+            .setNegativeButton("Không", null)
             .show()
     }
 

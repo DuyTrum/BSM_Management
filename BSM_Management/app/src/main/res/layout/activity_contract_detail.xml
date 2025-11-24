@@ -259,7 +259,7 @@
         android:id="@+id/btnDelete"
         android:layout_width="match_parent"
         android:layout_height="@dimen/btn_h"
-        android:text="Kết thúc hợp đồng"
+        android:text="Hủy hợp đồng"
         android:textAllCaps="false"
         android:backgroundTint="@color/err"
         android:textColor="@color/txt_on_pri"

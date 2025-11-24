@@ -44,10 +44,12 @@ class ContractListActivity : AppCompatActivity() {
 
         setupHeader()
         setupFilters()
-        selectedStatus = null
-        findViewById<TextView>(R.id.tvStatusValue).text = "Tất cả"
+        selectedStatus = "Đang hiệu lực"
+        findViewById<TextView>(R.id.tvStatusValue).text = "Đang hiệu lực"
+        selectedRoom = null
+        findViewById<TextView>(R.id.tvRoomValue).text = "Tất cả"
 
-        loadContracts()
+        applyFilters()
     }
 
     /** ---------------- HEADER ---------------- */
@@ -71,7 +73,10 @@ class ContractListActivity : AppCompatActivity() {
 
         val db = DatabaseHelper(this)
         val cursor = db.readableDatabase.rawQuery("SELECT name FROM rooms", null)
+
         val roomList = mutableListOf<String>()
+        roomList.add("Tất cả phòng")
+
         while (cursor.moveToNext()) roomList.add(cursor.getString(0))
         cursor.close()
 
@@ -80,8 +85,13 @@ class ContractListActivity : AppCompatActivity() {
             AlertDialog.Builder(this)
                 .setTitle("Chọn phòng")
                 .setItems(roomList.toTypedArray()) { _, which ->
-                    selectedRoom = roomList[which]
-                    tvRoomValue.text = selectedRoom
+                    if (which == 0) {
+                        selectedRoom = null
+                        tvRoomValue.text = "Tất cả"
+                    } else {
+                        selectedRoom = roomList[which]
+                        tvRoomValue.text = selectedRoom
+                    }
                     applyFilters()
                 }
                 .setNegativeButton("Hủy", null)
@@ -89,7 +99,7 @@ class ContractListActivity : AppCompatActivity() {
         }
 
         // --- Lọc theo trạng thái ---
-        val statuses = listOf("Tất cả", "Đang hiệu lực", "Đã hết hạn")
+        val statuses = listOf("Tất cả", "Đang hiệu lực", "Đã hết hạn", "Đã hủy")
         btnFilterStatus.setOnClickListener {
             AlertDialog.Builder(this)
                 .setTitle("Trạng thái hợp đồng")
@@ -122,10 +132,16 @@ class ContractListActivity : AppCompatActivity() {
             }
             cursor.close()
 
+            val statusText = when {
+                c.active == 0 -> "🔴 Đã hủy"
+                c.endDate != null && c.endDate!! < System.currentTimeMillis() -> "🟡 Đã hết hạn"
+                else -> "🟢 Đang hiệu lực"
+            }
+
             ContractListItem(
                 id = c.id,
                 roomName = roomName,
-                status = if (c.active == 1) "Đang hiệu lực" else "Đã hết hạn",
+                status = statusText,
                 rent = "%,d ₫/tháng".format(baseRent),
                 deposit = "%,d ₫".format(c.deposit),
                 createdDate = df.format(Date(c.startDate)),
@@ -151,8 +167,14 @@ class ContractListActivity : AppCompatActivity() {
 
         selectedStatus?.let {
             when (it) {
-                "Đang hiệu lực" -> whereClauses.add("active=1")
-                "Đã hết hạn" -> whereClauses.add("active=0")
+                "Đang hiệu lực" ->
+                    whereClauses.add("active = 1 AND (endDate IS NULL OR endDate >= ${System.currentTimeMillis()})")
+
+                "Đã hết hạn" ->
+                    whereClauses.add("active = 1 AND endDate < ${System.currentTimeMillis()}")
+
+                "Đã hủy" ->
+                    whereClauses.add("active = 0")
             }
         }
 
@@ -181,15 +203,21 @@ class ContractListActivity : AppCompatActivity() {
             }
             rCur.close()
 
+            val statusText = when {
+                active == 0 -> "🔴 Đã hủy"
+                endDate > 0 && endDate < System.currentTimeMillis() -> "🟡 Đã hết hạn"
+                else -> "🟢 Đang hiệu lực"
+            }
+
             list.add(
                 ContractListItem(
-                    id,
-                    roomName,
-                    if (active == 1) "Đang hiệu lực" else "Đã hết hạn",
-                    "%,d ₫/tháng".format(baseRent),
-                    "%,d ₫".format(deposit),
-                    df.format(Date(startDate)),
-                    if (endDate > 0) df.format(Date(endDate)) else "Vô thời hạn"
+                    id = id,
+                    roomName = roomName,
+                    status = statusText,
+                    rent = "%,d ₫/tháng".format(baseRent),
+                    deposit = "%,d ₫".format(deposit),
+                    createdDate = df.format(Date(startDate)),
+                    endDate = if (endDate > 0) df.format(Date(endDate)) else "Vô thời hạn"
                 )
             )
         }
@@ -208,7 +236,17 @@ class ContractListActivity : AppCompatActivity() {
 
         val btnDetail = view.findViewById<LinearLayout>(R.id.btnDetail)
         val btnRenew = view.findViewById<LinearLayout>(R.id.btnRenew)
+        // Ẩn nút Gia hạn nếu hợp đồng đã hủy
+        if (contract.status.contains("Đã hủy")) {
+            btnRenew.visibility = View.GONE
+        } else {
+            btnRenew.visibility = View.VISIBLE
+        }
+
         val btnEnd = view.findViewById<LinearLayout>(R.id.btnEnd)
+        val btnRestore = view.findViewById<LinearLayout>(R.id.btnRestore)
+
+        btnRestore.visibility = if (contract.status.contains("Đã hủy")) View.VISIBLE else View.GONE
 
         btnDetail.setOnClickListener {
             dialog.dismiss()
@@ -217,17 +255,76 @@ class ContractListActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        btnRestore.setOnClickListener {
+            dialog.dismiss()
+            restoreContract(contract)
+        }
+
         btnRenew.setOnClickListener {
             dialog.dismiss()
+
+            if (contract.status.contains("Đã hủy")) {
+                Toast.makeText(this, "Hợp đồng đã hủy – không thể gia hạn", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
             openRenewContract(contract)
         }
 
+
         btnEnd.setOnClickListener {
             dialog.dismiss()
-            confirmEndContract(contract)
+            confirmDeleteContract(contract)
         }
 
         dialog.show()
+    }
+
+    private fun restoreContract(contract: ContractListItem) {
+        val db = DatabaseHelper(this).readableDatabase
+
+        // 1) Kiểm tra phòng phải TRỐNG
+        val cursor = db.rawQuery(
+            "SELECT status FROM rooms WHERE name=? LIMIT 1",
+            arrayOf(contract.roomName)
+        )
+
+        var isEmpty = false
+        if (cursor.moveToFirst()) {
+            isEmpty = cursor.getString(0) == "EMPTY"
+        }
+        cursor.close()
+
+        if (!isEmpty) {
+            Toast.makeText(this, "Không thể khôi phục! Phòng hiện đang được thuê.", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        // Xác nhận
+        AlertDialog.Builder(this)
+            .setTitle("Khôi phục hợp đồng")
+            .setMessage("Khôi phục hợp đồng này? Phòng sẽ được đánh dấu là đang thuê.")
+            .setPositiveButton("Khôi phục") { _, _ ->
+
+                val wdb = DatabaseHelper(this).writableDatabase
+
+                // 2) Khôi phục hợp đồng
+                val cv = android.content.ContentValues().apply {
+                    put("active", 1)
+                }
+                wdb.update("contracts", cv, "id=?", arrayOf(contract.id.toString()))
+
+                // 3) Cập nhật phòng về RENTED
+                val cvRoom = android.content.ContentValues().apply {
+                    put("status", "RENTED")
+                }
+                wdb.update("rooms", cvRoom, "name=?", arrayOf(contract.roomName))
+
+                Toast.makeText(this, "Đã khôi phục hợp đồng", Toast.LENGTH_SHORT).show()
+                loadContracts()
+            }
+            .setNegativeButton("Hủy", null)
+            .show()
     }
 
     /** ---------------- GIA HẠN HỢP ĐỒNG ---------------- */
@@ -383,10 +480,10 @@ class ContractListActivity : AppCompatActivity() {
 
 
     /** ---------------- KẾT THÚC HỢP ĐỒNG ---------------- */
-    private fun confirmEndContract(contract: ContractListItem) {
+    private fun confirmDeleteContract(contract: ContractListItem) {
         AlertDialog.Builder(this)
-            .setTitle("Kết thúc hợp đồng")
-            .setMessage("Bạn có chắc muốn kết thúc hợp đồng của ${contract.roomName}?")
+            .setTitle("Xóa hợp đồng")
+            .setMessage("Bạn có chắc muốn XÓA hợp đồng của ${contract.roomName}?")
             .setPositiveButton("Xóa") { _, _ ->
                 val db = DatabaseHelper(this)
                 db.writableDatabase.delete("contracts", "id = ?", arrayOf(contract.id.toString()))
@@ -402,6 +499,6 @@ class ContractListActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        loadContracts()
+        applyFilters()
     }
 }
