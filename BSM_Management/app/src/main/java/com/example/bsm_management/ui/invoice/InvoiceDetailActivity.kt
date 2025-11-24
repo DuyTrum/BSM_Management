@@ -147,7 +147,6 @@ class InvoiceDetailActivity : AppCompatActivity() {
 
         // Bind UI
         findViewById<TextView>(R.id.tvRoomName).text  = roomName ?: "Phòng ?"
-        findViewById<TextView>(R.id.tvTenant).text    = "Khách thuê: ${tenantName ?: "—"}"
         findViewById<TextView>(R.id.tvPeriod).text    = "T.${periodMonth}, $periodYear"
         findViewById<TextView>(R.id.tvCreatedAt).text = if (createdAt > 0) df.format(Date(createdAt)) else "—"
         findViewById<TextView>(R.id.tvDueAt).apply {
