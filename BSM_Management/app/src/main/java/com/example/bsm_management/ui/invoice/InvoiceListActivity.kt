@@ -74,18 +74,15 @@ class InvoiceListActivity : AppCompatActivity() {
 
         listAdapter = InvoiceListAdapter(
             onItemClick = { item ->
-                item.id.toIntOrNull()?.let {
-                    startActivity(Intent(this, InvoiceDetailActivity::class.java).putExtra("invoiceId", it))
-                }
+                openDetail(item)
             },
-            onMoreClick = { _, item ->
-                item.id.toIntOrNull()?.let {
-                    startActivity(Intent(this, InvoiceDetailActivity::class.java).putExtra("invoiceId", it))
-                }
+            onMoreClick = { view, item ->
+                showInvoiceMenu(view, item)
             },
             onCall = { phone -> dial(phone) },
             onSend = { item -> sendInvoice(item) }
         )
+
 
         rv.layoutManager = LinearLayoutManager(this)
         rv.adapter = listAdapter
@@ -94,6 +91,58 @@ class InvoiceListActivity : AppCompatActivity() {
         initStatusSpinner()
         reload()
     }
+
+    private fun showInvoiceMenu(anchor: View, item: InvoiceCardItem) {
+        val popup = PopupMenu(this, anchor)
+        popup.menuInflater.inflate(R.menu.menu_invoice_actions, popup.menu)
+
+        popup.setOnMenuItemClickListener { menu ->
+            when (menu.itemId) {
+
+                R.id.action_detail -> {
+                    openDetail(item)
+                    true
+                }
+
+                R.id.action_mark_paid -> {
+                    markInvoicePaid(item.id.toInt())
+                    true
+                }
+
+                R.id.action_cancel -> {
+                    cancelInvoice(item.id.toInt())
+                    true
+                }
+
+                else -> false
+            }
+        }
+
+        popup.show()
+    }
+
+    private fun openDetail(item: InvoiceCardItem) {
+        item.id.toIntOrNull()?.let {
+            startActivity(Intent(this, InvoiceDetailActivity::class.java).putExtra("invoiceId", it))
+        }
+    }
+
+    private fun markInvoicePaid(invoiceId: Int) {
+        val db = DatabaseHelper(this).writableDatabase
+        db.execSQL("UPDATE invoices SET paid = 1 WHERE id = ?", arrayOf(invoiceId))
+        Toast.makeText(this, "Đã đánh dấu hóa đơn #$invoiceId là ĐÃ THU", Toast.LENGTH_SHORT).show()
+        reload()
+    }
+    private fun cancelInvoice(invoiceId: Int) {
+        val db = DatabaseHelper(this).writableDatabase
+        db.execSQL(
+            "UPDATE invoices SET paid = 2 WHERE id = ?",
+            arrayOf(invoiceId.toString())
+        )
+        Toast.makeText(this, "Đã hủy hóa đơn #$invoiceId", Toast.LENGTH_SHORT).show()
+        reload()
+    }
+
 
     private fun dial(phone: String) {
         if (phone.isBlank()) {
@@ -128,30 +177,92 @@ class InvoiceListActivity : AppCompatActivity() {
     }
 
     private fun showMonthPicker() {
-        val dialog = android.app.DatePickerDialog(
-            this,
-            { _, year, month, _ ->
-                selYear = year
-                selMonth = month + 1
-                spMonth.adapter = ArrayAdapter(
-                    this,
-                    android.R.layout.simple_spinner_dropdown_item,
-                    listOf(monthText(selMonth - 1, selYear))
-                )
-                reload()
-            },
-            selYear, selMonth - 1, 1
-        )
 
-        dialog.setOnShowListener {
-            val dp = dialog.datePicker
-            runCatching {
-                val dayId = resources.getIdentifier("day", "id", "android")
-                dp.findViewById<View>(dayId)?.visibility = View.GONE
+        val view = layoutInflater.inflate(R.layout.dialog_month_picker, null)
+        val dlg = androidx.appcompat.app.AlertDialog.Builder(this)
+            .setView(view)
+            .setCancelable(true)
+            .create()
+
+        // View components
+        val tvYearPrev = view.findViewById<TextView>(R.id.tvYearPrev)
+        val tvYearCur  = view.findViewById<TextView>(R.id.tvYearCur)
+        val tvYearNext = view.findViewById<TextView>(R.id.tvYearNext)
+        val grid       = view.findViewById<GridLayout>(R.id.gridMonths)
+        val btnClose   = view.findViewById<TextView>(R.id.btnClose)
+
+        // Set năm hiện tại
+        tvYearCur.text = selYear.toString()
+        tvYearPrev.text = (selYear - 1).toString()
+        tvYearNext.text = (selYear + 1).toString()
+
+        fun renderMonths(year: Int) {
+            grid.removeAllViews()
+
+            for (m in 1..12) {
+                val cell = TextView(this).apply {
+                    text = String.format("%02d\n%d", m, year)
+                    textSize = 16f
+                    gravity = Gravity.CENTER
+                    setPadding(25, 25, 25, 25)
+                    setBackgroundResource(R.drawable.bg_border)
+
+                    // Highlight tháng đang chọn
+                    if (m == selMonth && year == selYear) {
+                        setBackgroundResource(R.drawable.bg_selected)
+                    }
+
+                    setOnClickListener {
+                        selMonth = m
+                        selYear = year
+
+                        // Update spinner hiển thị
+                        spMonth.adapter = ArrayAdapter(
+                            this@InvoiceListActivity,
+                            android.R.layout.simple_spinner_dropdown_item,
+                            listOf(monthText(selMonth - 1, selYear))
+                        )
+
+                        reload()
+                        dlg.dismiss()
+                    }
+                }
+
+                val params = GridLayout.LayoutParams().apply {
+                    width = 0
+                    height = GridLayout.LayoutParams.WRAP_CONTENT
+                    columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
+                    setMargins(12, 12, 12, 12)
+                }
+
+                grid.addView(cell, params)
             }
         }
-        dialog.show()
+
+        renderMonths(selYear)
+
+        // Chuyển năm
+        tvYearPrev.setOnClickListener {
+            selYear--
+            tvYearPrev.text = (selYear - 1).toString()
+            tvYearCur.text  = selYear.toString()
+            tvYearNext.text = (selYear + 1).toString()
+            renderMonths(selYear)
+        }
+
+        tvYearNext.setOnClickListener {
+            selYear++
+            tvYearPrev.text = (selYear - 1).toString()
+            tvYearCur.text  = selYear.toString()
+            tvYearNext.text = (selYear + 1).toString()
+            renderMonths(selYear)
+        }
+
+        btnClose.setOnClickListener { dlg.dismiss() }
+
+        dlg.show()
     }
+
 
     private fun monthText(month0: Int, year: Int) =
         "Tháng ${month0 + 1}/$year"
@@ -218,18 +329,42 @@ class InvoiceListActivity : AppCompatActivity() {
                     2 -> "Hủy"
                     else -> "Chưa thu"
                 }
+                val total = c.getInt(2)
+                val createdAt = c.getLong(5)
+                val dueAt = c.getLong(6)
+                val reasonText = c.getString(7)
+
+                val remainStr = when (paidCode) {
+                    1 -> "0đ"
+                    2 -> "—"
+                    else -> "${vn.format(total)}đ"
+                }
+
+                val collectedStr = when (paidCode) {
+                    1 -> "Đã thu ${vn.format(total)}đ"
+                    2 -> "Đã hủy"
+                    else -> "Chưa thu"
+                }
+
+                val reasonDisplay = when (paidCode) {
+                    2 -> "Hóa đơn đã bị hủy"
+                    else -> reasonText ?: "—"
+                }
+
+                val createdStr = if (createdAt > 0) df.format(Date(createdAt)) else "—"
+                val dueStr = if (dueAt > 0) df.format(Date(dueAt)) else "—"
 
                 list.add(
                     InvoiceCardItem(
                         id = c.getInt(0).toString(),
                         title = c.getString(1),
                         mainStatus = mainStatus,
-                        rent = "${vn.format(c.getInt(2))}đ",
-                        deposit = if (paidCode == 1) "0đ" else "${vn.format(c.getInt(2))}đ",
-                        collected = if (paidCode == 1) "Đã thu ${vn.format(c.getInt(2))}đ" else "Chưa thu",
-                        createdDate = df.format(Date(c.getLong(5))),
-                        endDate = df.format(Date(c.getLong(6))),
-                        moveInDate = c.getString(7) ?: "—",
+                        rent = "${vn.format(total)}đ",
+                        deposit = remainStr,
+                        collected = collectedStr,
+                        createdDate = createdStr,
+                        endDate = dueStr,
+                        moveInDate = reasonDisplay,
                         phone = c.getString(8) ?: "",
                         tenantName = c.getString(9) ?: "",
                         periodMonth = c.getInt(10),
