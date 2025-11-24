@@ -2,6 +2,7 @@ package com.example.bsm_management.ui.contract
 
 import android.R.attr.mode
 import android.app.DatePickerDialog
+import android.content.ContentValues
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.bsm_management.R
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import database.DatabaseHelper
 import database.dao.ContractDAO
 import java.text.SimpleDateFormat
@@ -24,6 +26,8 @@ class AddContractActivity : AppCompatActivity() {
     private var endDate: Long? = null
     private var mode: String? = null
     private var contractId: Int = 0
+    private var dobTimestamp: Long = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +51,10 @@ class AddContractActivity : AppCompatActivity() {
         setupThoiHanSpinner()
         setupDatePickers()
         setupSaveButton()
+        findViewById<TextView>(R.id.tvDob).setOnClickListener {
+            openDobPicker()
+        }
+
 
         // Mặc định ngày bắt đầu & kết thúc 6 tháng sau
         setDefaultDates()
@@ -167,53 +175,64 @@ class AddContractActivity : AppCompatActivity() {
 
     /** ---------------- NÚT LƯU ---------------- */
     private fun setupSaveButton() {
-        val edtName = findViewById<EditText>(R.id.edtTenKhach)
-        val edtPhone = findViewById<EditText>(R.id.edtSdtKhach)
+
+        val edtTenantName = findViewById<EditText>(R.id.edtTenKhach)
+        val edtTenantPhone = findViewById<EditText>(R.id.edtSdtKhach)
         val edtDeposit = findViewById<EditText>(R.id.edtMucCoc)
         val btnSave = findViewById<Button>(R.id.btnSave)
+        val edtCccd = findViewById<EditText>(R.id.edtCccd)
+        val edtAddress = findViewById<EditText>(R.id.edtAddress)
 
         btnSave.setOnClickListener {
-            val name = edtName.text.toString().trim()
-            val phone = edtPhone.text.toString().trim()
+            val tenantName = edtTenantName.text.toString().trim()
+            val tenantPhone = edtTenantPhone.text.toString().trim()
             val deposit = edtDeposit.text.toString().toIntOrNull() ?: 0
 
-            if (name.isEmpty() || phone.isEmpty() || startDate == 0L) {
+            if (tenantName.isEmpty() || tenantPhone.isEmpty() || startDate == 0L) {
                 Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
+            // ====== Lưu hợp đồng ======
             val contract = Contract(
-                id = contractId,
                 roomId = roomId,
-                tenantName = name,
-                tenantPhone = phone,
+                tenantName = tenantName,
+                tenantPhone = tenantPhone,
                 startDate = startDate,
                 endDate = endDate,
                 deposit = deposit,
                 active = 1
             )
 
-            if (mode == "renew") {
-                val rows = dao.update(contract)
-                if (rows > 0) {
-                    Toast.makeText(this, "Đã gia hạn hợp đồng thành công!", Toast.LENGTH_SHORT).show()
-                    finish()
-                } else {
-                    Toast.makeText(this, "Gia hạn thất bại!", Toast.LENGTH_SHORT).show()
+            val id = dao.insert(contract)
+
+            if (id > 0) {
+                val db = DatabaseHelper(this)
+
+                // ====== Lưu khách thuê ======
+                val cv = ContentValues().apply {
+                    put("roomId", roomId)
+                    put("name", tenantName)
+                    put("phone", tenantPhone)
+                    put("cccd", edtCccd.text.toString().trim())
+                    put("address", edtAddress.text.toString().trim())
+                    put("dob", dobTimestamp)
+                    put("createdAt", System.currentTimeMillis())
+                    put("slotIndex", 1)
+                    put("isOld", 0)
                 }
+                db.writableDatabase.insert("tenants", null, cv)
+
+                db.writableDatabase.execSQL("UPDATE rooms SET status='RENTED' WHERE id=$roomId")
+
+                Toast.makeText(this, "Đã thêm hợp đồng & khách thuê", Toast.LENGTH_SHORT).show()
+                finish()
             } else {
-                val id = dao.insert(contract)
-                if (id > 0) {
-                    val db = DatabaseHelper(this)
-                    db.writableDatabase.execSQL("UPDATE rooms SET status='RENTED' WHERE id=$roomId")
-                    Toast.makeText(this, "Đã thêm hợp đồng cho $roomName", Toast.LENGTH_SHORT).show()
-                    finish()
-                } else {
-                    Toast.makeText(this, "Lưu hợp đồng thất bại!", Toast.LENGTH_SHORT).show()
-                }
+                Toast.makeText(this, "Lưu hợp đồng thất bại!", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
 
     /** ---------------- MẶC ĐỊNH NGÀY BẮT ĐẦU + KẾT THÚC ---------------- */
     private fun setDefaultDates() {
@@ -222,14 +241,22 @@ class AddContractActivity : AppCompatActivity() {
         val txtStart = viewStart.findViewById<TextView>(R.id.txtValue)
         val txtEnd = viewEnd.findViewById<TextView>(R.id.txtValue)
 
-        val now = Calendar.getInstance()
-        startDate = now.timeInMillis
+        // Lấy ngày hôm nay theo format dd/MM/yyyy → parse về timestamp 00:00
+        val todayString = df.format(Date())
+        val today = df.parse(todayString)!!.time
 
-        val endCal = Calendar.getInstance().apply { add(Calendar.MONTH, 6) }
-        endDate = endCal.timeInMillis
+        startDate = today
 
-        txtStart.text = df.format(now.time)
-        txtEnd.text = df.format(endCal.time)
+        // Tính ngày kết thúc 6 tháng sau
+        val cal = Calendar.getInstance().apply {
+            timeInMillis = today
+            add(Calendar.MONTH, 6)
+        }
+        endDate = cal.timeInMillis
+
+        // Hiển thị ra UI
+        txtStart.text = df.format(Date(startDate))
+        txtEnd.text = df.format(Date(endDate!!))
     }
 
     /** ---------------- DATE PICKER ---------------- */
@@ -246,4 +273,45 @@ class AddContractActivity : AppCompatActivity() {
             cal.get(Calendar.DAY_OF_MONTH)
         ).show()
     }
+    private fun openDobPicker() {
+        val dialog = BottomSheetDialog(this)
+        val view = layoutInflater.inflate(R.layout.bottom_dob_picker, null)
+        dialog.setContentView(view)
+
+        val npDay = view.findViewById<NumberPicker>(R.id.npDay)
+        val npMonth = view.findViewById<NumberPicker>(R.id.npMonth)
+        val npYear = view.findViewById<NumberPicker>(R.id.npYear)
+        val btnDone = view.findViewById<Button>(R.id.btnDoneDob)
+
+        npDay.minValue = 1
+        npDay.maxValue = 31
+
+        npMonth.minValue = 1
+        npMonth.maxValue = 12
+
+        npYear.minValue = 1950
+        npYear.maxValue = 2025
+        npYear.value = 2000 // default
+
+        btnDone.setOnClickListener {
+            val d = npDay.value
+            val m = npMonth.value
+            val y = npYear.value
+
+            val cal = Calendar.getInstance()
+            cal.set(y, m - 1, d)
+
+            // set text lên UI
+            findViewById<TextView>(R.id.tvDob).text =
+                "%02d/%02d/%04d".format(d, m, y)
+
+            // lưu timestamp tạm vào biến
+            dobTimestamp = cal.timeInMillis
+
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
 }
