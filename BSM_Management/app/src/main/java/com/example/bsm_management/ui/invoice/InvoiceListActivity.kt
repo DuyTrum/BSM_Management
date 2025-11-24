@@ -10,6 +10,7 @@ import android.os.Looper
 import android.view.*
 import android.widget.*
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.FileProvider
@@ -19,6 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bsm_management.R
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import database.DatabaseHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -93,32 +95,74 @@ class InvoiceListActivity : AppCompatActivity() {
     }
 
     private fun showInvoiceMenu(anchor: View, item: InvoiceCardItem) {
-        val popup = PopupMenu(this, anchor)
-        popup.menuInflater.inflate(R.menu.menu_invoice_actions, popup.menu)
+        val dialog = BottomSheetDialog(this)
+        val view = layoutInflater.inflate(R.layout.bottom_invoice_actions, null)
+        dialog.setContentView(view)
 
-        popup.setOnMenuItemClickListener { menu ->
-            when (menu.itemId) {
+        val btnDetail = view.findViewById<LinearLayout>(R.id.btnDetail)
+        val btnMarkPaid = view.findViewById<LinearLayout>(R.id.btnMarkPaid)
+        val btnCancel = view.findViewById<LinearLayout>(R.id.btnCancel)
 
-                R.id.action_detail -> {
-                    openDetail(item)
-                    true
-                }
+        // ============================
+        // ẨN HIỆN NÚT THEO STATUS
+        // ============================
 
-                R.id.action_mark_paid -> {
-                    markInvoicePaid(item.id.toInt())
-                    true
-                }
-
-                R.id.action_cancel -> {
-                    cancelInvoice(item.id.toInt())
-                    true
-                }
-
-                else -> false
+        when (item.mainStatus) {
+            "Chưa thu" -> {
+                btnMarkPaid.visibility = View.VISIBLE
+                btnCancel.visibility = View.VISIBLE
+            }
+            "Đã thu" -> {
+                btnMarkPaid.visibility = View.GONE
+                btnCancel.visibility = View.GONE
+            }
+            "Hủy" -> {
+                btnMarkPaid.visibility = View.GONE
+                btnCancel.visibility = View.GONE
             }
         }
 
-        popup.show()
+        // ============================
+        // ACTION: Xem chi tiết
+        // ============================
+        btnDetail.setOnClickListener {
+            dialog.dismiss()
+            openDetail(item)
+        }
+
+        // ============================
+        // ACTION: Đánh dấu đã thu
+        // ============================
+        btnMarkPaid.setOnClickListener {
+            dialog.dismiss()
+
+            AlertDialog.Builder(this)
+                .setTitle("Đánh dấu đã thu")
+                .setMessage("Bạn chắc chắn muốn đánh dấu hóa đơn #${item.id} là ĐÃ THU?")
+                .setPositiveButton("Xác nhận") { _, _ ->
+                    markInvoicePaid(item.id.toInt())
+                }
+                .setNegativeButton("Hủy", null)
+                .show()
+        }
+
+        // ============================
+        // ACTION: Hủy hóa đơn
+        // ============================
+        btnCancel.setOnClickListener {
+            dialog.dismiss()
+
+            AlertDialog.Builder(this)
+                .setTitle("Hủy hóa đơn")
+                .setMessage("Bạn có chắc muốn HỦY hóa đơn #${item.id}?")
+                .setPositiveButton("Hủy hóa đơn") { _, _ ->
+                    cancelInvoice(item.id.toInt())
+                }
+                .setNegativeButton("Không", null)
+                .show()
+        }
+
+        dialog.show()
     }
 
     private fun openDetail(item: InvoiceCardItem) {
@@ -450,4 +494,8 @@ class InvoiceListActivity : AppCompatActivity() {
 
 
     private enum class StatusFilter { ALL, UNPAID, PAID, CANCEL }
+    override fun onResume() {
+        super.onResume()
+        reload()
+    }
 }

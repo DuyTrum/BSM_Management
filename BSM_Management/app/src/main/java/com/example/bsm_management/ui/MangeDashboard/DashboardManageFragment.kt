@@ -93,6 +93,7 @@ class DashboardManageFragment : Fragment(R.layout.fragment_dashboard_manage) {
 
     override fun onResume() {
         super.onResume()
+        autoExpireContracts()
         updateWarnCardVisibility()
     }
 
@@ -138,5 +139,21 @@ class DashboardManageFragment : Fragment(R.layout.fragment_dashboard_manage) {
             putExtra(Settings.EXTRA_APP_PACKAGE, requireContext().packageName)
         }
         startActivity(intent)
+    }
+
+    private fun autoExpireContracts() {
+        val db = database.DatabaseHelper(requireContext()).writableDatabase
+        val now = System.currentTimeMillis()
+
+        // Chỉ set active = 0 cho hợp đồng đã hết hạn nhưng vẫn = 1
+        val sql = """
+        UPDATE contracts
+        SET active = 0
+        WHERE active = 1
+        AND endDate IS NOT NULL
+        AND endDate < $now
+    """
+
+        db.execSQL(sql)
     }
 }
