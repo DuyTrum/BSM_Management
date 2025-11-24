@@ -44,15 +44,15 @@ class EmptyStateActivity : AppCompatActivity() {
         createBottom.setOnClickListener { goCreate() }
         guide.setOnClickListener {
             // mở trang/FAQ hoặc hiển thị dialog – tạm mở web demo
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://example.com/huong-dan")))
+            startActivity(Intent(this, GuideActivity::class.java))
         }
 
         rowCall.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:0900000000")))
+            startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:0968872541")))
         }
         rowZalo.setOnClickListener {
             // mở Zalo chat theo link OA/phone, tạm mở web
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://zalo.me/")))
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/tuan.duy.941173")))
         }
     }
 }

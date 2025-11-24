@@ -309,6 +309,17 @@ class AddHostelActivity : AppCompatActivity() {
         } finally {
             db.endTransaction()
         }
+        // ghi thông báo vào bảng messages
+        val now = java.text.SimpleDateFormat("HH:mm dd/MM/yyyy", java.util.Locale("vi", "VN"))
+            .format(java.util.Date())
+
+        DatabaseHelper(this).insertMessage(
+            sender = "Hệ thống",
+            message = "Đã tạo nhà trọ mới: $hostelName với $count phòng.",
+            time = now,
+            isRead = false,
+            hostelName = hostelName
+        )
 
         goDashboard()
     }

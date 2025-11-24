@@ -13,6 +13,9 @@ import com.example.bsm_management.databinding.FragmentTenantListBinding
 import com.example.bsm_management.ui.excel.ExcelViewerActivity
 import com.example.bsm_management.utils.ExcelExporter
 import database.DatabaseHelper
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class TenantManagerActivity : AppCompatActivity() {
 
@@ -83,6 +86,16 @@ class TenantManagerActivity : AppCompatActivity() {
                 Toast.makeText(this, "Xuất Excel thất bại!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+            val now = SimpleDateFormat("HH:mm dd/MM/yyyy", Locale("vi", "VN"))
+                .format(Date())
+
+            DatabaseHelper(this).insertMessage(
+                sender = "Hệ thống",
+                message = "Xuất danh sách khách thuê sang Excel thành công.",
+                time = now,
+                isRead = false
+            )
+
 
             val intent = Intent(this, ExcelViewerActivity::class.java)
             intent.putExtra("fileUri", uri.toString())

@@ -1,0 +1,229 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Hướng Dẫn Sử Dụng BSM</title>
+<style>
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #f4f6f9;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    color: #333;
+}
+.header {
+    background: linear-gradient(135deg, #4A90E2, #007AFF);
+    padding: 40px 20px;
+    text-align: center;
+    color: white;
+}
+.header h1 {
+    margin: 0;
+    font-size: 32px;
+}
+.container {
+    max-width: 900px;
+    margin: auto;
+    background: white;
+    padding: 30px;
+    margin-top: -20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
+h2 {
+    color: #007AFF;
+    margin-top: 40px;
+}
+.section {
+    margin-bottom: 30px;
+}
+ul {
+    padding-left: 20px;
+}
+.card {
+    background: #f8faff;
+    border-left: 4px solid #007AFF;
+    padding: 12px 16px;
+    margin: 10px 0;
+    border-radius: 6px;
+}
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+}
+.table th, .table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+.table th {
+    background: #007AFF;
+    color: white;
+}
+.footer {
+    text-align: center;
+    margin-top: 40px;
+    padding: 20px;
+    color: #666;
+    font-size: 14px;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>HƯỚNG DẪN SỬ DỤNG ỨNG DỤNG QUẢN LÝ NHÀ TRỌ BSM</h1>
+</div>
+
+<div class="container">
+
+<h2>1. Giới thiệu</h2>
+<div class="section">
+<div class="card">Ứng dụng BSM hỗ trợ chủ trọ quản lý toàn bộ hoạt động nhà trọ:</div>
+<ul>
+<li>Quản lý phòng & dịch vụ theo từng phòng</li>
+<li>Thêm khách thuê – quản lý hồ sơ</li>
+<li>Tạo & gia hạn hợp đồng</li>
+<li>Lập & theo dõi hóa đơn điện nước</li>
+<li>Theo dõi thanh toán</li>
+<li>Xuất danh sách khách thuê ra Excel</li>
+<li>Gửi thông báo nội bộ (Hộp thư)</li>
+<li>Dashboard theo dõi tổng quan</li>
+</ul>
+</div>
+
+<h2>2. Bắt đầu sử dụng</h2>
+<div class="section">
+<ul>
+<li>Đăng ký tài khoản với Tên, SĐT, Mật khẩu</li>
+<li>Đăng nhập bằng số điện thoại</li>
+</ul>
+</div>
+
+<h2>3. Tạo nhà trọ mới</h2>
+<div class="section">
+<h3>Bước 1 – Thiết lập phòng mẫu</h3>
+<ul>
+<li>Nhập số lượng phòng</li>
+<li>Nhập diện tích phòng (giá gợi ý tự động)</li>
+<li>Chọn số người tối đa</li>
+</ul>
+
+<h3>Bước 2 – Cài đặt dịch vụ</h3>
+<table class="table">
+<tr><th>Dịch vụ</th><th>Trạng thái</th><th>Mô tả</th></tr>
+<tr><td>Điện</td><td>Bật</td><td>Tính theo công tơ</td></tr>
+<tr><td>Nước</td><td>Bật</td><td>Tính theo công tơ</td></tr>
+<tr><td>Rác</td><td>Tùy chọn</td><td>Giá cố định / miễn phí</td></tr>
+<tr><td>Internet</td><td>Tùy chọn</td><td>Nhà mạng hoặc miễn phí</td></tr>
+</table>
+
+<h3>Cài đặt địa chỉ</h3>
+<ul>
+<li>Nhập địa chỉ thủ công</li>
+<li>Lấy vị trí hiện tại</li>
+<li>Chọn vị trí trên bản đồ</li>
+</ul>
+
+</div>
+
+<h2>4. Quản lý khách thuê</h2>
+<div class="section">
+<ul>
+<li>Thêm khách mới</li>
+<li>Quản lý CCCD – hồ sơ</li>
+<li>Chuyển khách sang nhóm khách cũ</li>
+<li>Khôi phục khách nếu phòng còn trống</li>
+</ul>
+</div>
+
+<h2>5. Hợp đồng</h2>
+<div class="section">
+<ul>
+<li>Tạo hợp đồng mới</li>
+<li>Gia hạn hợp đồng</li>
+<li>Thanh lý hợp đồng → phòng chuyển trạng thái EMPTY</li>
+</ul>
+</div>
+
+<h2>6. Hóa đơn</h2>
+<div class="section">
+<ul>
+<li>Tạo hóa đơn theo tháng</li>
+<li>Tự tính điện nước – dịch vụ – tổng tiền</li>
+<li>Đánh dấu đã thu tiền</li>
+<li>Chốt tháng & lập hóa đơn hàng loạt</li>
+</ul>
+</div>
+
+<h2>7. Xuất danh sách khách thuê</h2>
+<div class="section">
+<ul>
+<li>Xuất Excel (.xlsx)</li>
+<li>Mở bằng Excel Viewer trong app</li>
+<li>Ghi tin nhắn: “Xuất danh sách khách thuê thành công”</li>
+</ul>
+</div>
+
+<h2>8. Hộp thư nội bộ</h2>
+<div class="section">
+<ul>
+<li>Xem thông báo hệ thống</li>
+<li>Vuốt để xóa</li>
+<li>Tin chưa đọc hiển thị đậm</li>
+</ul>
+</div>
+
+<h2>9. Dashboard</h2>
+<div class="section">
+<ul>
+<li>Tổng quan phòng</li>
+<li>Hợp đồng sắp hết hạn</li>
+<li>Hóa đơn cần thu</li>
+<li>Chức năng nhanh</li>
+</ul>
+</div>
+
+<h2>10. Tìm khách</h2>
+<div class="section">
+<ul>
+<li>Tìm theo tên / số điện thoại</li>
+<li>Xem phòng hiện tại</li>
+</ul>
+</div>
+
+<h2>11. Sao lưu dữ liệu</h2>
+<div class="section">
+<div class="card">Dữ liệu lưu Offline bằng SQLite</div>
+<ul>
+<li>Không cần internet</li>
+<li>Dữ liệu theo máy</li>
+<li>Tương lai hỗ trợ bản Cloud</li>
+</ul>
+</div>
+
+<h2>12. Giới hạn hiện tại</h2>
+<div class="section">
+<ul>
+<li>Chưa đồng bộ Cloud</li>
+<li>Chưa phân quyền nhân viên</li>
+<li>Chưa có app phía khách thuê</li>
+<li>Chưa có thanh toán online</li>
+</ul>
+</div>
+
+<h2>13. Liên hệ – Support</h2>
+<div class="section">
+<ul>
+<li>Zalo: 0968872541</li>
+<li>Email: 2224802010787@student.tdmu.edu.vn</li>
+</ul>
+</div>
+
+<div class="footer">© BSM Boarding House Management</div>
+</div>
+
+</body>
+</html>

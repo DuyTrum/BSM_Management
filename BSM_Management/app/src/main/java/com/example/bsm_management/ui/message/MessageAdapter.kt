@@ -45,7 +45,7 @@ class MessageAdapter : RecyclerView.Adapter<MessageAdapter.VH>() {
         val msg = items[pos]
 
         // Nếu layout có tvHostel, gán tên trọ nếu có
-        tvHostel?.text = msg.hostelName ?: ""
+        tvHostel.text = msg.hostelName ?: "Nhà trọ"
 
         tvSender.text = msg.sender
         tvMessage.text = msg.message
