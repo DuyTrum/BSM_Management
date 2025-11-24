@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bsm_management.R
 import com.google.android.material.button.MaterialButton
+import java.text.NumberFormat
+import java.util.Locale
 
 class RoomAdapter(
     private val onPhoneClick: (String?) -> Unit,
@@ -55,13 +57,17 @@ class RoomAdapter(
         private val btnMore: ImageButton = v.findViewById(R.id.btnMore)
         private val btnEditRoomPrice: ImageButton = v.findViewById(R.id.btnEditRoomPrice)
         private val layoutServices: LinearLayout = v.findViewById(R.id.layoutServices)
+        private val vn = NumberFormat.getInstance(Locale("vi", "VN"))
+        fun formatMoney(amount: Int?): String {
+            if (amount == null) return "0 đ"
+            return vn.format(amount) + " đ"
+        }
 
         fun bind(item: UiRoom, services: List<Triple<String, Boolean, Int>>) {
 
             tvRoomName.text = item.name
             tvPhone.text = item.phone ?: "Chưa có số điện thoại"
-            tvRent.text = "${item.baseRent} đ/tháng"
-
+            tvRent.text = formatMoney(item.baseRent)
             chipOccupied.isVisible = item.status == "RENTED"
             chipEmpty.isVisible = item.status == "EMPTY"
 
@@ -93,7 +99,7 @@ class RoomAdapter(
                 val btnEdit = row.findViewById<ImageButton>(R.id.btnEditService)
 
                 tvName.text = name
-                tvPrice.text = if (price > 0) "$price đ" else "Chưa đặt giá"
+                tvPrice.text = if (price > 0) formatMoney(price) else "Chưa đặt giá"
 
                 icon.setImageResource(
                     when {

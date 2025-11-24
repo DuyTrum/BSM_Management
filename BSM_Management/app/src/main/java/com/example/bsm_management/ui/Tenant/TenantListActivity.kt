@@ -1,10 +1,14 @@
 package com.example.bsm_management.ui.tenant
 
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bsm_management.databinding.ActivityTenantListBinding
 import database.DatabaseHelper
+import kotlin.collections.filterNotNull
 
 class TenantListActivity : AppCompatActivity() {
 
@@ -20,6 +24,14 @@ class TenantListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityTenantListBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        enableEdgeToEdge()
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { v, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
+            insets
+        }
+
 
         db = DatabaseHelper(this)
 
@@ -38,7 +50,7 @@ class TenantListActivity : AppCompatActivity() {
 
     private fun loadData() {
         val slots = db.getTenantSlots(roomId, maxPeople)
-
+        val active = slots.count { it != null }
         adapter = TenantSlotAdapter(
             maxPeople = maxPeople,
             tenants = slots,
@@ -57,16 +69,25 @@ class TenantListActivity : AppCompatActivity() {
         binding.rvTenants.layoutManager = LinearLayoutManager(this)
         binding.rvTenants.adapter = adapter
 
-        binding.tvCount.text = "Đang có ${slots.count { it != null }} khách"
+        binding.tvCount.text = "Đang có $active khách"
     }
 
     private fun showAddTenantDialog(slot: Int) {
         val dialog = AddTenantDialog(
             context = this,
-            onSave = { name, phone ->
-                db.addTenant(roomId, name, phone, slot)
+            onSave = { name, phone, cccd, address ->
+                db.addTenant(
+                    roomId = roomId,
+                    name = name,
+                    phone = phone,
+                    cccd = cccd,
+                    address = address,
+                    dob = null,
+                    slotIndex = slot
+                )
                 loadData()
             }
+
         )
         dialog.show()
     }
@@ -75,16 +96,18 @@ class TenantListActivity : AppCompatActivity() {
         val dialog = EditTenantDialog(
             context = this,
             tenant = t,
-            onSave = { newName, newPhone ->
-                db.updateTenant(t.copy(name = newName, phone = newPhone))
+            onSave = { updatedTenant ->
+                db.updateTenant(updatedTenant)
                 loadData()
             }
         )
         dialog.show()
     }
 
+
     private fun deleteTenant(t: Tenant) {
-        db.moveTenantToOld(t.id)
+        db.moveTenantToOld(this, t)
         loadData()
     }
+
 }

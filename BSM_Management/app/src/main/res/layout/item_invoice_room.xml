@@ -56,16 +56,6 @@
                 app:layout_constraintEnd_toStartOf="@id/btnChevron"
                 app:layout_constraintTop_toBottomOf="@id/tvRoomName"/>
 
-            <TextView
-                android:id="@+id/tvInvoiceCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0 hóa đơn tháng này"
-                android:textColor="@color/txt_sec"
-                android:textSize="@dimen/txt_s"
-                app:layout_constraintStart_toStartOf="@id/tvPhone"
-                app:layout_constraintTop_toBottomOf="@id/tvPhone"/>
-
             <ImageButton
                 android:id="@+id/btnChevron"
                 android:layout_width="@dimen/icon_xl"
@@ -126,7 +116,6 @@
                     android:layout_height="wrap_content"
                     android:text="Đang ở"
                     android:textColor="@color/succ"/>
-
             </LinearLayout>
         </LinearLayout>
 

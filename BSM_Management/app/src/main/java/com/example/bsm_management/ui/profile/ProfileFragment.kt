@@ -23,8 +23,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
         val tvHello       = view.findViewById<TextView>(R.id.tvHello)
         val tvGreet       = view.findViewById<TextView>(R.id.tvGreetingMessage)
+        val tvMaKH        = view.findViewById<TextView>(R.id.tvMaKhachHang)
         val tvPhone       = view.findViewById<TextView>(R.id.tvPhone)
         val tvJoinedDate  = view.findViewById<TextView>(R.id.tvJoinedDate)
+        val btnCopy       = view.findViewById<LinearLayout>(R.id.btnCopy)
         val rowChangePass = view.findViewById<LinearLayout>(R.id.rowChangePassword)
         val rowRate       = view.findViewById<LinearLayout>(R.id.rowAppPermission)
         val rowHelp       = view.findViewById<LinearLayout>(R.id.rowHelp)
@@ -35,9 +37,19 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         val (name, phone) = loadUserFromDbBySession() ?: ("Bạn" to "+84 ")
         tvHello.text = "Xin chào! $name"
         tvGreet.text = "Chúc bạn một ngày làm việc hiệu quả"
+        tvMaKH.text  = "#BSM-${name.take(3).uppercase(Locale.getDefault())}001"
         tvPhone.text = phone
         tvJoinedDate.text = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             .format(Date(System.currentTimeMillis() - 90L * 24 * 3600 * 1000)) // giả lập "tham gia 3 tháng"
+
+        // Copy mã KH
+        btnCopy.setOnClickListener {
+            val code = tvMaKH.text?.toString().orEmpty()
+            if (code.isBlank()) { toast("Không có mã để sao chép"); return@setOnClickListener }
+            val cm = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            cm.setPrimaryClip(ClipData.newPlainText("Mã khách hàng", code))
+            toast("Đã sao chép: $code")
+        }
 
         // Gọi điện khi chạm số
         tvPhone.setOnClickListener {

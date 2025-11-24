@@ -27,6 +27,31 @@
             android:orientation="vertical"
             android:padding="@dimen/pad_l">
 
+            <!-- 🔹 Section: Lý do lập hóa đơn -->
+            <LinearLayout
+                android:id="@+id/sectionReason"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_border"
+                android:padding="@dimen/pad_l"
+                android:layout_marginBottom="@dimen/mar_m">
+
+                <include
+                    android:id="@+id/secReason"
+                    layout="@layout/view_section_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <Spinner
+                    android:id="@+id/spReason"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/edt_h"
+                    android:layout_marginTop="@dimen/mar_s"
+                    android:spinnerMode="dialog"
+                    android:background="@drawable/bg_border" />
+            </LinearLayout>
+
             <!-- 🔹 Section: Kỳ tính tiền -->
             <LinearLayout
                 android:id="@+id/sectionPeriod"
@@ -208,18 +233,21 @@
                     android:gravity="center_vertical"
                     android:layout_marginTop="@dimen/mar_m">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Rác"
-                        android:textSize="@dimen/txt_m"
-                        android:textColor="@color/txt_pri"
-                        android:layout_marginEnd="@dimen/mar_s"/>
+                    <EditText
+                        android:id="@+id/edtTrashQty"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/edt_h"
+                        android:layout_weight="1"
+                        android:hint="Số rác (kg/tháng)"
+                        android:inputType="number"
+                        android:background="@drawable/bg_border"
+                        android:paddingStart="@dimen/pad_m"
+                        android:paddingEnd="@dimen/pad_m" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text=": "
+                        android:text="×"
                         android:textSize="@dimen/txt_l"
                         android:textColor="@color/txt_pri"
                         android:layout_marginHorizontal="@dimen/mar_s" />
@@ -229,7 +257,7 @@
                         android:layout_width="0dp"
                         android:layout_height="@dimen/edt_h"
                         android:layout_weight="1"
-                        android:hint="Phí rác (đ/tháng)"
+                        android:hint="Đơn giá rác (đ)"
                         android:inputType="number"
                         android:background="@drawable/bg_border"
                         android:paddingStart="@dimen/pad_m"
@@ -244,18 +272,21 @@
                     android:gravity="center_vertical"
                     android:layout_marginTop="@dimen/mar_m">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="WiFi"
-                        android:textSize="@dimen/txt_m"
-                        android:textColor="@color/txt_pri"
-                        android:layout_marginEnd="@dimen/mar_s"/>
+                    <EditText
+                        android:id="@+id/edtWifiQty"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/edt_h"
+                        android:layout_weight="1"
+                        android:hint="Số tháng WiFi"
+                        android:inputType="number"
+                        android:background="@drawable/bg_border"
+                        android:paddingStart="@dimen/pad_m"
+                        android:paddingEnd="@dimen/pad_m" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text=": "
+                        android:text="×"
                         android:textSize="@dimen/txt_l"
                         android:textColor="@color/txt_pri"
                         android:layout_marginHorizontal="@dimen/mar_s" />
@@ -265,7 +296,7 @@
                         android:layout_width="0dp"
                         android:layout_height="@dimen/edt_h"
                         android:layout_weight="1"
-                        android:hint="Phí WiFi (đ/tháng)"
+                        android:hint="Đơn giá WiFi (đ)"
                         android:inputType="number"
                         android:background="@drawable/bg_border"
                         android:paddingStart="@dimen/pad_m"

@@ -65,9 +65,11 @@
         <service
             android:name=".service.NotificationService"
             android:exported="false" />
+
         <activity
-            android:name=".ui.service.ServiceSettingsActivity"
+            android:name=".ui.excel.ExcelViewerActivity"
             android:exported="false" />
+
 
         <!-- AUTH -->
         <activity

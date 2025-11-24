@@ -2,8 +2,6 @@ package com.example.bsm_management.ui.tenant
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -29,60 +27,31 @@ class TenantMenuSheet(
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val v = inflater.inflate(R.layout.sheet_tenant_menu, container, false)
+// ==== STATUS: kiểm tra địa chỉ + CCCD ====
+        val tvStatus = v.findViewById<TextView>(R.id.tvWarning)
 
-        val warn = v.findViewById<TextView>(R.id.tvWarning)
-        warn.visibility = if (!tenant.isUsingApp) View.VISIBLE else View.GONE
+        val hasAddress = tenant.address?.isNotBlank() == true
+        val hasCccd = tenant.cccd?.isNotBlank() == true
 
-        // ========== 1. CHAT ==========
-        v.findViewById<View>(R.id.rowChat).setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:${tenant.phone}"))
-            startActivity(intent)
-            dismiss()
+        tvStatus.text = when {
+            !hasAddress && !hasCccd -> "Khách chưa khai tạm trú và CCCD"
+            !hasAddress -> "Khách chưa khai tạm trú"
+            !hasCccd -> "Khách chưa khai CCCD"
+            else -> "Khách đã khai đủ thông tin"
         }
-
-        // ========== 2. CHO PHÉP DÙNG APP ==========
-        v.findViewById<View>(R.id.rowAllowApp).setOnClickListener {
-            tenant.isUsingApp = true
-
-            val db = DatabaseHelper(safeContext)
-            db.updateTenantUsingApp(tenant.id, true)
-
-            onTenantUpdated(tenant)
-            Toast.makeText(safeContext, "Đã cho phép khách dùng APP", Toast.LENGTH_SHORT).show()
-
-            dismiss()
-        }
-
-        // ========== 3. XEM / SỬA (DIALOG DETAIL) ==========
+        // 2. Xem chi tiết / chỉnh sửa
         v.findViewById<View>(R.id.rowDetail).setOnClickListener {
             showDetailDialog()
             dismiss()
         }
 
-        // ========== 4. CHỈNH SỬA ==========
-        v.findViewById<View>(R.id.rowEdit).setOnClickListener {
-            showDetailDialog()
-            dismiss()
-        }
-
-        // ========== 5. IN TỜ KHAI ==========
-        v.findViewById<View>(R.id.rowPrint).setOnClickListener {
-            Toast.makeText(safeContext, "Đang tạo PDF...", Toast.LENGTH_SHORT).show()
-            dismiss()
-        }
-
-        // ========== 6. XÓA ==========
+        // 4. Xoá
         v.findViewById<View>(R.id.rowDelete).setOnClickListener {
             confirmDelete()
         }
 
         return v
     }
-
-
-    // ======================
-    //  HÀM HỖ TRỢ AN TOÀN
-    // ======================
 
     private fun showDetailDialog() {
         TenantDetailDialog(safeContext, tenant) { updated ->
@@ -95,15 +64,16 @@ class TenantMenuSheet(
     private fun confirmDelete() {
         AlertDialog.Builder(safeContext)
             .setTitle("Xóa khách thuê")
-            .setMessage("Bạn có chắc muốn xóa '${tenant.name}'?")
-            .setPositiveButton("Xóa") { _, _ ->
+            .setMessage("Bạn có chắc muốn xoá '${tenant.name}'?")
+            .setPositiveButton("Xoá") { _, _ ->
                 val db = DatabaseHelper(safeContext)
-                db.moveTenantToOld(tenant.id)
+                db.moveTenantToOld(safeContext, tenant)
                 onTenantDeleted(tenant.id)
-                Toast.makeText(safeContext, "Đã xóa khách thuê", Toast.LENGTH_SHORT).show()
+                Toast.makeText(safeContext, "Đã xoá khách thuê", Toast.LENGTH_SHORT).show()
                 dismiss()
             }
             .setNegativeButton("Hủy", null)
             .show()
     }
 }
+

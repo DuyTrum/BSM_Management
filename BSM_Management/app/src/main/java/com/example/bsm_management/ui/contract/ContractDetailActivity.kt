@@ -31,7 +31,7 @@ class ContractDetailActivity : AppCompatActivity() {
     private var tenantPhone = ""
 
     private lateinit var contract: Contract
-    private var roomPrice = 0   // ⭐ baseRent từ bảng rooms
+    private var roomPrice = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

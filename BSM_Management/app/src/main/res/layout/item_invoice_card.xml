@@ -74,13 +74,21 @@
                     android:text="Trong thời hạn hợp đồng"
                     android:textColor="@color/txt_sec"
                     android:textSize="@dimen/txt_m"/>
+
+                <TextView
+                    android:id="@+id/tvNote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Khách chưa cài APP"
+                    android:textColor="@color/warn"
+                    android:textSize="@dimen/txt_s"/>
             </LinearLayout>
 
             <TextView
                 android:id="@+id/btnDetail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Chi tiết ->"
+                android:text="Chi tiết >"
                 android:textColor="@color/acc"
                 android:textSize="@dimen/txt_m"
                 android:padding="@dimen/pad_m"/>

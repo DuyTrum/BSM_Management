@@ -5,11 +5,14 @@ import android.content.Context
 import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.example.bsm_management.ui.room.UiRoom
 import com.example.bsm_management.ui.tenant.Tenant
 
 class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
     override fun onConfigure(db: SQLiteDatabase) {
         super.onConfigure(db)
         db.setForeignKeyConstraintsEnabled(true)
@@ -63,32 +66,19 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
         CREATE TABLE IF NOT EXISTS invoices (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             roomId INTEGER NOT NULL,
-        
             periodYear INTEGER NOT NULL,
             periodMonth INTEGER NOT NULL,
-        
             roomRent INTEGER NOT NULL,
-        
             electricKwh INTEGER NOT NULL DEFAULT 0,
-            electricRate INTEGER NOT NULL DEFAULT 0,
-        
             waterM3 INTEGER NOT NULL DEFAULT 0,
-            waterRate INTEGER NOT NULL DEFAULT 0,
-        
-            trashRate INTEGER NOT NULL DEFAULT 0,
-            wifiRate INTEGER NOT NULL DEFAULT 0,
-        
             serviceFee INTEGER NOT NULL DEFAULT 0,
-        
             totalAmount INTEGER NOT NULL,
             paid INTEGER NOT NULL DEFAULT 0,
-        
             createdAt INTEGER NOT NULL,
             dueAt INTEGER,
-        
             reason TEXT,
-        
-            FOREIGN KEY(roomId) REFERENCES rooms(id) ON DELETE CASCADE
+            FOREIGN KEY(roomId) REFERENCES rooms(id) ON DELETE CASCADE,
+            UNIQUE(roomId, periodYear, periodMonth)
         );
     """.trimIndent())
 
@@ -114,7 +104,6 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             cccd TEXT,
             address TEXT,
             dob INTEGER,
-            isUsingApp INTEGER NOT NULL DEFAULT 0,
             hasTempReg INTEGER NOT NULL DEFAULT 0,
             hasPaper INTEGER NOT NULL DEFAULT 0,
             createdAt INTEGER NOT NULL,
@@ -123,6 +112,7 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             FOREIGN KEY(roomId) REFERENCES rooms(id) ON DELETE SET NULL
         );
     """.trimIndent())
+
 
         // ===== ROOM SERVICES (PER ROOM) =====
         db.execSQL("""
@@ -204,6 +194,7 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
         writableDatabase.insert("messages", null, cv)
     }
 
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
     fun getAllMessages(): List<Message> {
         val list = mutableListOf<Message>()
         val c = readableDatabase.rawQuery("SELECT * FROM messages ORDER BY id DESC", null)
@@ -386,12 +377,18 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
         roomId: Int,
         name: String,
         phone: String,
+        cccd: String?,
+        address: String?,
+        dob: Long?,
         slotIndex: Int
     ) {
         val cv = ContentValues().apply {
             put("roomId", roomId)
             put("name", name)
             put("phone", phone)
+            put("cccd", cccd)
+            put("address", address)
+            put("dob", dob)
             put("slotIndex", slotIndex)
             put("createdAt", System.currentTimeMillis())
             put("isOld", 0)
@@ -399,33 +396,35 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
         writableDatabase.insert("tenants", null, cv)
     }
 
+
     fun getTenantSlots(roomId: Int, maxPeople: Int): List<Tenant?> {
         val slots = MutableList<Tenant?>(maxPeople) { null }
 
-        val cursor = readableDatabase.rawQuery(
+        val c = readableDatabase.rawQuery(
             """
-            SELECT id, name, phone, slotIndex, isUsingApp, hasTempReg, hasPaper
-            FROM tenants
-            WHERE roomId = ? AND isOld = 0
-            ORDER BY slotIndex ASC
+        SELECT id, name, phone, cccd, address, dob, slotIndex
+        FROM tenants
+        WHERE roomId = ? AND isOld = 0
+        ORDER BY slotIndex ASC
         """,
             arrayOf(roomId.toString())
         )
 
-        cursor.use {
+        c.use {
             while (it.moveToNext()) {
-                val index = it.getInt(3) - 1
+                val index = it.getInt(6) - 1
                 if (index !in 0 until maxPeople) continue
 
                 slots[index] = Tenant(
                     id = it.getInt(0),
                     name = it.getString(1),
                     phone = it.getString(2),
+                    cccd = it.getString(3),
+                    address = it.getString(4),
+                    dob = it.getLong(5),
                     roomId = roomId,
-                    isUsingApp = it.getInt(4) == 1,
-                    hasTemporaryResidence = it.getInt(5) == 1,
-                    hasEnoughDocuments = it.getInt(6) == 1,
-                    slotIndex = index + 1
+                    slotIndex = it.getInt(6),
+                    isOld = false
                 )
             }
         }
@@ -434,45 +433,82 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
     }
 
 
-
-    fun updateTenant(t: com.example.bsm_management.ui.tenant.Tenant) {
+    fun updateTenant(t: Tenant) {
         val cv = ContentValues().apply {
             put("name", t.name)
             put("phone", t.phone)
-            put("isUsingApp", if (t.isUsingApp) 1 else 0)
+            put("cccd", t.cccd)
+            put("address", t.address)
+            put("dob", t.dob)
+
         }
         writableDatabase.update("tenants", cv, "id=?", arrayOf(t.id.toString()))
     }
 
-    fun moveTenantToOld(id: Int) {
+
+    fun moveTenantToOld(context: Context, tenant: Tenant) {
+        // Lưu phòng cũ
+        val prefs = context.getSharedPreferences("restore", Context.MODE_PRIVATE)
+        prefs.edit().putInt("tenant_${tenant.id}_oldRoom", tenant.roomId ?: -1).apply()
+
+        // Đánh dấu khách cũ + xoá roomId
         val cv = ContentValues().apply {
             put("isOld", 1)
             putNull("roomId")
         }
-        writableDatabase.update("tenants", cv, "id=?", arrayOf(id.toString()))
+        writableDatabase.update("tenants", cv, "id=?", arrayOf(tenant.id.toString()))
     }
-    fun moveRoomTenantsToOld(roomId: Int) {
-        writableDatabase.execSQL(
-            "UPDATE tenants SET roomId = NULL, isOld = 1 WHERE roomId = $roomId"
+
+    fun restoreOldTenant(context: Context, tenantId: Int): Boolean {
+        val prefs = context.getSharedPreferences("restore", Context.MODE_PRIVATE)
+        val oldRoom = prefs.getInt("tenant_${tenantId}_oldRoom", -1)
+
+        // Không có phòng cũ
+        if (oldRoom == -1) return false
+
+        // Phòng có tồn tại không?
+        val roomCursor = readableDatabase.rawQuery(
+            "SELECT maxPeople FROM rooms WHERE id=?",
+            arrayOf(oldRoom.toString())
         )
-    }
 
-
-    fun updateTenantUsingApp(id: Int, isUsing: Boolean) {
-        val cv = ContentValues().apply {
-            put("isUsingApp", if (isUsing) 1 else 0)
+        var maxPeople = 1
+        roomCursor.use {
+            if (!it.moveToFirst()) return false // phòng đã bị xóa
+            maxPeople = it.getInt(0)
         }
-        writableDatabase.update("tenants", cv, "id=?", arrayOf(id.toString()))
+
+        // Kiểm tra chỗ trống
+        val currentCount = DatabaseUtils.longForQuery(
+            readableDatabase,
+            "SELECT COUNT(*) FROM tenants WHERE roomId=? AND isOld=0",
+            arrayOf(oldRoom.toString())
+        ).toInt()
+
+        if (currentCount >= maxPeople) return false // phòng đầy
+
+        // KHÔI PHỤC
+        val cv = ContentValues().apply {
+            put("isOld", 0)
+            put("roomId", oldRoom)
+        }
+        writableDatabase.update("tenants", cv, "id=?", arrayOf(tenantId.toString()))
+
+        return true
     }
+
+
+
+
     fun getAllTenantsActive(): List<Tenant> {
         val list = mutableListOf<Tenant>()
 
         val c = readableDatabase.rawQuery(
             """
-            SELECT id, name, phone, roomId, isUsingApp, hasTempReg, hasPaper
-            FROM tenants
-            WHERE isOld = 0
-            ORDER BY id DESC
+        SELECT id, name, phone, roomId, cccd, address, dob, slotIndex
+        FROM tenants
+        WHERE isOld = 0
+        ORDER BY id DESC
         """, null
         )
 
@@ -483,26 +519,46 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
                     name = it.getString(1),
                     phone = it.getString(2),
                     roomId = it.getInt(3),
-                    isUsingApp = it.getInt(4) == 1,
-                    hasTemporaryResidence = it.getInt(5) == 1,
-                    hasEnoughDocuments = it.getInt(6) == 1,
-                    slotIndex = -1
+                    cccd = it.getString(4),
+                    address = it.getString(5),
+                    dob = it.getLong(6),
+                    slotIndex = it.getInt(7),
+                    isOld = false
                 )
             }
         }
 
         return list
     }
+
+    fun getRoomNameById(roomId: Int?): String {
+        if (roomId == null) return "Không xác định"
+
+        val c = readableDatabase.rawQuery(
+            "SELECT name FROM rooms WHERE id = ? LIMIT 1",
+            arrayOf(roomId.toString())
+        )
+
+        c.use {
+            if (it.moveToFirst()) {
+                return it.getString(0)
+            }
+        }
+
+        return "Không xác định"
+    }
+
     fun getOldTenants(): List<Tenant> {
         val list = mutableListOf<Tenant>()
 
         val c = readableDatabase.rawQuery(
             """
-            SELECT id, name, phone, isUsingApp, hasTempReg, hasPaper
-            FROM tenants
-            WHERE isOld = 1
-            ORDER BY id DESC
-        """, null
+        SELECT id, name, phone, cccd, address, dob
+        FROM tenants
+        WHERE isOld = 1
+        ORDER BY id DESC
+        """,
+            null
         )
 
         c.use {
@@ -511,17 +567,19 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
                     id = it.getInt(0),
                     name = it.getString(1),
                     phone = it.getString(2),
-                    roomId = null, // khách cũ không thuộc phòng nào
-                    isUsingApp = it.getInt(3) == 1,
-                    hasTemporaryResidence = it.getInt(4) == 1,
-                    hasEnoughDocuments = it.getInt(5) == 1,
-                    slotIndex = -1
+                    roomId = null,
+                    cccd = it.getString(3),
+                    address = it.getString(4),
+                    dob = it.getLong(5),
+                    slotIndex = -1,
+                    isOld = true
                 )
             }
         }
 
         return list
     }
+
     fun countRoomsByStatus(status: String): Int {
         val sql = "SELECT COUNT(*) FROM rooms WHERE status = ?"
         return DatabaseUtils.longForQuery(readableDatabase, sql, arrayOf(status)).toInt()
@@ -569,8 +627,10 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
         return DatabaseUtils.longForQuery(readableDatabase, sql, null).toInt()
     }
 
+
+
     companion object {
         const val DB_NAME = "bsm.db"
-        private const val DB_VERSION = 1
+        private const val DB_VERSION = 4
     }
 }

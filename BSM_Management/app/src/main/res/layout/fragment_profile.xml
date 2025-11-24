@@ -68,6 +68,65 @@
                 android:layout_marginBottom="@dimen/mar_m"
                 android:layout_marginTop="@dimen/mar_m"/>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:paddingVertical="8dp">
+
+                    <TextView
+                        android:id="@+id/tvLabelMa"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mã khách hàng"
+                        android:textColor="@color/txt_sec"
+                        android:textSize="@dimen/txt_m"/>
+
+                    <TextView
+                        android:id="@+id/tvMaKhachHang"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="#25OW00011347"
+                        android:textColor="@color/dark_green"
+                        android:textSize="@dimen/txt_m"/>
+                </LinearLayout>
+
+
+
+                <LinearLayout
+                    android:id="@+id/btnCopy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:paddingStart="@dimen/pad_m"
+                    android:paddingEnd="@dimen/pad_m"
+                    android:background="@drawable/bg_btn_copy">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sao chép"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/txt_m"/>
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_marginStart="6dp"
+                        android:src="@drawable/ic_copy"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider"/>
+
             <!-- Số điện thoại -->
             <LinearLayout
                 android:layout_width="match_parent"

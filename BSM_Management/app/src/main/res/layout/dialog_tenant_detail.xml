@@ -22,7 +22,9 @@
             android:layout_height="wrap_content"/>
 
 
-        <!-- VIEW MODE -->
+        <!-- ============================= -->
+        <!--         VIEW MODE            -->
+        <!-- ============================= -->
         <LinearLayout
             android:id="@+id/layoutViewMode"
             android:orientation="vertical"
@@ -48,10 +50,32 @@
                 android:textSize="16sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/tvCccd"
+                android:text="CCCD: ---"
+                android:textColor="#555555"
+                android:layout_marginTop="6dp"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/tvAddress"
+                android:text="Địa chỉ: ---"
+                android:textColor="#555555"
+                android:layout_marginTop="6dp"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
         </LinearLayout>
 
 
-        <!-- EDIT MODE -->
+
+        <!-- ============================= -->
+        <!--          EDIT MODE           -->
+        <!-- ============================= -->
         <LinearLayout
             android:id="@+id/layoutEditMode"
             android:orientation="vertical"
@@ -59,6 +83,7 @@
             android:layout_marginTop="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
 
             <!-- NAME -->
             <LinearLayout
@@ -82,6 +107,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp"/>
             </LinearLayout>
+
 
             <!-- PHONE -->
             <LinearLayout
@@ -107,6 +133,58 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp"/>
             </LinearLayout>
+
+
+            <!-- CCCD -->
+            <LinearLayout
+                android:layout_marginTop="14dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:text="CCCD"
+                    android:textColor="#555555"
+                    android:textSize="14sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <EditText
+                    android:id="@+id/etCccd"
+                    android:layout_marginTop="6dp"
+                    android:padding="12dp"
+                    android:inputType="number"
+                    android:textSize="15sp"
+                    android:background="@drawable/bg_input_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"/>
+            </LinearLayout>
+
+
+            <!-- ADDRESS -->
+            <LinearLayout
+                android:layout_marginTop="14dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:text="Địa chỉ"
+                    android:textColor="#555555"
+                    android:textSize="14sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <EditText
+                    android:id="@+id/etAddress"
+                    android:layout_marginTop="6dp"
+                    android:padding="12dp"
+                    android:textSize="15sp"
+                    android:background="@drawable/bg_input_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"/>
+            </LinearLayout>
+
         </LinearLayout>
 
 
@@ -147,7 +225,6 @@
             android:textColor="#333333"
             android:textSize="15sp"
             app:cornerRadius="10dp"/>
-
 
     </LinearLayout>
 

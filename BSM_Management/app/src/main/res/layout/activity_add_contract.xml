@@ -42,6 +42,14 @@
                 android:padding="@dimen/pad_l"
                 android:layout_marginBottom="@dimen/mar_l">
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="⏱ Thời hạn hợp đồng"
+                    android:textStyle="bold"
+                    android:textColor="@color/txt_pri"
+                    android:textSize="@dimen/txt_m"
+                    android:layout_marginBottom="@dimen/mar_m"/>
 
                 <include
                     android:id="@+id/viewThoiHan1"
@@ -103,39 +111,6 @@
                     android:inputType="textPersonName"
                     android:layout_marginBottom="@dimen/mar_m"/>
 
-                <!-- Ngày sinh (click mở bottom sheet) -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_border"
-                    android:padding="@dimen/pad_m"
-                    android:layout_marginBottom="@dimen/mar_m">
-
-                    <TextView
-                        android:id="@+id/tvDob"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="Ngày sinh"
-                        android:textColor="@color/txt_pri"
-                        android:gravity="center_vertical"
-                        android:paddingEnd="8dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/ivCalendar"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"/>
-
-                    <ImageView
-                        android:id="@+id/ivCalendar"
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:src="@drawable/ic_calendar"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/tvDob"
-                        app:layout_constraintBottom_toBottomOf="@id/tvDob"
-                        app:tint="@color/txt_pri" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-
                 <EditText
                     android:id="@+id/edtSdtKhach"
                     android:layout_width="match_parent"
@@ -145,25 +120,6 @@
                     android:padding="@dimen/pad_m"
                     android:inputType="phone"
                     android:layout_marginBottom="@dimen/mar_m"/>
-
-                <EditText
-                    android:id="@+id/edtCccd"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Số CCCD"
-                    android:background="@drawable/bg_border"
-                    android:padding="@dimen/pad_m"
-                    android:inputType="number"
-                    android:layout_marginBottom="@dimen/mar_m"/>
-
-                <EditText
-                    android:id="@+id/edtAddress"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Địa chỉ thường trú"
-                    android:background="@drawable/bg_border"
-                    android:padding="@dimen/pad_m"
-                    android:inputType="textPostalAddress"/>
             </LinearLayout>
 
             <!-- SECTION 3: TIỀN CỌC -->

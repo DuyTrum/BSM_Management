@@ -134,6 +134,13 @@
                     android:text="Phòng 1"
                     android:textSize="@dimen/txt_l"
                     android:textStyle="bold"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvTenant"
+                    android:text="Khách thuê: Thbbb"
+                    android:textColor="@color/txt_sec"
+                    android:layout_marginTop="@dimen/pad_s"/>
             </LinearLayout>
 
             <Space android:layout_width="match_parent" android:layout_height="@dimen/mar_m"/>
@@ -255,131 +262,6 @@
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
-            <Space android:layout_width="match_parent" android:layout_height="@dimen/mar_m"/>
-
-            <!-- Chi tiêu khác -->
-            <LinearLayout
-                android:id="@+id/secCosts"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/bg_card"
-                android:orientation="vertical"
-                android:padding="@dimen/pad_l">
-
-                <!-- Điện -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Điện (kWh)"
-                        android:textColor="@color/txt_sec"/>
-
-                    <TextView
-                        android:id="@+id/tvElectric"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="—"
-                        android:textStyle="bold"/>
-                </LinearLayout>
-
-                <!-- Nước -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_marginTop="@dimen/pad_s">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Nước (m³)"
-                        android:textColor="@color/txt_sec"/>
-
-                    <TextView
-                        android:id="@+id/tvWater"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="—"
-                        android:textStyle="bold"/>
-                </LinearLayout>
-
-                <!-- Rác -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_marginTop="@dimen/pad_s">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Rác"
-                        android:textColor="@color/txt_sec"/>
-
-                    <TextView
-                        android:id="@+id/tvTrash"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="—"
-                        android:textStyle="bold"/>
-                </LinearLayout>
-
-                <!-- Wifi -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_marginTop="@dimen/pad_s">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Wifi"
-                        android:textColor="@color/txt_sec"/>
-
-                    <TextView
-                        android:id="@+id/tvWifi"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="—"
-                        android:textStyle="bold"/>
-                </LinearLayout>
-
-                <!-- Dịch vụ khác -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_marginTop="@dimen/pad_s">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Phí dịch vụ khác"
-                        android:textColor="@color/txt_sec"/>
-
-                    <TextView
-                        android:id="@+id/tvService"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="—"
-                        android:textStyle="bold"/>
-                </LinearLayout>
-            </LinearLayout>
 
             <Space android:layout_width="match_parent" android:layout_height="@dimen/mar_m"/>
 
@@ -402,6 +284,40 @@
                     android:layout_height="wrap_content"
                     android:text="5.400.000 đ"
                     android:textStyle="bold"/>
+            </LinearLayout>
+
+            <Space android:layout_width="match_parent" android:layout_height="@dimen/mar_m"/>
+
+            <!-- Đã trả / tổng phải thu -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/bg_card"
+                android:orientation="vertical"
+                android:padding="@dimen/pad_l">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvPaidNote"
+                    android:text="Chưa trả lần nào, 1 phiếu có thể thu nhiều lần."
+                    android:textColor="@color/warn"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/pad_m">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Số lần thanh toán\n0 lần"/>
+                    <TextView
+                        android:id="@+id/tvRemain"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tổng phải thu\n5.400.000 đ"
+                        android:textStyle="bold"/>
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

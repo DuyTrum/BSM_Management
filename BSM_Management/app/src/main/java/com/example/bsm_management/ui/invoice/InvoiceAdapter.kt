@@ -29,9 +29,7 @@ class InvoiceAdapter(
         private val tvContract: TextView = view.findViewById(R.id.tvContract)
         private val tvRent: TextView     = view.findViewById(R.id.tvRent)
         private val tvPeople: TextView   = view.findViewById(R.id.tvPeople)
-        private val tvStatus: TextView   = view.findViewById(R.id.tvStatus)
-
-        private val tvInvoiceCount: TextView = view.findViewById(R.id.tvInvoiceCount)
+        private val tvStatus: TextView = view.findViewById(R.id.tvStatus)
 
         fun bind(item: RoomItem) {
             tvRoomName.text = item.roomName
@@ -40,8 +38,6 @@ class InvoiceAdapter(
             tvRent.text     = item.rent
             tvPeople.text   = item.people
             tvStatus.text   = item.status
-
-            tvInvoiceCount.text = "${item.invoiceCount} hóa đơn tháng này"
 
             itemView.setOnClickListener { onItemClick(item) }
         }

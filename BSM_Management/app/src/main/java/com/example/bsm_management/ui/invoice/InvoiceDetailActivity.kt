@@ -45,15 +45,6 @@ class InvoiceDetailActivity : AppCompatActivity() {
     private var periodYear = 0
     private var createdAt = 0L
     private var dueAt = 0L
-
-    private var electricKwh = 0
-    private var electricRate = 0
-    private var waterM3 = 0
-    private var waterRate = 0
-    private var trashRate = 0
-    private var wifiRate = 0
-    private var serviceFee = 0
-
     private var totalAmount = 0
     private var rentAmount = 0
     private var reason: String? = null
@@ -100,21 +91,13 @@ class InvoiceDetailActivity : AppCompatActivity() {
         val db = DatabaseHelper(this).readableDatabase
         db.rawQuery(
             """
-            SELECT i.id,
-                   i.periodMonth, i.periodYear,
-                   i.totalAmount, i.roomRent,
-                   i.electricKwh, i.electricRate,
-                   i.waterM3, i.waterRate,
-                   i.trashRate, i.wifiRate,
-                   i.serviceFee,
-                   i.createdAt, i.dueAt, i.reason,
+            SELECT i.id, i.periodMonth, i.periodYear, i.totalAmount, i.roomRent, i.createdAt, i.dueAt, i.reason,
                    r.name AS roomName,
                    c.tenantName, c.tenantPhone
             FROM invoices i
             JOIN rooms r ON r.id = i.roomId
             LEFT JOIN contracts c ON c.roomId = i.roomId AND c.active = 1
             WHERE i.id = ?
-
             """.trimIndent(),
             arrayOf(invoiceId.toString())
         ).use { c ->
@@ -127,26 +110,17 @@ class InvoiceDetailActivity : AppCompatActivity() {
             periodYear  = c.getInt(2)
             totalAmount = c.getInt(3)
             rentAmount  = c.getInt(4)
-
-            electricKwh  = c.getInt(5)
-            electricRate = c.getInt(6)
-            waterM3      = c.getInt(7)
-            waterRate    = c.getInt(8)
-            trashRate    = c.getInt(9)
-            wifiRate     = c.getInt(10)
-            serviceFee   = c.getInt(11)
-
-            createdAt   = c.getLong(12)
-            dueAt       = c.getLong(13)
-            reason      = c.getString(14)
-
-            roomName    = c.getString(15)
-            tenantName  = c.getString(16)
-            tenantPhone = c.getString(17)
+            createdAt   = c.getLong(5)
+            dueAt       = c.getLong(6)
+            reason      = c.getString(7)
+            roomName    = c.getString(8)
+            tenantName  = c.getString(9)
+            tenantPhone = c.getString(10)
         }
 
         // Bind UI
         findViewById<TextView>(R.id.tvRoomName).text  = roomName ?: "Phòng ?"
+        findViewById<TextView>(R.id.tvTenant).text    = "Khách thuê: ${tenantName ?: "—"}"
         findViewById<TextView>(R.id.tvPeriod).text    = "T.${periodMonth}, $periodYear"
         findViewById<TextView>(R.id.tvCreatedAt).text = if (createdAt > 0) df.format(Date(createdAt)) else "—"
         findViewById<TextView>(R.id.tvDueAt).apply {
@@ -159,23 +133,9 @@ class InvoiceDetailActivity : AppCompatActivity() {
         // Mục tiền thuê phòng: hiển thị số tiền (nếu có khoảng ngày chi tiết thì bạn set thêm vào title)
         findViewById<TextView>(R.id.tvRentAmount).text = "${vn.format(rentAmount.coerceAtLeast(0))} đ"
 
-        findViewById<TextView>(R.id.tvElectric).text =
-            "${electricKwh} × ${vn.format(electricRate)} = ${vn.format(electricKwh * electricRate)} đ"
-
-        findViewById<TextView>(R.id.tvWater).text =
-            "${waterM3} × ${vn.format(waterRate)} = ${vn.format(waterM3 * waterRate)} đ"
-
-        findViewById<TextView>(R.id.tvTrash).text =
-            "${vn.format(trashRate)} đ"
-
-        findViewById<TextView>(R.id.tvWifi).text =
-            "${vn.format(wifiRate)} đ"
-
-        findViewById<TextView>(R.id.tvService).text =
-            "${vn.format(serviceFee)} đ"
-
         // Tổng cộng & phải thu
         findViewById<TextView>(R.id.tvTotal).text  = "${vn.format(totalAmount)} đ"
+        findViewById<TextView>(R.id.tvRemain).text = "Tổng phải thu\n${vn.format(totalAmount)} đ"
     }
 
     /* ====== ACTIONS ====== */

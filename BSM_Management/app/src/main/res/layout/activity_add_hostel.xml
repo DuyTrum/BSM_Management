@@ -34,8 +34,9 @@
         android:layout_height="match_parent"
         android:fillViewport="true"
         android:padding="16dp"
-        android:paddingBottom="112dp"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:paddingBottom="120dp"
+        android:clipToPadding="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -81,7 +82,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Thông tin cơ bản tên, loại hình…"
+                        android:text="Thông tin cơ bản tên, ..."
                         android:textColor="@color/bsm_text_secondary"/>
                 </LinearLayout>
             </LinearLayout>
@@ -153,18 +154,20 @@
                                     android:layout_height="32dp"
                                     android:src="@drawable/ic_byroom"
                                     app:tint="@color/bsm_green" />
+
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
                                     android:text="Thuê theo phòng"
-                                    android:textStyle="bold"
-                                    android:layout_marginTop="8dp"/>
+                                    android:textStyle="bold" />
+
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Tính tiền thuê theo phòng"
                                     android:textColor="@color/bsm_text_secondary"
-                                    android:textSize="12sp"/>
+                                    android:textSize="12sp" />
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
 
@@ -172,41 +175,6 @@
                             android:layout_width="12dp"
                             android:layout_height="0dp"/>
 
-                        <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/cardByBed"
-                            android:layout_width="0dp"
-                            android:layout_height="120dp"
-                            android:layout_weight="1"
-                            app:cardCornerRadius="16dp"
-                            app:strokeColor="@color/bsm_divider"
-                            android:foreground="?attr/selectableItemBackground">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:orientation="vertical"
-                                android:padding="12dp">
-
-                                <ImageView
-                                    android:layout_width="32dp"
-                                    android:layout_height="32dp"
-                                    android:src="@drawable/ic_bybed"
-                                    app:tint="@color/bsm_text_secondary" />
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Thuê theo giường"
-                                    android:textStyle="bold"
-                                    android:layout_marginTop="8dp"/>
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Tính tiền theo giường"
-                                    android:textColor="@color/bsm_text_secondary"
-                                    android:textSize="12sp"/>
-                            </LinearLayout>
-                        </com.google.android.material.card.MaterialCardView>
                     </LinearLayout>
 
                     <!-- Tên nhà trọ -->
@@ -262,7 +230,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Theo mẫu hoặc từ excel hoặc thủ công"
+                        android:text="Khởi tạo dữ liệu thủ công"
                         android:textColor="@color/bsm_text_secondary"/>
                 </LinearLayout>
             </LinearLayout>
@@ -272,26 +240,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Đang khởi tạo tự động theo mẫu"
-                        android:textStyle="bold" />
-
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switchAuto"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true" />
-                </LinearLayout>
 
                 <!-- Box: số tầng -->
                 <com.google.android.material.card.MaterialCardView
@@ -311,7 +259,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Thiết lập số tầng (Gồm tầng trệt) *"
+                            android:text="Thiết lập số phòng dự kiến *"
                             android:textStyle="bold" />
 
                         <TextView
@@ -428,82 +376,6 @@
                         android:hint="Tối đa người ở / phòng"
                         android:inputType="none" />
                 </com.google.android.material.textfield.TextInputLayout>
-
-                <!-- SECTION 3: Cài đặt ngày chốt & hạn hoá đơn -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:background="@drawable/bg_icon_circle"
-                        android:padding="8dp"
-                        android:src="@drawable/ic_tag" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Cài đặt ngày chốt &amp; hạn hóa đơn"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Tùy chỉnh tính năng sử dụng cho Nhà trọ"
-                            android:textColor="@color/bsm_text_secondary" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:orientation="horizontal">
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edtInvoiceDay"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Ngày lập hóa đơn"
-                            android:inputType="number" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <Space
-                        android:layout_width="12dp"
-                        android:layout_height="0dp" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edtDueDays"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Hạn đóng tiền (ngày)"
-                            android:inputType="number" />
-                    </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
 
