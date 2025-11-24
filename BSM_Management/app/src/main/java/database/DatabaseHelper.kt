@@ -63,18 +63,33 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
         CREATE TABLE IF NOT EXISTS invoices (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             roomId INTEGER NOT NULL,
+        
             periodYear INTEGER NOT NULL,
             periodMonth INTEGER NOT NULL,
+        
             roomRent INTEGER NOT NULL,
+        
             electricKwh INTEGER NOT NULL DEFAULT 0,
+            electricRate INTEGER NOT NULL DEFAULT 0,
+        
             waterM3 INTEGER NOT NULL DEFAULT 0,
+            waterRate INTEGER NOT NULL DEFAULT 0,
+        
+            trashRate INTEGER NOT NULL DEFAULT 0,
+            wifiRate INTEGER NOT NULL DEFAULT 0,
+        
             serviceFee INTEGER NOT NULL DEFAULT 0,
+        
             totalAmount INTEGER NOT NULL,
             paid INTEGER NOT NULL DEFAULT 0,
+        
             createdAt INTEGER NOT NULL,
             dueAt INTEGER,
+        
             reason TEXT,
+        
             FOREIGN KEY(roomId) REFERENCES rooms(id) ON DELETE CASCADE,
+        
             UNIQUE(roomId, periodYear, periodMonth)
         );
     """.trimIndent())
@@ -98,6 +113,9 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             roomId INTEGER,
             name TEXT NOT NULL,
             phone TEXT NOT NULL,
+            cccd TEXT,
+            address TEXT,
+            dob INTEGER,
             isUsingApp INTEGER NOT NULL DEFAULT 0,
             hasTempReg INTEGER NOT NULL DEFAULT 0,
             hasPaper INTEGER NOT NULL DEFAULT 0,
@@ -557,6 +575,6 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
 
     companion object {
         const val DB_NAME = "bsm.db"
-        private const val DB_VERSION = 3
+        private const val DB_VERSION = 1
     }
 }
