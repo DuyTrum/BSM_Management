@@ -77,8 +77,7 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
             createdAt INTEGER NOT NULL,
             dueAt INTEGER,
             reason TEXT,
-            FOREIGN KEY(roomId) REFERENCES rooms(id) ON DELETE CASCADE,
-            UNIQUE(roomId, periodYear, periodMonth)
+            FOREIGN KEY(roomId) REFERENCES rooms(id) ON DELETE CASCADE
         );
     """.trimIndent())
 
