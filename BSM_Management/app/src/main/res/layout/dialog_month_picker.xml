@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- Dòng chọn Năm -->
+    <LinearLayout
+        android:id="@+id/rowYears"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvYearPrev"
+            android:text="2024"
+            android:textSize="18sp"
+            android:padding="12dp"
+            android:textColor="@color/txt_sec" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvYearCur"
+            android:text="2025"
+            android:textSize="20sp"
+            android:padding="12dp"
+            android:textStyle="bold"
+            android:textColor="@color/pri" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvYearNext"
+            android:text="2026"
+            android:textSize="18sp"
+            android:padding="12dp"
+            android:textColor="@color/txt_sec" />
+    </LinearLayout>
+
+    <!-- Lưới tháng -->
+    <GridLayout
+        android:id="@+id/gridMonths"
+        android:columnCount="4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:rowCount="3">
+    </GridLayout>
+
+    <TextView
+        android:id="@+id/btnClose"
+        android:text="Đóng chọn"
+        android:textSize="18sp"
+        android:padding="16dp"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/err"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

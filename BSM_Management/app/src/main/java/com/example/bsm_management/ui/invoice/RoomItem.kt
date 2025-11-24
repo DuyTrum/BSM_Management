@@ -7,5 +7,6 @@ data class RoomItem(
     val contract: String,
     val status: String,
     val rent: String,
-    val people: String
+    val people: String,
+    val invoiceCount: Int
 )

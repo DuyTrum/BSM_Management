@@ -115,7 +115,7 @@ class AddContractActivity : AppCompatActivity() {
     /** ---------------- THỜI HẠN SPINNER ---------------- */
     private fun setupThoiHanSpinner() {
         val spinner = findViewById<View>(R.id.viewThoiHan1).findViewById<Spinner>(R.id.spinnerItem)
-        val options = listOf("6 tháng", "1 năm", "2 năm", "Tùy chỉnh")
+        val options = listOf("1 năm", "2 năm", "Tùy chỉnh")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, options)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
@@ -123,7 +123,7 @@ class AddContractActivity : AppCompatActivity() {
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, v: View?, pos: Int, id: Long) {
-                val months = when (pos) { 0 -> 6; 1 -> 12; 2 -> 24; else -> null }
+                val months = when (pos) { 0 -> 12; 2 -> 24; else -> null }
                 if (months != null && startDate > 0) {
                     val cal = Calendar.getInstance().apply {
                         timeInMillis = startDate

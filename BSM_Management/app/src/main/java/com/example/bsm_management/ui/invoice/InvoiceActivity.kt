@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat.enableEdgeToEdge
@@ -86,16 +87,43 @@ class InvoiceActivity : AppCompatActivity() {
         tvEmpty = findViewById(R.id.tvEmpty) // nhớ đã thêm vào activity_in_voice.xml
 
         adapter = InvoiceAdapter { item ->
-            val i = Intent(this, AddInvoiceActivity::class.java)
-            i.putExtra("roomId", item.roomId)
-            i.putExtra("roomName", item.roomName)
-            i.putExtra("rent", item.rent)
-            startActivity(i)
+            checkBeforeCreateInvoice(item)
         }
+
         rv.layoutManager = LinearLayoutManager(this)
         rv.adapter = adapter
         reload()
     }
+
+    private fun checkBeforeCreateInvoice(room: RoomItem) {
+
+        val count = room.invoiceCount
+
+        if (count > 0) {
+            AlertDialog.Builder(this)
+                .setTitle("Đã có hóa đơn")
+                .setMessage(
+                    "Phòng ${room.roomName} đã có $count hóa đơn trong tháng $curMonth/$curYear.\n" +
+                            "Bạn có chắc muốn lập thêm hóa đơn nữa không?"
+                )
+                .setNegativeButton("Hủy", null)
+                .setPositiveButton("Lập tiếp") { _, _ ->
+                    openCreateInvoice(room)
+                }
+                .show()
+        } else {
+            openCreateInvoice(room)
+        }
+    }
+
+    private fun openCreateInvoice(room: RoomItem) {
+        val i = Intent(this, AddInvoiceActivity::class.java)
+        i.putExtra("roomId", room.roomId)
+        i.putExtra("roomName", room.roomName)
+        i.putExtra("rent", room.rent)
+        startActivity(i)
+    }
+
     private fun updateMonthLabel(tv: TextView) {
         tv.text = "Tháng $curMonth, $curYear"
     }
@@ -195,6 +223,16 @@ class InvoiceActivity : AppCompatActivity() {
                     arrayOf(id.toString())
                 ).toInt()
 
+                // Đếm số hóa đơn của phòng trong tháng đang chọn
+                val invoiceCount = DatabaseUtils.longForQuery(
+                    db,
+                    """
+                        SELECT COUNT(*) FROM invoices 
+                        WHERE roomId = ? AND periodMonth = ? AND periodYear = ?
+                    """.trimIndent(),
+                        arrayOf(id.toString(), curMonth.toString(), curYear.toString())
+                    ).toInt()
+
                 list.add(
                     RoomItem(
                         roomId   = id,
@@ -203,7 +241,8 @@ class InvoiceActivity : AppCompatActivity() {
                         contract = contract,
                         status   = status,
                         rent     = "${formatVnd(baseRent)}đ",
-                        people   = "${tenantCount}/${maxPeople} người"
+                        people   = "${tenantCount}/${maxPeople} người",
+                        invoiceCount = invoiceCount
                     )
                 )
             }

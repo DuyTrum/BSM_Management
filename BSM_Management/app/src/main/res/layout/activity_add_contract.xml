@@ -42,14 +42,6 @@
                 android:padding="@dimen/pad_l"
                 android:layout_marginBottom="@dimen/mar_l">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="⏱ Thời hạn hợp đồng"
-                    android:textStyle="bold"
-                    android:textColor="@color/txt_pri"
-                    android:textSize="@dimen/txt_m"
-                    android:layout_marginBottom="@dimen/mar_m"/>
 
                 <include
                     android:id="@+id/viewThoiHan1"

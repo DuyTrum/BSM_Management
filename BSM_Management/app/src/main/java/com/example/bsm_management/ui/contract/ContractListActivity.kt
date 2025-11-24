@@ -1,7 +1,9 @@
 package com.example.bsm_management.ui.contract
 
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -42,6 +44,9 @@ class ContractListActivity : AppCompatActivity() {
 
         setupHeader()
         setupFilters()
+        selectedStatus = null
+        findViewById<TextView>(R.id.tvStatusValue).text = "Tất cả"
+
         loadContracts()
     }
 
@@ -227,24 +232,155 @@ class ContractListActivity : AppCompatActivity() {
 
     /** ---------------- GIA HẠN HỢP ĐỒNG ---------------- */
     private fun openRenewContract(contract: ContractListItem) {
-        val db = DatabaseHelper(this)
-        val cursor = db.readableDatabase.rawQuery(
-            "SELECT id FROM rooms WHERE name=?",
-            arrayOf(contract.roomName)
-        )
-        var roomId = 0
-        if (cursor.moveToFirst()) {
-            roomId = cursor.getInt(0)
+        if (contract.endDate == "Vô thời hạn") {
+            Toast.makeText(this, "Hợp đồng vô thời hạn không thể gia hạn", Toast.LENGTH_SHORT).show()
+            return
         }
+
+        val dialog = BottomSheetDialog(this)
+        val view = layoutInflater.inflate(R.layout.bottom_renew_contract, null)
+        dialog.setContentView(view)
+
+        val tvStart = view.findViewById<TextView>(R.id.tvStartDate)
+        val tvEnd = view.findViewById<TextView>(R.id.tvEndDate)
+        val spnTerm = view.findViewById<Spinner>(R.id.spnTerm)
+        val btnConfirm = view.findViewById<Button>(R.id.btnConfirm)
+        val btnCancel = view.findViewById<Button>(R.id.btnCancel)
+
+        // Format
+        val df = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+        // Lấy endDate cũ làm start mới
+        val oldEndTimestamp = df.parse(contract.endDate)?.time ?: System.currentTimeMillis()
+        tvStart.text = contract.endDate   // ví dụ: 19/02/2025
+
+        var newEndTimestamp = 0L
+
+        // Spinner: 1 năm, 2 năm, tùy chỉnh
+        val options = listOf("1 năm", "2 năm", "Tùy chỉnh")
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, options)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spnTerm.adapter = adapter
+
+        fun recalcEnd(term: Int?) {
+            if (term != null) {
+                val cal = Calendar.getInstance().apply {
+                    timeInMillis = oldEndTimestamp
+                    add(Calendar.MONTH, term)
+                }
+                newEndTimestamp = cal.timeInMillis
+                tvEnd.text = df.format(cal.time)
+            }
+        }
+
+        // Mặc định 1 năm
+        recalcEnd(12)
+
+        spnTerm.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, v: View?, pos: Int, id: Long) {
+                when (pos) {
+                    0 -> recalcEnd(12)
+                    1 -> recalcEnd(24)
+                    2 -> {
+                        // Tùy chỉnh → cho người dùng chọn
+                        showDatePicker { picked ->
+                            tvEnd.text = picked
+                            newEndTimestamp = df.parse(picked)?.time ?: 0L
+                        }
+                    }
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        // Xác nhận gia hạn
+        btnConfirm.setOnClickListener {
+            renewContractInDB(contract.id, oldEndTimestamp, newEndTimestamp)
+            dialog.dismiss()
+            loadContracts()
+        }
+
+        btnCancel.setOnClickListener { dialog.dismiss() }
+        dialog.show()
+    }
+
+    private fun showDatePicker(onPicked: (String) -> Unit) {
+        val df = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val cal = Calendar.getInstance()
+
+        DatePickerDialog(
+            this,
+            { _, y, m, d ->
+                cal.set(y, m, d)
+                onPicked(df.format(cal.time))
+            },
+            cal.get(Calendar.YEAR),
+            cal.get(Calendar.MONTH),
+            cal.get(Calendar.DAY_OF_MONTH)
+        ).show()
+    }
+
+
+    private fun renewContractInDB(oldContractId: Int, newStart: Long, newEnd: Long) {
+        val db = DatabaseHelper(this)
+
+        // --- Lấy hợp đồng cũ ---
+        val cursor = db.readableDatabase.rawQuery(
+            "SELECT roomId, tenantName, tenantPhone, deposit, endDate FROM contracts WHERE id=?",
+            arrayOf(oldContractId.toString())
+        )
+
+        if (!cursor.moveToFirst()) {
+            cursor.close()
+            Toast.makeText(this, "Không tìm thấy hợp đồng cũ!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val roomId = cursor.getInt(cursor.getColumnIndexOrThrow("roomId"))
+        val tenantName = cursor.getString(cursor.getColumnIndexOrThrow("tenantName"))
+        val tenantPhone = cursor.getString(cursor.getColumnIndexOrThrow("tenantPhone"))
+        val deposit = cursor.getInt(cursor.getColumnIndexOrThrow("deposit"))
+        val oldEndDate = cursor.getLong(cursor.getColumnIndexOrThrow("endDate"))
         cursor.close()
 
-        val intent = Intent(this, AddContractActivity::class.java)
-        intent.putExtra("mode", "renew")
-        intent.putExtra("contractId", contract.id)
-        intent.putExtra("roomId", roomId)
-        intent.putExtra("roomName", contract.roomName)
-        startActivity(intent)
+        // --- CHẶN hợp đồng vô thời hạn ---
+        if (oldEndDate <= 0) {
+            Toast.makeText(this, "Hợp đồng vô thời hạn không thể gia hạn!", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        // --- Set hợp đồng cũ thành hết hiệu lực ---
+        db.writableDatabase.execSQL(
+            "UPDATE contracts SET active=0 WHERE id=$oldContractId"
+        )
+
+        // --- Tạo hợp đồng mới ---
+        val sqlInsert = """
+        INSERT INTO contracts (roomId, tenantName, tenantPhone, startDate, endDate, deposit, active)
+        VALUES (?, ?, ?, ?, ?, ?, 1)
+    """
+
+        db.writableDatabase.execSQL(
+            sqlInsert,
+            arrayOf(
+                roomId,
+                tenantName,
+                tenantPhone,
+                newStart,
+                newEnd,
+                deposit
+            )
+        )
+
+        // --- Cập nhật trạng thái phòng ---
+        db.writableDatabase.execSQL(
+            "UPDATE rooms SET status='RENTED' WHERE id=$roomId"
+        )
+
+        Toast.makeText(this, "Gia hạn hợp đồng thành công!", Toast.LENGTH_SHORT).show()
     }
+
+
 
     /** ---------------- KẾT THÚC HỢP ĐỒNG ---------------- */
     private fun confirmEndContract(contract: ContractListItem) {

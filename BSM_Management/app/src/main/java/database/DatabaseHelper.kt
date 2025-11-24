@@ -88,9 +88,7 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
         
             reason TEXT,
         
-            FOREIGN KEY(roomId) REFERENCES rooms(id) ON DELETE CASCADE,
-        
-            UNIQUE(roomId, periodYear, periodMonth)
+            FOREIGN KEY(roomId) REFERENCES rooms(id) ON DELETE CASCADE
         );
     """.trimIndent())
 
@@ -570,8 +568,6 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
         val sql = "SELECT COUNT(*) FROM contracts WHERE active = 0"
         return DatabaseUtils.longForQuery(readableDatabase, sql, null).toInt()
     }
-
-
 
     companion object {
         const val DB_NAME = "bsm.db"
