@@ -182,7 +182,7 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
         val isRead: Boolean
     )
 
-    fun insertMessage(sender: String, message: String, time: String, isRead: Boolean = false, hostelName: String? = "Nhà trọ Duy") {
+    fun insertMessage(sender: String, message: String, time: String, isRead: Boolean = false, hostelName: String? = null ) {
         val cv = ContentValues().apply {
             put("hostelName", hostelName)
             put("sender", sender)
@@ -630,6 +630,6 @@ class DatabaseHelper(context: Context?) : SQLiteOpenHelper(context, DB_NAME, nul
 
     companion object {
         const val DB_NAME = "bsm.db"
-        private const val DB_VERSION = 4
+        private const val DB_VERSION = 5
     }
 }
